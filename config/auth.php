@@ -15,7 +15,7 @@ return [
 
     'defaults' => [
         'guard' => 'web',
-        'passwords' => 'users',
+        'passwords' => 'customers',
     ],
 
     /*
@@ -38,13 +38,33 @@ return [
     'guards' => [
         'web' => [
             'driver' => 'session',
-            'provider' => 'users',
+            'provider' => 'customers',
         ],
 
         'api' => [
             'driver' => 'token',
             'provider' => 'users',
             'hash' => false,
+        ],
+
+        'manager' => [
+            'driver' => 'session',
+            'provider' => 'managers',
+        ],
+
+        'vendor' => [
+            'driver' => 'session',
+            'provider' => 'vendors',
+        ],
+
+        'sales-associate' => [
+            'driver' => 'session',
+            'provider' => 'sales-associates',
+        ],
+
+        'delivery-partner' => [
+            'driver' => 'session',
+            'provider' => 'delivery-partners',
         ],
     ],
 
@@ -71,6 +91,31 @@ return [
             'model' => App\User::class,
         ],
 
+        'customers' => [
+            'driver' => 'eloquent',
+            'model' => App\Customer::class,
+        ],
+
+        'managers' => [
+            'driver' => 'eloquent',
+            'model' => App\Manager::class,
+        ],
+
+        'vendors' => [
+            'driver' => 'eloquent',
+            'model' => App\Vendor::class,
+        ],
+
+        'sales-associates' => [
+            'driver' => 'eloquent',
+            'model' => App\SalesAssociate::class,
+        ],
+
+        'delivery-partners' => [
+            'driver' => 'eloquent',
+            'model' => App\DeliveryPartner::class,
+        ],
+
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
@@ -95,6 +140,36 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
+            'table' => 'password_resets',
+            'expire' => 60,
+        ],
+
+        'customers' => [
+            'provider' => 'customers',
+            'table' => 'password_resets',
+            'expire' => 60,
+        ],
+
+        'managers' => [
+            'provider' => 'managers',
+            'table' => 'password_resets',
+            'expire' => 60,
+        ],
+
+        'vendors' => [
+            'provider' => 'vendors',
+            'table' => 'password_resets',
+            'expire' => 60,
+        ],
+
+        'sales-associates' => [
+            'provider' => 'sales-associates',
+            'table' => 'password_resets',
+            'expire' => 60,
+        ],
+
+        'delivery-partners' => [
+            'provider' => 'delivery-partners',
             'table' => 'password_resets',
             'expire' => 60,
         ],
