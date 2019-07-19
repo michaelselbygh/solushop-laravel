@@ -19,12 +19,14 @@ class CreateManagersTable extends Migration
             $table->string('last_name', '70');
             $table->string('email', '50')->unique();
             $table->string('phone', '12');
-            $table->integer('sms')->default('1');
-            $table->integer('access_level');
-            $table->string('password');
-            $table->string('avi');
+            $table->integer('sms')->default('0');
+            $table->integer('access_level')->default('0');
+            $table->string('passcode')->default('0');
+            $table->string('password')->nullable();
+            $table->string('avi')->nullable();
             $table->rememberToken();
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
         });
     }
 

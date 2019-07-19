@@ -1,28 +1,47 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use Flynsarmy\CsvSeeder\CsvSeeder;
 
-class VendorsTableSeeder extends Seeder
+class VendorsTableSeeder extends CsvSeeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
-    {
-        \DB::table('vendors')->insert([
-            'vendor_id'     => '1',
-            'name'          => 'Solushop Core',
-            'username'      => 'SolushopCore',
-            'email'         => 'michaelselbygh@gmail.com',
-            'phone'         => '233506753093',
-            'alt_phone'     => '233503788515',
-            'password'      => bcrypt('VMichael2131$'),
-            'address'       => 'Solushop Hub, Eastlegon',
-            'balance'       => '0',
-            'created_at'    => \Carbon\Carbon::now(),
-            'updated_at'    => \Carbon\Carbon::now(),
-        ]);
+    public function __construct()
+	{
+		$this->table = 'vendors';
+		$this->filename = base_path().'/database/seeds/csvs/solushop_table_suppliers.csv';
+		$this->mapping = [
+			0 => 'vendor_id',
+			1 => 'name',
+			2 => 'username',
+			3 => 'phone',
+			4 => 'alt_phone',
+			5 => 'email',
+			6 => 'address',
+			7 => 'passcode',
+			8 => 'balance',
+		];
+	}
+
+	public function run()
+	{
+		// Recommended when importing larger CSVs
+		DB::disableQueryLog();
+
+		// Uncomment the below to wipe the table clean before populating
+		DB::table($this->table)->truncate();
+
+        parent::run();
+
+        //hashify
+		$vendors = App\Vendor::all();
+
+        foreach ($vendors as $vendor) {
+			DB::table('vendors')
+			->where('vendor_id', $vendor->vendor_id)
+			->update([
+				'password' => bcrypt($vendor->passcode),
+				'username' => str_slug($vendor->name, '-')
+            ]);
+        }
     }
 }

@@ -19,7 +19,8 @@ class CreateSalesAssociatesTable extends Migration
             $table->string('last_name', '70');
             $table->string('phone', '12');
             $table->string('email', '70')->unique();
-            $table->string('password');
+            $table->string('passcode');
+            $table->string('password')->nullable();
             $table->string('address');
             $table->integer('badge');
             $table->string('id_type', '100');
@@ -28,7 +29,8 @@ class CreateSalesAssociatesTable extends Migration
             $table->string('payment_details');
             $table->double('balance');
             $table->rememberToken();
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
         });
     }
 

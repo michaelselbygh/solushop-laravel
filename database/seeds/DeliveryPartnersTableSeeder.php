@@ -1,26 +1,44 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use Flynsarmy\CsvSeeder\CsvSeeder;
 
-class DeliveryPartnersTableSeeder extends Seeder
+class DeliveryPartnersTableSeeder extends CsvSeeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
-    {
-        \DB::table('delivery_partners')->insert([
-            'dp_id'         => '1',
-            'dp_company_id' => '1',
-            'first_name'    => 'Michael',
-            'last_name'     => 'Selby',
-            'email'         => 'michaelselbygh@gmail.com',
-            'password'      => bcrypt('DMichael2131$'),
-            'access_level'  => '0',
-            'created_at'    => \Carbon\Carbon::now(),
-            'updated_at'    => \Carbon\Carbon::now(),
-        ]);
-    }
+    public function __construct()
+	{
+		$this->table = 'delivery_partners';
+		$this->filename = base_path().'/database/seeds/csvs/solushop_table_neglmanagement.csv';
+		$this->mapping = [
+			0 => 'dp_id',
+			5 => 'first_name',
+			6 => 'last_name',
+			3 => 'email',
+			2 => 'passcode',
+		];
+	}
+
+	public function run()
+	{
+		// Recommended when importing larger CSVs
+		DB::disableQueryLog();
+
+		// Uncomment the below to wipe the table clean before populating
+		DB::table($this->table)->truncate();
+
+		parent::run();
+
+		//hashify
+		$deliveryPartners = App\DeliveryPartner::all();
+
+        foreach ($deliveryPartners as $deliveryPartner) {
+			DB::table('delivery_partners')
+			->where('dp_id', $deliveryPartner->dp_id)
+			->update([
+				'password' => bcrypt($deliveryPartner->passcode)
+			]);
+        }
+
+
+	}
 }

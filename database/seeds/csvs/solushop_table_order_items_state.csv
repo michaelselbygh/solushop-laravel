@@ -1,0 +1,5 @@
+"1","<span class='label label-info'>awaiting order confirmation</span>"
+"2","<span class='label label-warning'>being picked up</span>"
+"3","<span style='background-color:32CD32' class='label label-success'>picked up, ready for delivery</span>"
+"4","<span class='label label-success'>Delivered</span>"
+"5","<span class='label label-danger'>Cancelled</span>"

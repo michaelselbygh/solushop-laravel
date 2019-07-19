@@ -24,12 +24,13 @@ class CreateCustomersTable extends Migration
             $table->string('activation_code', '10');
             $table->string('password');
             $table->string('default_address', '5');
-            $table->date('date_of_birth')->nullable();
+            $table->string('date_of_birth', '10')->nullable();
             $table->double('milkshake');
             $table->string('icono', '50')->nullable();
             $table->string('sm', '70')->default('SOLUSHOP');
             $table->rememberToken();
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent(); 
+            $table->timestamp('updated_at')->useCurrent();
         });
     }
 

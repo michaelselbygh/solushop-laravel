@@ -22,12 +22,12 @@ class VendorLoginController extends Controller
     {
         //validate form data
         $this->validate($request, [
-            'email' => 'required|email',
+            'username' => 'required',
             'password' => 'required'
         ]);
 
         //attempt to log user in
-        if(Auth::guard('vendor')->attempt(['email' => $request->email, 'password' => $request->password], $request->remember)){
+        if(Auth::guard('vendor')->attempt(['username' => $request->username, 'password' => $request->password], $request->remember)){
             
             //if successful, then redirect to intended location
             return redirect()->intended(route('vendor.dashboard'));

@@ -11,7 +11,7 @@ class Customer extends Authenticatable
     use Notifiable;
 
     protected $primaryKey = 'customer_id';
-
+    public $incrementing = false;
     /**
      * The attributes that are mass assignable.
      *

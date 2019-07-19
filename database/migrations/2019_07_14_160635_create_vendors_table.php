@@ -16,15 +16,19 @@ class CreateVendorsTable extends Migration
         Schema::create('vendors', function (Blueprint $table) {
             $table->string('vendor_id')->primary();
             $table->string('name');
-            $table->string('username');
+            $table->string('username')->unique();
             $table->string('phone', '12');
             $table->string('alt_phone', '12');
-            $table->string('email', '70')->unique();
+            $table->string('email', '70');
             $table->string('address');
-            $table->string('password');
+            $table->string('passcode');
+            $table->string('password')->nullable();
+            $table->string('mode_of_payment')->nullable();
+            $table->string('payment_details')->nullable();
             $table->double('balance');
             $table->rememberToken();
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
         });
     }
 

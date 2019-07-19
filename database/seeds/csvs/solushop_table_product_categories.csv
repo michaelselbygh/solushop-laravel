@@ -1,0 +1,102 @@
+"1","0","Fashion","4|12|13|14|15|16|17|18|19|20|21|5|22|23|24|25|26|27|28|29|30|31|32|33|34|35|36|37|6|38|39|40|41|42|43|44|45|69|70|73|74|79|81|92|96|"
+"2","0","Electronics","7|46|47|48|49|50|51|8|52|53|54|"
+"3","0","Home and Living","9|55|56|57|58|59|60|61|10|62|63|64|65|66|11|67|83|87|88|89|90|97|98|99|
+"
+"4","1","Mens Fashion","12|13|14|15|16|17|18|19|20|21|38|39|40|41|42|43|44|45|6|75|79|96|"
+"5","1","Womens Fashion","22|23|24|25|26|27|28|29|30|31|32|33|34|35|36|37|38|39|40|41|42|43|44|45|6|69|70|73|74|75|79|81|96|
+"
+"6","1","Unisex Fashion","38|39|40|41|42|43|44|45|75|79|92|96|"
+"7","2","Computing","46|47|48|49|50|51|"
+"8","2","Phones & Tablets","52|53|54|"
+"9","3","Kitchenware","55|56|57|58|59|60|61|97|98|99|"
+"10","3","Home Appliances and Electronics","62|63|64|65|66|89|90|"
+"11","3","Furniture and Accessories","67|"
+"12","4","Mens Shirts",
+"13","4","Mens Trousers",
+"14","4","Singlets",
+"15","4","Mens Watches","39|"
+"16","4","Mens Footwear",
+"17","4","Mens Skin and Hair Products",
+"18","4","Mens Fragrances and Deodorant",
+"19","4","Mens Belt",
+"20","4","Wallet",
+"21","4","African Traditional Wear",
+"22","5","Women Shoes",
+"23","5","Skirts",
+"24","5","Camisoles",
+"25","5","Necklaces, Earrings and Brooches",
+"26","5","Womens Watches","39|"
+"27","5","Women Jeans",
+"28","5","Women Skin Prodicts",
+"29","5","Women Skin and Hair products","75|"
+"30","5","Women Tops",
+"31","5","Women Fragrances & Deodorant",
+"32","5","Make up",
+"33","5","Handbags and Purses",
+"34","5","Women Traditional Wear",
+"35","5","Women Slippers and Sandals",
+"36","5","Women Jumpsuits",
+"37","5","Women Anklets",
+"38","6","Unisex Necklaces",
+"39","6","Unisex Watches",
+"40","6","Unisex Jeans",
+"41","6","Unisex Skin Products","75|"
+"42","6","Unisex Hair Products","75|"
+"43","6","Unisex Deodorant",
+"44","6","Unisex Fragrances",
+"45","6","Unisex T-Shirts",
+"46","7","Monitors",
+"47","7","Desktops",
+"48","7","Laptops",
+"49","7","Keyboard",
+"50","7","Mouse",
+"51","7","Chargers",
+"52","8","Phones",
+"53","8","Tablets",
+"54","8","Phone Accessories",
+"55","9","Mugs",
+"56","9","Plates",
+"57","9","Cutlery",
+"58","9","Silverware",
+"59","9","Microwaves",
+"60","9","Rice Cookers",
+"61","9","Blenders",
+"62","10","Televisions",
+"63","10","Air Conditioning",
+"64","10","Fridges & Freezers",
+"65","10","Washing Machines",
+"66","10","Home Theatre",
+"67","11","Bedsheet",
+"68","6","Unisex Bags",
+"69","5","Women Underwear, Sleepwear and Lingerie",
+"70","5","Women Two And Three Piece Sets",
+"71","9","Burners And Cookers",
+"72","9","Coffee Maker",
+"73","5","Women Trousers",
+"74","5","Women Dresses",
+"75","6","Oils",
+"76","0","Food and Health","77|78|80|85|86|91|"
+"77","76","Vitamins and Dietary Supplements","78|80|"
+"78","77","Sexual Reproductive Health Products",
+"79","6","Towels and Bathroom Wear",
+"80","77","Weight Loss Supplements",
+"81","5","Women Swimwear & Bikini",
+"82","3","Personal Care","83|"
+"83","82","Bathroom",
+"84","76","Grocery","85|86|91|"
+"85","84","Shito",
+"86","84","Creams, Purees and Sauces",
+"87","3","Home Decor","88|89|"
+"88","87","Air Fresheners",
+"89","87","Lighting",
+"90","10","Stabilizers",
+"91","84","Pudding, Oats and Porridge",
+"92","6","Unisex Footwear
+",
+"93","0","Education","94|95|"
+"94","93","Books","95|"
+"95","94","Business & Motivational Books",
+"96","6","Shorts",
+"97","9","Bowls",
+"98","9","Sets",
+"99","9","Table Tops & Napkins",

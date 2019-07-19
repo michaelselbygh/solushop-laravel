@@ -15,14 +15,16 @@ class CreateDeliveryPartnersTable extends Migration
     {
         Schema::create('delivery_partners', function (Blueprint $table) {
             $table->bigIncrements('dp_id');
-            $table->string('dp_company_id', '10');
+            $table->string('dp_company_id', '10')->nullable();
             $table->string('first_name', '70');
             $table->string('last_name', '70');
             $table->string('email', '70')->unique();
-            $table->string('password');
-            $table->integer('access_level');
+            $table->string('passcode');
+            $table->string('password')->nullable();
+            $table->integer('access_level')->default('0');
             $table->rememberToken();
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
         });
     }
 

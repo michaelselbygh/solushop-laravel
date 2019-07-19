@@ -1,0 +1,5 @@
+"1","Live","<span style='color:green;' >LIVE</span> "
+"2","Pending Approval","<span style='color:orange;' >PENDING APPROVAL</span> "
+"3","Rejected","<span style='color:red;' >REJECTED</span> "
+"4","Deleted","<span style='color:red;' >DELETED</span> "
+"5","Inactive","<span style='color:orange;' >INACTIVE</span> "

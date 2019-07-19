@@ -1,0 +1,7 @@
+"1","Unpaid","<span style=""color:#1C2833""><b>Unpaid</b></span>","<span class='label label-info'>Awaiting Order Confirmation</span>"
+"2","Pending Confirmation","<span style=""color:#1E9FF2""><b>Pending Confirmation</b></span>","<span class='label label-info'>Awaiting Order Confirmation</span>"
+"3","Confirmed, being processed","<span style=""color:#FF9149""><b>Confirmed, being processed</b></span>","<span class='label label-warning'>Confirmed, being processed</span>"
+"4","Ready for Delivery","<span style=""color:#0275d8""><b>Ready for Delivery</b></span>","<span style='background-color:#0275d8' class='label label-info'>Awaiting Delivery Confirmation</span>"
+"5","Delivering","<span style=""color:#32CD32""><b>Delivering</b></span>","<span style='background-color:#32CD32' class='label label-info'>Delivering</span>"
+"6","Completed","<span style=""color:green""><b>Completed</b></span>","<span style='background-color:green' class='label label-success'>Completed</span>"
+"7","Cancelled","<span style=""color:red""><b>Cancelled</b></span>","<span style='' class='label label-danger'>Cancelled</span>"

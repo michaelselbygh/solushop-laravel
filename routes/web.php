@@ -15,11 +15,14 @@ Route::get('/', function () {
     return view('welcome');
 })->name('welcome');
 
-Auth::routes();
 
+
+Auth::routes();
 //app routes
 Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/logout', 'LoginController@logout')->name('customer.logout');
+Route::get('/logout', 'Auth\LoginController@logout')->name('customer.logout');
+Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
+Route::post('/login', 'Auth\LoginController@login')->name('customer.login.submit');
 
 
 //portal routes

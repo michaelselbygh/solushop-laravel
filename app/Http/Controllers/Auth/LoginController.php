@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Auth;
+use App\ProductCategory;
 
 class LoginController extends Controller
 {
@@ -37,6 +38,40 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    public function showLoginForm()
+    {   
+        $productCategories = ProductCategory::
+                            where('pc_level', 2)    
+                            ->get();
+        return view('app.main.general.login')
+                ->with('productCategories', $productCategories);
+    }
+
+    //overriding the login function
+    public function login(Request $request)
+    {
+        //check if login or register button was clicked
+        if($request->solushop_lr == 'login'){
+           //validate form data
+            $this->validate($request, [
+                'email' => 'required|email',
+                'password' => 'required'
+            ]);
+
+
+            //attempt to log user in
+            if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
+                
+                //if successful, then redirect to intended location
+                return redirect()->intended(route('home'));
+            }
+            
+            //if unsuccessful then redirect back to login with the form data
+            return redirect()->back()->withInput($request->only('email'))->with('login_error_message', 'Invalid login credentials.');
+        }
+        
     }
 
     public function logout(){

@@ -1,28 +1,43 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use Flynsarmy\CsvSeeder\CsvSeeder;
 
-class ManagersTableSeeder extends Seeder
+class ManagersTableSeeder extends CsvSeeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
-    {
-        \DB::table('managers')->insert([
-            'manager_id'    => '1',
-            'first_name'    => 'Michael',
-            'last_name'     => 'Selby',
-            'email'         => 'michaelselbygh@gmail.com',
-            'phone'         => '233503788515',
-            'password'      => bcrypt('MMichael2131$'),
-            'sms'           => '0',
-            'access_level'  => '0',
-            'avi'           => 'michael.jpg',
-            'created_at'    => \Carbon\Carbon::now(),
-            'updated_at'    => \Carbon\Carbon::now(),
-        ]);
-    }
+    public function __construct()
+	{
+		$this->table = 'managers';
+		$this->filename = base_path().'/database/seeds/csvs/solushop_table_manager.csv';
+		$this->mapping = [
+			0 => 'manager_id',
+			2 => 'first_name',
+			3 => 'last_name',
+			4 => 'email',
+			5 => 'phone',
+			7 => 'passcode',
+		];
+	}
+
+	public function run()
+	{
+		// Recommended when importing larger CSVs
+		DB::disableQueryLog();
+
+		// Uncomment the below to wipe the table clean before populating
+		DB::table($this->table)->truncate();
+
+		parent::run();
+
+		//hashify
+		$managers = App\Manager::all();
+
+        foreach ($managers as $manager) {
+			DB::table('managers')
+			->where('manager_id', $manager->manager_id)
+			->update([
+				'password' => bcrypt($manager->passcode)
+			]);
+        }
+	}
 }
