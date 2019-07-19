@@ -26,7 +26,12 @@
         <div class="container">
             <div class="row justify-content-md-center">
                 <div class="col-sm-4 col-sm-offset-4 text-center customFadeIn" style="border-radius: 50px; border: 1px solid #f68c1e; padding: 20px; margin-bottom: 40px;">
-                    <div class="customer-login-register customFadeIn" id="register">
+                    <div class="customer-login-register customFadeIn" id="register"
+                     @if (session()->has('register_error_message')) 
+                        style="display:block;" 
+                    @elseif (session()->has('login_error_message'))
+                        style="display:none;"
+                    @endif >
                         <h3 style="text-align:center;">Join Our Happy Community</h3>
                         <div style="padding-left: 20px; padding-right: 20px"><br>
                             @if (session()->has('register_error_message')) 
@@ -43,29 +48,29 @@
                                 @csrf
                                 <div class="col-lg-6" style="padding-left: 0px; padding-right: 5px;">
                                     <div class="form-fild">
-                                        <input type="text" name="first_name" value="" placeholder="First Name">
+                                        <input type="text" name="first_name" value="{{ old('first_name') }}" placeholder="First Name">
                                     </div>
                                 </div>
                                 <div class="col-lg-6" style="padding-right: 0px; padding-left: 5px;">
                                     <div class="form-fild">
-                                            <input type="text" name="last_name" value="" placeholder="Last Name">
+                                            <input type="text" name="last_name" value="{{ old('last_name') }}" placeholder="Last Name">
                                     </div>
                                 </div>
                                 <div class="col-lg-12" style="padding-right: 0px; padding-left: 0px;">
                                     <div class="form-fild">
-                                        <input type="text" name="email" value="" placeholder="Email e.g. ekowyeboah@gmail.com">
+                                        <input type="text" name="r_email" value="{{ old('r_email') }}" placeholder="Email e.g. ekowyeboah@gmail.com">
                                     </div>
                                     <div class="form-fild">
-                                        <input type="text" name="phone" value="" placeholder="Phone e.g 0544000000">
+                                        <input type="text" name="phone" value="{{ old('phone') }}" placeholder="Phone e.g 0544000000">
                                     </div>
                                     <div class="form-fild">
-                                        <input type="password" id="Password" name="password" value="" placeholder="Enter password" >
+                                        <input type="password" id="Password" name="r_password" value="" placeholder="Enter password" >
                                     </div>
                                     <div class="register-submit" style="text-align:center;">
                                         <div class="lost-password" style="text-align:center; font-size: 11px">
                                             By clicking on register you  agree to the <br><a target="_blank" href="terms-and-conditions.php">Terms and Conditions</a><br> binding the use of this platform.
                                         </div>
-                                        <button type="submit" name="solushop_lr" value="register" class="form-button" onclick="gtag_report_conversion()">Register</button>
+                                        <button type="submit" name="register" value="register" class="form-button" onclick="gtag_report_conversion()">Register</button>
                                         
                                         <div class="lost-password" style="text-align:center; font-size: 11px">
                                             <br>
@@ -76,7 +81,12 @@
                             </form>
                         </div>
                     </div>
-                    <div class="customer-login-register customFadeIn" id="login">
+                    <div class="customer-login-register customFadeIn" id="login"
+                    @if (session()->has('login_error_message')) 
+                        style="display:block;" 
+                    @elseif (session()->has('register_error_message'))
+                        style="display:none;"
+                    @endif >
                         <div class="form-login-title">
                             <h3 style="text-align:center;">Hi there, welcome back.</h3><br>
                             <div style="padding-left: 20px; padding-right: 20px">
@@ -101,10 +111,10 @@
                                     <br><br>
                                 </div>
                                 <div class="login-submit" style="text-align:center;">
-                                    <button type="submit" name="solushop_lr" value='login' class="form-button">Login</button>
+                                    <button type="submit" name="login" value='login' class="form-button">Login</button>
                                 </div>
                                 <div class="lost-password" style="text-align:center;">
-                                    <a href="lost-password.php">Lost your password?</a>
+                                    <a href="{{ route('customer.reset.password') }}">Lost your password?</a>
                                     <br>
                                     <span style="font-size: 11px">Not registered yet? <a id="toggleRegister" style="color: #f68c1e; cursor:pointer;">Register here</a></span>
                                 </div>

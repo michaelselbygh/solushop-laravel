@@ -19,11 +19,11 @@ class CreateCustomersTable extends Migration
             $table->string('last_name', '70');
             $table->string('email', '70')->unique();
             $table->boolean('email_verified')->default('1');
-            $table->string('phone', '15');
-            $table->string('phone_verified', '15')->default('1');
+            $table->string('phone', '15')->unique();
+            $table->boolean('phone_verified', '15')->default('1');
             $table->string('activation_code', '10');
             $table->string('password');
-            $table->string('default_address', '5');
+            $table->string('default_address', '5')->default('None');
             $table->string('date_of_birth', '10')->nullable();
             $table->double('milkshake');
             $table->string('icono', '50')->nullable();
