@@ -50,11 +50,12 @@ class LoginController extends Controller
 
     public function showLoginForm()
     {   
-        $productCategories = ProductCategory::
-                            where('pc_level', 2)    
-                            ->get();
+        $search_bar_pc_options = ProductCategory::
+                            where('pc_level', 2) 
+                            ->orderBy('pc_description')     
+                            ->get(['pc_id', 'pc_description']);
         return view('app.main.general.login')
-                ->with('productCategories', $productCategories);
+                ->with('search_bar_pc_options', $search_bar_pc_options);
     }
 
     //overriding the default login function
@@ -189,11 +190,12 @@ class LoginController extends Controller
 
     public function showResetPasswordForm()
     {   
-        $productCategories = ProductCategory::
-                            where('pc_level', 2)    
-                            ->get();
+        $search_bar_pc_options = ProductCategory::
+                            where('pc_level', 2) 
+                            ->orderBy('pc_description')     
+                            ->get(['pc_id', 'pc_description']);
         return view('app.main.general.reset-password')
-                ->with('productCategories', $productCategories);
+                ->with('search_bar_pc_options', $search_bar_pc_options);
     }
 
     public function resetPassword(Request $request)

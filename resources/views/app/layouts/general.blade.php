@@ -3,9 +3,9 @@
 	<head>
 		<meta charset="utf-8">
 		<meta http-equiv="x-ua-compatible" content="ie=edge">
-		<meta property="og:image" content="{{ url('app/assets/img/Solushop.jpg') }}">
 		<title>{{ config('app.name') }} - @yield('page-title')</title>
-		<meta name="description" content="Solushop is Ghana&#039;s most trusted Online Shopping Mall ➜Shop electronics, accessories, books, fashion &amp; more online ✔ Great customer care ✔ Top quality products ✓ super fast shipping ✓ Order now and enjoy a revolutionary shopping experience!">
+		<meta name="description" content="@yield('page-description')">
+		<meta property="og:image" content="@yield('page-image')">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<!-- Place favicon.ico in the root directory -->
 		<link rel="shortcut icon" type="image/x-icon" href="{{ url('app/assets/img/favicon.ico') }}">
@@ -42,40 +42,6 @@
 		<!-- Responsive CSS -->
 		<link rel="stylesheet" href="{{ url('app/assets/css/responsive.css') }}">
 		<style>
-			#note {
-				position: absolute;
-				z-index: 101;
-				top: 0;
-				left: 0;
-				right: 0;
-				font-size: 16px;
-				color: white;
-				background: green;
-				text-align: center;
-				line-height: 2.8;
-				overflow: hidden; 
-				-webkit-box-shadow: 0 0 5px black;
-				-moz-box-shadow:    0 0 5px black;
-				box-shadow:         0 0 5px black;
-			}
-			@-webkit-keyframes slideDown {
-				0%, 100% { -webkit-transform: translateY(-50px); }
-				10%, 90% { -webkit-transform: translateY(0px); }
-			}
-			@-moz-keyframes slideDown {
-				0%, 100% { -moz-transform: translateY(-50px); }
-				10%, 90% { -moz-transform: translateY(0px); }
-			}
-			.cssanimations.csstransforms #note {
-				-webkit-transform: translateY(-50px);
-				-webkit-animation: slideDown 5s 1.0s 1 ease forwards;
-				-moz-transform:    translateY(-50px);
-				-moz-animation:    slideDown 5s 1.0s 1 ease forwards;
-			}
-			.cssanimations.csstransforms #close {
-				display: none;
-			}
-
 			#register { display:none; }
 		</style>
 		<!-- Modernizr Js -->

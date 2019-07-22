@@ -18,8 +18,14 @@ Route::get('/', function () {
 
 
 Auth::routes();
-//app routes
-Route::get('/home', 'HomeController@index')->name('home');
+
+//mobile app routes
+Route::group(['domain' => 'm.solushop.laravel'], function () {
+    Route::get('/', 'MobileAppHomeController@showHome')->name('mobile.home');
+});
+
+//desktop & tablet app routes
+Route::get('/', 'AppHomeController@showHome')->name('home');
 Route::get('/logout', 'Auth\LoginController@logout')->name('customer.logout');
 Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
 Route::post('/login', 'Auth\LoginController@login')->name('customer.login.submit');

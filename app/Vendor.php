@@ -11,7 +11,6 @@ class Vendor extends Authenticatable
     use Notifiable;
 
     protected $primaryKey = 'vendor_id';
-
     protected $guard = 'vendor';
 
     /**
@@ -48,4 +47,9 @@ class Vendor extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function products()
+    {
+        return $this->hasMany('App\Product', 'product_vid', 'vendor_id' );
+    }
 }
