@@ -14,7 +14,7 @@ class CreateDeliveredItemsTable extends Migration
     public function up()
     {
         Schema::create('delivered_items', function (Blueprint $table) {
-            $table->bigIncrements('di_id');
+            $table->bigIncrements('id');
             $table->string('di_order_item_id', '50');
             $table->string('di_marked_by_id', '50');
             $table->string('di_marked_by_description', '100');

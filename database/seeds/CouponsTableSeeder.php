@@ -10,7 +10,7 @@ class CouponsTableSeeder extends CsvSeeder
 		$this->table = 'coupons';
 		$this->filename = base_path().'/database/seeds/csvs/solushop_table_coupons.csv';
 		$this->mapping = [
-			0 => 'coupon_id',
+			0 => 'id',
 			1 => 'coupon_code',
 			2 => 'coupon_value',
 			3 => 'coupon_owner',
@@ -35,7 +35,7 @@ class CouponsTableSeeder extends CsvSeeder
 
         foreach ($coupons as $coupon) {
 			DB::table('coupons')
-			->where('coupon_id', $coupon->coupon_id)
+			->where('id', $coupon->id)
 			->update([
                 'coupon_state' => $coupon->coupon_state + 1
             ]);

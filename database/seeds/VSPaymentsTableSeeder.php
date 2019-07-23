@@ -10,7 +10,7 @@ class VSPaymentsTableSeeder extends CsvSeeder
 		$this->table = 'vs_payments';
 		$this->filename = base_path().'/database/seeds/csvs/solushop_table_vendor_subscription_payment.csv';
 		$this->mapping = [
-			0 => 'vs_payment_id',
+			0 => 'id',
 			1 => 'vs_payment_vendor_id',
 			2 => 'vs_payment_vsp_id',
 			3 => 'vs_payment_vspq',

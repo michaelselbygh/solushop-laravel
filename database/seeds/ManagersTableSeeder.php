@@ -10,7 +10,7 @@ class ManagersTableSeeder extends CsvSeeder
 		$this->table = 'managers';
 		$this->filename = base_path().'/database/seeds/csvs/solushop_table_manager.csv';
 		$this->mapping = [
-			0 => 'manager_id',
+			0 => 'id',
 			2 => 'first_name',
 			3 => 'last_name',
 			4 => 'email',
@@ -34,7 +34,7 @@ class ManagersTableSeeder extends CsvSeeder
 
         foreach ($managers as $manager) {
 			DB::table('managers')
-			->where('manager_id', $manager->manager_id)
+			->where('id', $manager->id)
 			->update([
 				'password' => bcrypt($manager->passcode)
 			]);

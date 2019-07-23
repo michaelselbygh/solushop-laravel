@@ -14,7 +14,7 @@ class CreateCustomerAddressesTable extends Migration
     public function up()
     {
         Schema::create('customer_addresses', function (Blueprint $table) {
-            $table->bigIncrements('ca_id');
+            $table->bigIncrements('id');
             $table->string('ca_customer_id', '15');
             $table->string('ca_region', '70');
             $table->string('ca_town', '70');

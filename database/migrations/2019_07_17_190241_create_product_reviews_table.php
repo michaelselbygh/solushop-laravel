@@ -14,7 +14,7 @@ class CreateProductReviewsTable extends Migration
     public function up()
     {
         Schema::create('product_reviews', function (Blueprint $table) {
-            $table->bigIncrements('pr_id');
+            $table->bigIncrements('id');
             $table->string('pr_customer_id', '15');
             $table->string('pr_product_id', '15');
             $table->integer('pr_rating');

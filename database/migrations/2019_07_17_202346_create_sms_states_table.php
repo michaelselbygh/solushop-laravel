@@ -14,7 +14,7 @@ class CreateSmsStatesTable extends Migration
     public function up()
     {
         Schema::create('sms_states', function (Blueprint $table) {
-            $table->bigIncrements('sms_state_id');
+            $table->bigIncrements('id');
             $table->string('sms_state_description', '30');
             $table->string('sms_state_html');
             $table->timestamp('created_at')->useCurrent();

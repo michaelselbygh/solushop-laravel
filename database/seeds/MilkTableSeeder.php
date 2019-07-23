@@ -10,7 +10,7 @@ class MilkTableSeeder extends CsvSeeder
 		$this->table = 'milk';
 		$this->filename = base_path().'/database/seeds/csvs/solushop_table_milk.csv';
 		$this->mapping = [
-			0 => 'milk_customer_id',
+			0 => 'id',
 			1 => 'milk_value',
 		];
 	}

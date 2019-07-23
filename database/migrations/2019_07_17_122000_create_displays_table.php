@@ -14,7 +14,7 @@ class CreateDisplaysTable extends Migration
     public function up()
     {
         Schema::create('displays', function (Blueprint $table) {
-            $table->bigIncrements('display_id');
+            $table->bigIncrements('id');
             $table->string('display_description');
             $table->text('display_products');
             $table->timestamp('created_at')->useCurrent();

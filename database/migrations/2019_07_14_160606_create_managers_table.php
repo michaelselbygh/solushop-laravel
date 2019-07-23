@@ -14,7 +14,7 @@ class CreateManagersTable extends Migration
     public function up()
     {
         Schema::create('managers', function (Blueprint $table) {
-            $table->bigIncrements('manager_id');
+            $table->bigIncrements('id');
             $table->string('first_name', '70');
             $table->string('last_name', '70');
             $table->string('email', '50')->unique();

@@ -14,7 +14,7 @@ class CreateAccountsTransactionsTable extends Migration
     public function up()
     {
         Schema::create('accounts_transactions', function (Blueprint $table) {
-            $table->bigIncrements('trans_id');
+            $table->bigIncrements('id');
             $table->string('trans_type');
             $table->double('trans_amount');
             $table->integer('trans_credit_account_type')->nullable();

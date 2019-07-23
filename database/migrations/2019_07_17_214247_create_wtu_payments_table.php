@@ -14,7 +14,7 @@ class CreateWtuPaymentsTable extends Migration
     public function up()
     {
         Schema::create('wtu_payments', function (Blueprint $table) {
-            $table->bigIncrements('wtu_payment_id');
+            $table->bigIncrements('id');
             $table->string('wtu_payment_customer_id', '25');
             $table->integer('wtu_payment_wtup_id');
             $table->string('wtu_payment_token');

@@ -14,7 +14,7 @@ class CreateVsPackagesTable extends Migration
     public function up()
     {
         Schema::create('vs_packages', function (Blueprint $table) {
-            $table->bigIncrements('vs_package_id');
+            $table->bigIncrements('id');
             $table->string('vs_package_description');
             $table->integer('vs_package_product_cap');
             $table->integer('vs_package_days');

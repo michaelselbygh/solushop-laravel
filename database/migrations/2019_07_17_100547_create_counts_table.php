@@ -14,7 +14,7 @@ class CreateCountsTable extends Migration
     public function up()
     {
         Schema::create('counts', function (Blueprint $table) {
-            $table->bigIncrements('count_id');
+            $table->bigIncrements('id');
             $table->integer('customer_count');
             $table->integer('product_count');
             $table->integer('order_count');

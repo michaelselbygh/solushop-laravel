@@ -14,7 +14,7 @@ class CreateProductStatesTable extends Migration
     public function up()
     {
         Schema::create('product_states', function (Blueprint $table) {
-            $table->bigIncrements('ps_id');
+            $table->bigIncrements('id');
             $table->string('ps_description', '50');
             $table->string('ps_html');
             $table->timestamp('created_at')->useCurrent();

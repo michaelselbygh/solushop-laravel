@@ -10,7 +10,7 @@ class VSPackagesTableSeeder extends CsvSeeder
 		$this->table = 'vs_packages';
 		$this->filename = base_path().'/database/seeds/csvs/solushop_table_vendor_subscription_package.csv';
 		$this->mapping = [
-			0 => 'vs_package_id',
+			0 => 'id',
 			1 => 'vs_package_description',
 			2 => 'vs_package_product_cap',
 			3 => 'vs_package_days',

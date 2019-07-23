@@ -14,7 +14,7 @@ class CreateProductImagesTable extends Migration
     public function up()
     {
         Schema::create('product_images', function (Blueprint $table) {
-            $table->bigIncrements('pi_id');
+            $table->bigIncrements('id');
             $table->string('pi_product_id', '50');
             $table->string('pi_path', '50');
             $table->timestamp('created_at')->useCurrent();

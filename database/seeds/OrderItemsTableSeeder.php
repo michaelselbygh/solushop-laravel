@@ -36,7 +36,7 @@ class OrderItemsTableSeeder extends CsvSeeder
 
         foreach ($orderItems as $orderItem) {
 			DB::table('order_items')
-			->where('oi_id', $orderItem->oi_id)
+			->where('id', $orderItem->id)
 			->update([
                 'oi_state' => $orderItem->oi_state + 1
             ]);

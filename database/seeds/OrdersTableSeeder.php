@@ -10,7 +10,7 @@ class OrdersTableSeeder extends CsvSeeder
 		$this->table = 'orders';
 		$this->filename = base_path().'/database/seeds/csvs/solushop_table_orders.csv';
 		$this->mapping = [
-			0 => 'order_id',
+			0 => 'id',
 			3 => 'order_type',
 			1 => 'order_customer_id',
 			4 => 'order_address_id',
@@ -39,7 +39,7 @@ class OrdersTableSeeder extends CsvSeeder
 
         foreach ($orders as $order) {
 			DB::table('orders')
-			->where('order_id', $order->order_id)
+			->where('id', $order->id)
 			->update([
                 'order_state' => $order->order_state + 1
             ]);

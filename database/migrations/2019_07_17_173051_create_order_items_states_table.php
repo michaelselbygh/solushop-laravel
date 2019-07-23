@@ -14,7 +14,7 @@ class CreateOrderItemsStatesTable extends Migration
     public function up()
     {
         Schema::create('order_items_states', function (Blueprint $table) {
-            $table->bigIncrements('ois_id');
+            $table->bigIncrements('id');
             $table->string('ois_description')->nullable();
             $table->string('ois_html');
             $table->timestamp('created_at')->useCurrent();

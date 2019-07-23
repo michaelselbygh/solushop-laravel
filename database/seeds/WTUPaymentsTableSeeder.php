@@ -10,7 +10,7 @@ class WTUPaymentsTableSeeder extends CsvSeeder
 		$this->table = 'wtu_payments';
 		$this->filename = base_path().'/database/seeds/csvs/solushop_table_wtu_payments.csv';
 		$this->mapping = [
-			0 => 'wtu_payment_id',
+			0 => 'id',
 			1 => 'wtu_payment_customer_id',
 			2 => 'wtu_payment_wtup_id',
 			3 => 'wtu_payment_token',

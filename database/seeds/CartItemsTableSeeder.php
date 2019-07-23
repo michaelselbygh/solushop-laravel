@@ -10,7 +10,7 @@ class CartItemsTableSeeder extends CsvSeeder
 		$this->table = 'cart_items';
 		$this->filename = base_path().'/database/seeds/csvs/solushop_table_cart.csv';
 		$this->mapping = [
-			0 => 'ci_id',
+			0 => 'id',
 			1 => 'ci_customer_id',
 			2 => 'ci_sku',
 			3 => 'ci_quantity',

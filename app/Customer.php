@@ -10,7 +10,6 @@ class Customer extends Authenticatable
 {
     use Notifiable;
 
-    protected $primaryKey = 'customer_id';
     public $incrementing = false;
     /**
      * The attributes that are mass assignable.
@@ -51,4 +50,9 @@ class Customer extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function product_reviews()
+    {
+        return $this->hasMany('App\ProductReview', 'pr_customer_id', 'id' );
+    }
 }

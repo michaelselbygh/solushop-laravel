@@ -14,7 +14,7 @@ class CreateOrderItemsTable extends Migration
     public function up()
     {
         Schema::create('order_items', function (Blueprint $table) {
-            $table->bigIncrements('oi_id');
+            $table->bigIncrements('id');
             $table->string('oi_order_id', '15');
             $table->string('oi_sku', '20');
             $table->string('oi_name');

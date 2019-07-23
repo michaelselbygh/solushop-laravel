@@ -10,7 +10,7 @@ class CouponStatesTableSeeder extends CsvSeeder
 		$this->table = 'coupon_states';
 		$this->filename = base_path().'/database/seeds/csvs/solushop_table_coupon_state.csv';
 		$this->mapping = [
-			0 => 'cs_id',
+			0 => 'id',
 			1 => 'cs_state_description',
 			2 => 'cs_state_html',
 		];

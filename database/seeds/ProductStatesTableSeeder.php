@@ -10,7 +10,7 @@ class ProductStatesTableSeeder extends CsvSeeder
 		$this->table = 'product_states';
 		$this->filename = base_path().'/database/seeds/csvs/solushop_table_product_status.csv';
 		$this->mapping = [
-			0 => 'ps_id',
+			0 => 'id',
 			1 => 'ps_description',
 			2 => 'ps_html',
 		];

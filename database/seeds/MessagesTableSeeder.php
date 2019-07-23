@@ -10,7 +10,7 @@ class MessagesTableSeeder extends CsvSeeder
 		$this->table = 'messages';
 		$this->filename = base_path().'/database/seeds/csvs/solushop_table_message.csv';
 		$this->mapping = [
-			0 => 'message_id',
+			0 => 'id',
 			1 => 'message_sender',
 			2 => 'message_content',
 			3 => 'message_conversation_id',

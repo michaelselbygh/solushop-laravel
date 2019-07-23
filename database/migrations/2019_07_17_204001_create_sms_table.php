@@ -14,7 +14,7 @@ class CreateSmsTable extends Migration
     public function up()
     {
         Schema::create('sms', function (Blueprint $table) {
-            $table->bigIncrements('sms_id');
+            $table->bigIncrements('id');
             $table->text('sms_message');
             $table->string('sms_phone', '12');
             $table->integer('sms_state');

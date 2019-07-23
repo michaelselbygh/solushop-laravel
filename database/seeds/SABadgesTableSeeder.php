@@ -10,7 +10,7 @@ class SABadgesTableSeeder extends CsvSeeder
 		$this->table = 'sa_badges';
 		$this->filename = base_path().'/database/seeds/csvs/solushop_table_steam_badges.csv';
 		$this->mapping = [
-			0 => 'sab_id',
+			0 => 'id',
 			1 => 'sab_description',
 			2 => 'sab_commission',
 			3 => 'sab_image',

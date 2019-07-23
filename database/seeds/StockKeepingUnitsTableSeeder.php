@@ -10,7 +10,7 @@ class StockKeepingUnitsTableSeeder extends CsvSeeder
 		$this->table = 'stock_keeping_units';
         $this->filename = base_path().'/database/seeds/csvs/solushop_table_stock_keeping_unit.csv';
         $this->mapping = [
-			0 => 'sku_id',
+			0 => 'id',
 			1 => 'sku_product_id',
 			2 => 'sku_variant_description',
 			3 => 'sku_stock_left',
@@ -31,9 +31,9 @@ class StockKeepingUnitsTableSeeder extends CsvSeeder
         $skus = App\StockKeepingUnit::all();
 
         foreach ($skus as $sku) {
-            $product = App\Product::where('product_id', $sku->sku_product_id)->first();
+            $product = App\Product::where('id', $sku->sku_product_id)->first();
             DB::table('stock_keeping_units')
-            ->where('sku_product_id', $sku->product_id)
+            ->where('sku_product_id', $sku->sku_product_id)
             ->update([
                 'sku_settlement_price' => $product->product_settlement_price,
                 'sku_selling_price' => $product->product_selling_price,

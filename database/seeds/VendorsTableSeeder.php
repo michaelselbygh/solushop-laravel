@@ -10,7 +10,7 @@ class VendorsTableSeeder extends CsvSeeder
 		$this->table = 'vendors';
 		$this->filename = base_path().'/database/seeds/csvs/solushop_table_suppliers.csv';
 		$this->mapping = [
-			0 => 'vendor_id',
+			0 => 'id',
 			1 => 'name',
 			2 => 'username',
 			3 => 'phone',
@@ -37,7 +37,7 @@ class VendorsTableSeeder extends CsvSeeder
 
         foreach ($vendors as $vendor) {
 			DB::table('vendors')
-			->where('vendor_id', $vendor->vendor_id)
+			->where('id', $vendor->id)
 			->update([
 				'password' => bcrypt($vendor->passcode),
 				'username' => str_slug($vendor->name, '-')

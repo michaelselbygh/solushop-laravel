@@ -11,7 +11,7 @@ class CustomersTableSeeder extends CsvSeeder
 		$this->table = 'customers';
 		$this->filename = base_path().'/database/seeds/csvs/solushop_table_customers.csv';
 		$this->mapping = [
-			0 => 'customer_id',
+			0 => 'id',
 			1 => 'first_name',
 			2 => 'last_name',
 			3 => 'email',

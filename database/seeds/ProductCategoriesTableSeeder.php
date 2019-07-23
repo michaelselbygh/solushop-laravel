@@ -10,7 +10,7 @@ class ProductCategoriesTableSeeder extends CsvSeeder
 		$this->table = 'product_categories';
 		$this->filename = base_path().'/database/seeds/csvs/solushop_table_product_categories.csv';
 		$this->mapping = [
-			0 => 'pc_id',
+			0 => 'id',
 			1 => 'pc_parent',
 			2 => 'pc_description',
 			3 => 'pc_cna',
@@ -40,7 +40,7 @@ class ProductCategoriesTableSeeder extends CsvSeeder
 				$pc_level = 3;
 			}
 			DB::table('product_categories')
-			->where('pc_id', $productCategory->pc_id)
+			->where('id', $productCategory->id)
 			->update([
 				'pc_slug' => str_slug($productCategory->pc_description, '-'),
 				'pc_level' => $pc_level

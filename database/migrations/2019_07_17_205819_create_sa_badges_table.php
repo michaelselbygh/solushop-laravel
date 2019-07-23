@@ -14,7 +14,7 @@ class CreateSaBadgesTable extends Migration
     public function up()
     {
         Schema::create('sa_badges', function (Blueprint $table) {
-            $table->bigIncrements('sab_id');
+            $table->bigIncrements('id');
             $table->string('sab_description', '70');
             $table->double('sab_commission');
             $table->string('sab_image', '100');

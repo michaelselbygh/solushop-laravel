@@ -10,8 +10,8 @@ class Vendor extends Authenticatable
 {
     use Notifiable;
 
-    protected $primaryKey = 'vendor_id';
     protected $guard = 'vendor';
+    public $incrementing = false;
 
     /**
      * The attributes that are mass assignable.
@@ -19,7 +19,7 @@ class Vendor extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'vendor_id', 
+        'id', 
         'name', 
         'username', 
         'phone', 
@@ -50,6 +50,6 @@ class Vendor extends Authenticatable
 
     public function products()
     {
-        return $this->hasMany('App\Product', 'product_vid', 'vendor_id' );
+        return $this->hasMany('App\Product', 'product_vid', 'id' );
     }
 }

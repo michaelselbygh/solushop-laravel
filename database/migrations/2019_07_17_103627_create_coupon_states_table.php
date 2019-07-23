@@ -14,7 +14,7 @@ class CreateCouponStatesTable extends Migration
     public function up()
     {
         Schema::create('coupon_states', function (Blueprint $table) {
-            $table->bigIncrements('cs_id')->unique();
+            $table->bigIncrements('id')->unique();
             $table->string('cs_state_description', '50');
             $table->string('cs_state_html', '255');
             $table->timestamp('created_at')->useCurrent();

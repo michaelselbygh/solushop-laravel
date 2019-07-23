@@ -10,7 +10,7 @@ class ShippingFaresTableSeeder extends CsvSeeder
 		$this->table = 'shipping_fares';
 		$this->filename = base_path().'/database/seeds/csvs/solushop_table_shipping_fares.csv';
 		$this->mapping = [
-			0 => 'sf_id',
+			0 => 'id',
 			1 => 'sf_region',
 			2 => 'sf_town',
 			3 => 'sf_fare',

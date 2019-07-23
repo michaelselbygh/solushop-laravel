@@ -8,8 +8,8 @@
     <form class="form-horizontal form-simple" action="{{ route('manager.login.submit') }}" method="POST" >
         @csrf
         <fieldset class="form-group position-relative has-icon-left mb-0">
-            <input type="text" name="username" class="form-control form-control-lg input-lg" id="username" placeholder="Enter Your Email"
-            value="{{ old('username') }}" required autocomplete="email" autofocus>
+            <input type="text" name="email" class="form-control form-control-lg input-lg" id="email" placeholder="Enter Your Email"
+            value="{{ old('email') }}" required autocomplete="email" autofocus>
             <div class="form-control-position">
                 <i class="ft-user"></i>
             </div>

@@ -10,7 +10,7 @@ class ProductsTableSeeder extends CsvSeeder
 		$this->table = 'products';
 		$this->filename = base_path().'/database/seeds/csvs/solushop_table_products.csv';
 		$this->mapping = [
-			0 => 'product_id',
+			0 => 'id',
 			1 => 'product_cid',
 			2 => 'product_name',
 			12 => 'product_description',
@@ -43,7 +43,7 @@ class ProductsTableSeeder extends CsvSeeder
 
         foreach ($products as $product) {
 			DB::table('products')
-			->where('product_id', $product->product_id)
+			->where('id', $product->id)
 			->update([
 				'product_state' => $product->product_state + 1,
 				'product_slug' => str_slug($product->product_name, '-')

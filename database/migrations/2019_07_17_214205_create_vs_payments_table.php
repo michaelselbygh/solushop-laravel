@@ -14,7 +14,7 @@ class CreateVsPaymentsTable extends Migration
     public function up()
     {
         Schema::create('vs_payments', function (Blueprint $table) {
-            $table->bigIncrements('vs_payment_id');
+            $table->bigIncrements('id');
             $table->string('vs_payment_vendor_id', '20');
             $table->integer('vs_payment_vsp_id');
             $table->integer('vs_payment_vspq');

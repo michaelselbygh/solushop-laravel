@@ -10,7 +10,7 @@ class OrderStatesTableSeeder extends CsvSeeder
 		$this->table = 'order_states';
 		$this->filename = base_path().'/database/seeds/csvs/solushop_table_order_state.csv';
 		$this->mapping = [
-			0 => 'os_id',
+			0 => 'id',
 			1 => 'os_user_description',
 			2 => 'os_user_html',
 			3 => 'os_dp_html',

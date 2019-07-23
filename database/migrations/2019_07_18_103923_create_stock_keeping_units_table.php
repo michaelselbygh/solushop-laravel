@@ -14,7 +14,7 @@ class CreateStockKeepingUnitsTable extends Migration
     public function up()
     {
         Schema::create('stock_keeping_units', function (Blueprint $table) {
-            $table->string('sku_id', '10')->primary();
+            $table->string('id', '10')->primary();
             $table->string('sku_product_id', '20');
             $table->string('sku_variant_description');
             $table->double('sku_settlement_price')->nullable();

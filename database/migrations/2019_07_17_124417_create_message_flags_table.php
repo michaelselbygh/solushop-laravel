@@ -14,7 +14,7 @@ class CreateMessageFlagsTable extends Migration
     public function up()
     {
         Schema::create('message_flags', function (Blueprint $table) {
-            $table->bigIncrements('mf_id');
+            $table->bigIncrements('id');
             $table->string('mf_mid', '10');
             $table->string('mf_read')->default('Init');
             $table->timestamps();

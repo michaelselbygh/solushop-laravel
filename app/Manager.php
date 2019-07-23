@@ -10,7 +10,6 @@ class Manager extends Authenticatable
 {
     use Notifiable;
 
-    protected $primaryKey = 'manager_id';
 
     protected $guard = 'manager';
 
@@ -20,7 +19,7 @@ class Manager extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'manager_id',
+        'id',
         'first_name',
         'last_name',
         'email',

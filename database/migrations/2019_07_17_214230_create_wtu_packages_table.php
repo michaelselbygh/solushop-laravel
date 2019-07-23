@@ -14,7 +14,7 @@ class CreateWtuPackagesTable extends Migration
     public function up()
     {
         Schema::create('wtu_packages', function (Blueprint $table) {
-            $table->bigIncrements('wtu_package_id');
+            $table->bigIncrements('id');
             $table->string('wtu_package_description');
             $table->double('wtu_package_cost');
             $table->double('wtu_package_bonus');

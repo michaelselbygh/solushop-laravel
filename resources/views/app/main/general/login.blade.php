@@ -10,7 +10,7 @@
 @endsection
 @section('page-content')
     <!--Heading Banner Area Start-->
-    <section class="heading-banner-area pt-30">
+    <section class="heading-banner-area pt-10">
         <div class="container">
             <div class="row">
                 <div class="col-md-12">

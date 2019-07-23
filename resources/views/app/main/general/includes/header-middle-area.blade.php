@@ -18,7 +18,7 @@
                            <select name='search_category' data-placeholder="Choose Category" class="select" tabindex="1" required>
                                <option value='All'>Select Category</option>
                                 @foreach ($search_bar_pc_options as $search_bar_pc_option)
-                                    <option value='{{ $search_bar_pc_option->pc_id }}'>{{ $search_bar_pc_option->pc_description }}</option>
+                                    <option value='{{ $search_bar_pc_option->id }}'>{{ $search_bar_pc_option->pc_description }}</option>
                                 @endforeach
                            </select>
                         </div>

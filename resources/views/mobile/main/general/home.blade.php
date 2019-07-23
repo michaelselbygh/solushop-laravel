@@ -16,19 +16,19 @@
                     <i class="ti-home"></i>
                     <span class="tabbar-label">Home</span>
                 </a>
-                <a href="#tab-2" class="tab-link">
-                    <i class="ti-heart "></i>
-                    <span class="tabbar-label">Wishlist</span>
+                <a href="/shop" class="tab-link external">
+                    <i class="ti-gift"></i>
+                    <span class="tabbar-label">Shop</span>
                 </a>
-                <a href="#tab-3" class="tab-link">
+                <a href="/cart" class="tab-link external">
                     <i class="ti-shopping-cart"></i>
                     <span class="tabbar-label">Cart</span>
                 </a>
-                <a href="#tab-4" class="tab-link">
-                    <i class="ti-control-shuffle"></i>
-                    <span class="tabbar-label">Transaction</span>
+                <a href="/wishlist" class="tab-link external">
+                    <i class="ti-heart "></i>
+                    <span class="tabbar-label">Wishlist</span>
                 </a>
-                <a href="#tab-5" class="tab-link">
+                <a href="/my-account/" class="tab-link external">
                     <i class="ti-user"></i>
                     <span class="tabbar-label">Account</span>
                 </a>
@@ -303,13 +303,24 @@
                             <div class="swiper-wrapper">
                                 @for ($j = 0; $j < sizeof($sections['products'][$i]); $j++)
                                     <div class="swiper-slide">
-                                        <div class="content">
-                                            <img src="{{ url('app/assets/img/products/thumbnails/'.$sections['products'][$i][$j]['product_images'][0]['pi_path'].'.jpg') }}" alt="{{ ucwords($sections['products'][$i][$j]['product_name']) }}">
-                                            <div class="text">
-                                                <a href="{{ url($sections['products'][$i][$j]['vendor_slug'].'/'.$sections['products'][$i][$j]['product_slug'])}}" class="external"><p>{{ ucwords($sections['products'][$i][$j]['product_name']) }}</p></a>
-                                                <span class="price">GH¢ {{ $sections['products'][$i][$j]['product_selling_price'] - $sections['products'][$i][$j]['product_discount'] }}</span>
+                                        <a href="{{ url('shop/'.$sections['products'][$i][$j]['vendor_slug'].'/'.$sections['products'][$i][$j]['product_slug'])}}" class="external">
+                                            <div class="content">
+                                                <img src="{{ url('app/assets/img/products/thumbnails/'.$sections['products'][$i][$j]['images'][0]['pi_path'].'.jpg') }}" alt="{{ ucwords($sections['products'][$i][$j]['product_name']) }}">
+                                                <div class="text">
+                                                    <a href="{{ url('shop/'.$sections['products'][$i][$j]['vendor_slug'].'/'.$sections['products'][$i][$j]['product_slug'])}}" class="external">
+                                                        <p>{{ ucwords($sections['products'][$i][$j]['product_name']) }}</p>
+                                                    </a>
+                                                    <span class="price">
+                                                        GH¢ {{ $sections['products'][$i][$j]['product_selling_price'] - $sections['products'][$i][$j]['product_discount'] }} 
+                                                        @if($sections['products'][$i][$j]['product_discount'] > 0)
+                                                            <span style="color: #a4a4a4; text-decoration: line-through; margin-right: 5px; font-size: 10px;">
+                                                                GH¢ {{ $sections['products'][$i][$j]['product_selling_price'] }}
+                                                            </span>
+                                                        @endif
+                                                    </span>
+                                                </div>
                                             </div>
-                                        </div>
+                                        </a>
                                     </div>
                                 @endfor
                             </div>

@@ -14,7 +14,7 @@ class CreateShippingFaresTable extends Migration
     public function up()
     {
         Schema::create('shipping_fares', function (Blueprint $table) {
-            $table->bigIncrements('sf_id');
+            $table->bigIncrements('id');
             $table->string('sf_region', '70');
             $table->string('sf_town', '70');
             $table->integer('sf_fare');

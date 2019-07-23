@@ -10,7 +10,7 @@ class AccountsTransactionsTableSeeder extends CsvSeeder
 		$this->table = 'accounts_transactions';
 		$this->filename = base_path().'/database/seeds/csvs/solushop_table_account_transactions.csv';
 		$this->mapping = [
-			0 => 'trans_id',
+			0 => 'id',
 			1 => 'trans_type',
 			2 => 'trans_amount',
 			3 => 'trans_description',

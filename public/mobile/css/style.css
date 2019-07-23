@@ -138,8 +138,8 @@ ul li {
 }
 
 .wrap-title h3 {
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 15px;
+    font-weight: 400;
 }
 
 .section-wrapper {
@@ -797,18 +797,14 @@ ul li {
 .product-details .wrap-content {
     padding: 15px 16px 0;
 }
-.product-details .wrap-content h4 {
-    margin-bottom: 10px;
-}
+
 .product-details .wrap-content .price {
     font-size: 14px;
     font-weight: 500;
     color: #f68b1e;
     display: inline-block;
 }
-.product-details .wrap-content .information-product-wrapper ul li {
-    margin-bottom: 6px;
-}
+
 .product-details .wrap-content .information-product-wrapper ul li:last-child {
     margin-bottom: 0;
 }
@@ -816,9 +812,7 @@ ul li {
     float: right;
     color: #333;
 }
-.product-details .wrap-content .product-details-wrapper ul li {
-    margin-bottom: 6px;
-}
+
 .product-details .wrap-content .product-details-wrapper ul li:last-child {
     margin-bottom: 0;
 }
@@ -856,13 +850,13 @@ ul li {
     display: flex;
 }
 .product-details .author-wrapper a img {
-    width: 50px;
+    width: 60px;
     height: 100%;
     border-radius: 50%;
-    margin-right: 15px;
+    margin-right: 10px;
+
 }
 .product-details .author-wrapper a .title-name h4 {
-    margin-bottom: 5px;
     font-size: 16px;
 }
 .product-details .related-product .wrap-title {
@@ -893,6 +887,7 @@ ul li {
 .product-details .related-product .swiper-container .swiper-slide .content {
     border: 1px solid #ddd;
     border-radius: 3px;
+    min-height: 273px;
 }
 .product-details .related-product .swiper-container .swiper-slide .content img {
     width: 100%;

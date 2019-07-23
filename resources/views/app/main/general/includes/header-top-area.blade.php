@@ -32,7 +32,7 @@
                 <div class="header-top-menu">
                     <ul>
                         <li class="fa fa-phone" style="font-size: 12px; padding-right: 10px;"><a href="{{ url('tel:233506753093') }}" ><span>&nbsp; 0506753093 </span></a></li>
-                        <li class="fa fa-whatsapp" style="font-size: 12px"><a href="{{ url('https://api.whatsapp.com/send?phone=233506753093') }}" target="_blank"><span>&nbsp;&nbsp;0506753093 </span></a></li>
+                        <li class="fa fa-whatsapp" style="font-size: 12px; padding-right:10px"><a href="{{ url('https://api.whatsapp.com/send?phone=233506753093') }}" target="_blank"><span>&nbsp;&nbsp;0506753093 </span></a></li>
                         @if (Auth::check())
                             {{-- Return wallet balance from controller --}}
                             <li class="wallet">

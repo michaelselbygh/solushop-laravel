@@ -14,7 +14,7 @@ class CreateMailingListEmailsTable extends Migration
     public function up()
     {
         Schema::create('mailing_list_emails', function (Blueprint $table) {
-            $table->string('email')->primary();
+            $table->string('id')->primary();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();
         });

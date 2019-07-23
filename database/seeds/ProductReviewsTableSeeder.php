@@ -10,7 +10,7 @@ class ProductReviewsTableSeeder extends CsvSeeder
 		$this->table = 'product_reviews';
 		$this->filename = base_path().'/database/seeds/csvs/solushop_table_product_reviews.csv';
 		$this->mapping = [
-			0 => 'pr_id',
+			0 => 'id',
 			1 => 'pr_customer_id',
 			2 => 'pr_product_id',
 			3 => 'pr_rating',

@@ -53,7 +53,7 @@ class LoginController extends Controller
         $search_bar_pc_options = ProductCategory::
                             where('pc_level', 2) 
                             ->orderBy('pc_description')     
-                            ->get(['pc_id', 'pc_description']);
+                            ->get(['id', 'pc_description']);
         return view('app.main.general.login')
                 ->with('search_bar_pc_options', $search_bar_pc_options);
     }
@@ -134,7 +134,7 @@ class LoginController extends Controller
 
             //add customer
             $customer = new Customer;
-            $customer->customer_id = $customerID;
+            $customer->id = $customerID;
             $customer->first_name = ucwords(strtolower($request->first_name));
             $customer->last_name = ucwords(strtolower($request->last_name));
             $customer->email = $request->r_email;
@@ -193,7 +193,7 @@ class LoginController extends Controller
         $search_bar_pc_options = ProductCategory::
                             where('pc_level', 2) 
                             ->orderBy('pc_description')     
-                            ->get(['pc_id', 'pc_description']);
+                            ->get(['id', 'pc_description']);
         return view('app.main.general.reset-password')
                 ->with('search_bar_pc_options', $search_bar_pc_options);
     }
@@ -268,6 +268,6 @@ class LoginController extends Controller
 
     public function logout(){
         Auth::guard('web')->logout();
-        return redirect(route('welcome'));
+        return redirect(route('home'));
     }
 }

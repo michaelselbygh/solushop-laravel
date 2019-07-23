@@ -14,7 +14,7 @@ class CreateDeliveryPartnersTable extends Migration
     public function up()
     {
         Schema::create('delivery_partners', function (Blueprint $table) {
-            $table->bigIncrements('dp_id');
+            $table->bigIncrements('id');
             $table->string('dp_company_id', '10')->nullable();
             $table->string('first_name', '70');
             $table->string('last_name', '70');

@@ -32,6 +32,7 @@ class ManagerLoginController extends Controller
         if(Auth::guard('manager')->attempt(['email' => $request->email, 'password' => $request->password], $request->remember)){
             
             //if successful, then redirect to intended location
+            
             return redirect()->intended(route('manager.dashboard'));
         }
         

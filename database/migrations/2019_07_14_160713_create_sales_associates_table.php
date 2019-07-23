@@ -14,7 +14,7 @@ class CreateSalesAssociatesTable extends Migration
     public function up()
     {
         Schema::create('sales_associates', function (Blueprint $table) {
-            $table->bigIncrements('sa_id');
+            $table->bigIncrements('id');
             $table->string('first_name', '70');
             $table->string('last_name', '70');
             $table->string('phone', '12');

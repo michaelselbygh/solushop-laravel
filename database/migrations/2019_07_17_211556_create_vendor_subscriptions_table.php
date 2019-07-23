@@ -14,7 +14,7 @@ class CreateVendorSubscriptionsTable extends Migration
     public function up()
     {
         Schema::create('vendor_subscriptions', function (Blueprint $table) {
-            $table->bigIncrements('vs_id');
+            $table->bigIncrements('id');
             $table->string('vs_vendor_id', '30');
             $table->integer('vs_vsp_id');
             $table->integer('vs_days_left');

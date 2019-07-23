@@ -9,9 +9,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class DeliveryPartner extends Authenticatable
 {
     use Notifiable;
-
-    protected $primaryKey = 'dp_id';
-
+    
     protected $guard = 'delivery-partner';
 
     /**

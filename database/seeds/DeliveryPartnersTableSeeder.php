@@ -10,7 +10,7 @@ class DeliveryPartnersTableSeeder extends CsvSeeder
 		$this->table = 'delivery_partners';
 		$this->filename = base_path().'/database/seeds/csvs/solushop_table_neglmanagement.csv';
 		$this->mapping = [
-			0 => 'dp_id',
+			0 => 'id',
 			5 => 'first_name',
 			6 => 'last_name',
 			3 => 'email',
@@ -33,7 +33,7 @@ class DeliveryPartnersTableSeeder extends CsvSeeder
 
         foreach ($deliveryPartners as $deliveryPartner) {
 			DB::table('delivery_partners')
-			->where('dp_id', $deliveryPartner->dp_id)
+			->where('id', $deliveryPartner->id)
 			->update([
 				'password' => bcrypt($deliveryPartner->passcode)
 			]);

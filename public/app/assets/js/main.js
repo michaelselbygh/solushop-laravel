@@ -158,13 +158,13 @@ $('.category-heading').on('click', function(){
                 items: 2
             },
             600: {
-                items: 3
-            },
-            992: {
                 items: 4
             },
-            1200: {
+            992: {
                 items: 5
+            },
+            1200: {
+                items: 6
             }
         }
     })

@@ -10,7 +10,6 @@ class SalesAssociate extends Authenticatable
 {
     use Notifiable;
 
-    protected $primaryKey = 'sa_id';
 
     protected $guard = 'sales-associate';
 
@@ -20,7 +19,7 @@ class SalesAssociate extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'sa_id', 
+        'id', 
         'first_name', 
         'last_name', 
         'email', 

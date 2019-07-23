@@ -14,7 +14,7 @@ class CreateMilkTable extends Migration
     public function up()
     {
         Schema::create('milk', function (Blueprint $table) {
-            $table->string('milk_customer_id', '25')->unique();
+            $table->string('id', '25')->unique();
             $table->integer('milk_value');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();

@@ -10,7 +10,7 @@ class SMSStatesTableSeeder extends CsvSeeder
 		$this->table = 'sms_states';
 		$this->filename = base_path().'/database/seeds/csvs/solushop_table_sms_status.csv';
 		$this->mapping = [
-			0 => 'sms_state_id',
+			0 => 'id',
 			1 => 'sms_state_description',
 			2 => 'sms_state_html',
 		];

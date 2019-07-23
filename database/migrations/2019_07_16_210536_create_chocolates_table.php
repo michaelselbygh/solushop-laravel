@@ -14,7 +14,7 @@ class CreateChocolatesTable extends Migration
     public function up()
     {
         Schema::create('chocolates', function (Blueprint $table) {
-            $table->string('chocolate_customer_id', '25')->unique();
+            $table->string('id', '25')->unique();
             $table->integer('chocolate_value');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();

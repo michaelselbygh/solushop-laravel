@@ -14,7 +14,7 @@ class CreatePickedUpItemsTable extends Migration
     public function up()
     {
         Schema::create('picked_up_items', function (Blueprint $table) {
-            $table->bigIncrements('pui_id');
+            $table->bigIncrements('id');
             $table->string('pui_order_item_id', '50');
             $table->string('pui_marked_by_id', '50');
             $table->string('pui_marked_by_description', '100');

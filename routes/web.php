@@ -19,18 +19,16 @@ Route::get('/', function () {
 
 Auth::routes();
 
-//mobile app routes
-Route::group(['domain' => 'm.solushop.laravel'], function () {
-    Route::get('/', 'MobileAppHomeController@showHome')->name('mobile.home');
-});
 
-//desktop & tablet app routes
+
+//app routes
 Route::get('/', 'AppHomeController@showHome')->name('home');
 Route::get('/logout', 'Auth\LoginController@logout')->name('customer.logout');
 Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
 Route::post('/login', 'Auth\LoginController@login')->name('customer.login.submit');
 Route::get('/reset-password', 'Auth\LoginController@showResetPasswordForm')->name('customer.reset.password');
 Route::post('/reset-password', 'Auth\LoginController@resetPassword')->name('customer.reset.password.submit');
+Route::get('/shop/{vendorSlug}/{productSlug}', 'AppProductController@showProduct')->name('show.product');
 
 
 //portal routes

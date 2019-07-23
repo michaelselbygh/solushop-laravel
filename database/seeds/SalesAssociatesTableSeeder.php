@@ -10,7 +10,7 @@ class SalesAssociatesTableSeeder extends CsvSeeder
 		$this->table = 'sales_associates';
 		$this->filename = base_path().'/database/seeds/csvs/solushop_table_steam.csv';
 		$this->mapping = [
-			0 => 'sa_id',
+			0 => 'id',
 			1 => 'first_name',
 			2 => 'last_name',
 			3 => 'phone',
@@ -41,7 +41,7 @@ class SalesAssociatesTableSeeder extends CsvSeeder
 
         foreach ($salesAssociates as $salesAssociate) {
 			DB::table('sales_associates')
-			->where('sa_id', $salesAssociate->sa_id)
+			->where('id', $salesAssociate->id)
 			->update([
 				'password' => bcrypt($salesAssociate->passcode),
 				'badge' => $salesAssociate->badge + 1

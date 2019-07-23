@@ -6,13 +6,29 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    public function product_images()
+    public $incrementing = false;
+    public function images()
     {
-        return $this->hasMany('App\ProductImage', 'pi_product_id', 'product_id' );
+        return $this->hasMany('App\ProductImage', 'pi_product_id', 'id' );
+    }
+
+    public function skus()
+    {
+        return $this->hasMany('App\StockKeepingUnit', 'sku_product_id', 'id' );
+    }
+
+    public function category()
+    {
+        return $this->hasMany('App\ProductCategory', 'id', 'product_cid' );
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany('App\ProductReview', 'pr_product_id', 'id' );
     }
 
     public function vendor()
     {
-        return $this->belongsTo('App\Vendor', 'vendor_id', 'product_vid');
+        return $this->belongsTo('App\Vendor', 'product_vid', 'id');
     }
 }

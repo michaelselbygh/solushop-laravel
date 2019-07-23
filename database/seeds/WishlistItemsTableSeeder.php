@@ -10,7 +10,7 @@ class WishlistItemsTableSeeder extends CsvSeeder
 		$this->table = 'wishlist_items';
 		$this->filename = base_path().'/database/seeds/csvs/solushop_table_wishlist.csv';
 		$this->mapping = [
-			0 => 'wi_id',
+			0 => 'id',
 			1 => 'wi_customer_id',
 			2 => 'wi_product_id',
 		];

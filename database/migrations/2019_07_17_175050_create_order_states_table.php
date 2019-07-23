@@ -14,7 +14,7 @@ class CreateOrderStatesTable extends Migration
     public function up()
     {
         Schema::create('order_states', function (Blueprint $table) {
-            $table->bigIncrements('os_id');
+            $table->bigIncrements('id');
             $table->string('os_user_description');
             $table->string('os_user_html');
             $table->string('os_dp_description')->nullable();

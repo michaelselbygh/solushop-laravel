@@ -10,7 +10,7 @@ class CustomerAddressesTableSeeder extends CsvSeeder
 		$this->table = 'customer_addresses';
 		$this->filename = base_path().'/database/seeds/csvs/solushop_table_customer_address.csv';
 		$this->mapping = [
-			0 => 'ca_id',
+			0 => 'id',
 			1 => 'ca_customer_id',
 			2 => 'ca_region',
 			3 => 'ca_town',
