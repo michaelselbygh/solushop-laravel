@@ -3,113 +3,140 @@
     <div class="list links-list">
         <ul>
             <li>
-                <a href="/product/" class="panel-close">
+                {{-- change url to showcategories for more control --}}
+                <a href="{{ route('show.vendors') }}" class="panel-close external">
                     <div class="item-media">
-                        <i class="ti-shopping-cart"></i>
+                        <i class="ti-link"></i>
                     </div>
                     <div class="item-inner">
                         <div class="item-title">
-                            Product
+                            Vendors
+                        </div>
+                    </div>
+                </a>
+            <li>
+                <a href="{{ route('show.about') }}" class="panel-close external">
+                    <div class="item-media">
+                        <i class="ti-shopping-cart-full"></i>
+                    </div>
+                    <div class="item-inner">
+                        <div class="item-title">
+                            About Solushop
                         </div>
                     </div>
                 </a>
             </li>
             <li>
-                <a href="/categories/" class="panel-close">
+                <a href="{{ route('show.contact') }}" class="panel-close external">
                     <div class="item-media">
-                        <i class="ti-layers-alt"></i>
+                        <i class="ti-headphone-alt"></i>
                     </div>
                     <div class="item-inner">
                         <div class="item-title">
-                            Categories
+                            Contact Us
                         </div>
                     </div>
                 </a>
             </li>
             <li>
-                <a href="/blog/" class="panel-close">
+                <a href="{{ route('show.frequently.asked.questions') }}" class="panel-close external">
+                    <div class="item-media">
+                        <i class="ti-help-alt"></i>
+                    </div>
+                    <div class="item-inner">
+                        <div class="item-title">
+                            FAQs
+                        </div>
+                    </div>
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('show.privacy.policy') }}" class="panel-close external">
                     <div class="item-media">
                         <i class="ti-rss"></i>
                     </div>
                     <div class="item-inner">
                         <div class="item-title">
-                            Blog
+                            Privacy Policy
                         </div>
                     </div>
                 </a>
             </li>
             <li>
-                <a href="/order-history/" class="panel-close">
+                <a href="{{ route('show.return.policy') }}" class="panel-close external">
                     <div class="item-media">
-                        <i class="ti-time"></i>
+                        <i class="ti-loop"></i>
                     </div>
                     <div class="item-inner">
                         <div class="item-title">
-                            Order History
+                            Return Policy
                         </div>
                     </div>
                 </a>
-            </li>
             <li>
-                <a href="/tracking-order/" class="panel-close">
+                <a href="{{ route('show.terms.and.conditions') }}" class="panel-close external">
                     <div class="item-media">
-                        <i class="ti-truck"></i>
+                        <i class="ti-thumb-up"></i>
                     </div>
                     <div class="item-inner">
                         <div class="item-title">
-                            Tracking Order
+                            T &amp; Cs
                         </div>
                     </div>
                 </a>
             </li>
-            <li>
-                <a href="/settings/" class="panel-close">
-                    <div class="item-media">
-                        <i class="ti-settings"></i>
-                    </div>
-                    <div class="item-inner">
-                        <div class="item-title">
-                            Settings
+            @if(Auth::check())
+                <li>
+                    <a href="{{ route('show.account') }}" class="panel-close external">
+                        <div class="item-media">
+                            <i class="ti-settings"></i>
                         </div>
-                    </div>
-                </a>
-            </li>
-            <li>
-                <a href="/sign-in/" class="panel-close">
-                    <div class="item-media">
-                        <i class="ti-shift-right"></i>
-                    </div>
-                    <div class="item-inner">
-                        <div class="item-title">
-                            Sign In
+                        <div class="item-inner">
+                            <div class="item-title">
+                                Settings
+                            </div>
                         </div>
-                    </div>
-                </a>
-            </li>
-            <li>
-                <a href="/sign-up/" class="panel-close">
-                    <div class="item-media">
-                        <i class="ti-plus"></i>
-                    </div>
-                    <div class="item-inner">
-                        <div class="item-title">
-                            Sign Up
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('customer.logout') }}" class="panel-close external">
+                        <div class="item-media">
+                            <i class="ti-power-off"></i>
                         </div>
-                    </div>
-                </a>
-            </li>
-            <li>
-                <a href="/index/" class="panel-close">
-                    <div class="item-media">
-                        <i class="ti-power-off"></i>
-                    </div>
-                    <div class="item-inner">
-                        <div class="item-title">
-                            Logout
+                        <div class="item-inner">
+                            <div class="item-title">
+                                Logout
+                            </div>
                         </div>
-                    </div>
-                </a>
-            </li>
+                    </a>
+                </li>
+            @else
+                <li>
+                    <a href="{{ route('login') }}" class="panel-close external">
+                        <div class="item-media">
+                            <i class="ti-shift-right"></i>
+                        </div>
+                        <div class="item-inner">
+                            <div class="item-title">
+                                Sign In
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('register') }}" class="panel-close external">
+                        <div class="item-media">
+                            <i class="ti-plus"></i>
+                        </div>
+                        <div class="item-inner">
+                            <div class="item-title">
+                                Sign Up
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                
+            @endif
         </ul>
     </div>
 </div>

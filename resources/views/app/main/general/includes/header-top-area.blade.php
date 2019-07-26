@@ -44,14 +44,14 @@
                             </li>
 
                             <li class="account">
-                                <a href=""> customerFirstName <i class="fa fa-angle-down"></i></a>
+                                <a href=""> {{ Auth::user()->first_name }} <i class="fa fa-angle-down"></i></a>
                                 <ul class="ht-dropdown">
                                     <li>
                                         <a href="checkout.php"> Checkout</a>
                                     </li>
                                     <li>
                                         <a href="my-account/messages-area.php">
-                                            <span style='color:white; background-color: red; padding: 4px 8px; border-radius:20px; margin-right:3px;'> 2 </span> Messages
+                                            <span style='color:white; background-color: red; padding: 4px 4px 4px 8px; border-radius:20px; margin-right:3px;'> 2 </span> Messages
                                         </a>
                                     </li>
                                     <li><a href="my-account/">My Account</a></li>

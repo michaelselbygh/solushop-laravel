@@ -79,7 +79,7 @@ abbr[title] {
 
 b,
 strong {
-    font-weight: bold
+    font-weight: 400;
 }
 
 dfn {
@@ -5676,7 +5676,7 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
     padding: 6px 12px;
     line-height: 1.42857143;
     text-decoration: none;
-    color: #337ab7;
+    color: #001337;
     background-color: #fff;
     border: 1px solid #ddd;
     margin-left: -1px
@@ -5713,8 +5713,8 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
 .pagination>.active>span:focus {
     z-index: 3;
     color: #fff;
-    background-color: #337ab7;
-    border-color: #337ab7;
+    background-color: #001337;
+    border-color: #001337;
     cursor: default
 }
 
@@ -6564,8 +6564,9 @@ button.list-group-item-danger.active:focus {
 .panel-title {
     margin-top: 0;
     margin-bottom: 0;
-    font-size: 16px;
-    color: inherit
+    font-size: 14px;
+    color: inherit;
+    font-weight: 350;
 }
 
 .panel-title>a,
@@ -6798,10 +6799,7 @@ button.list-group-item-danger.active:focus {
     border-bottom: 0
 }
 
-.panel-group .panel-heading+.panel-collapse>.panel-body,
-.panel-group .panel-heading+.panel-collapse>.list-group {
-    border-top: 1px solid #ddd
-}
+
 
 .panel-group .panel-footer {
     border-top: 0
@@ -6821,9 +6819,6 @@ button.list-group-item-danger.active:focus {
     border-color: #ddd
 }
 
-.panel-default>.panel-heading+.panel-collapse>.panel-body {
-    border-top-color: #ddd
-}
 
 .panel-default>.panel-heading .badge {
     color: #f5f5f5;

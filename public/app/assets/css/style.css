@@ -1030,7 +1030,7 @@ Version: 1.0;
 }
 .product-price > span.new-price{
     font-size: 11px;
-	font-weight: 500;
+	font-weight: 400;
 	color: #f68b1e;
 }
 .single-product:hover a.button.add-btn,.single-product3:hover a.button.add-btn{
@@ -1045,8 +1045,7 @@ Version: 1.0;
 	border-bottom: 0;
 }
 .single-product.style-2,.single-product3 {
-	border-bottom: 1px solid #ebebeb;
-	padding: 15px 0;
+	padding: 7px 0;
 	overflow: hidden;
 }
 .single-product.style-2:after{
@@ -1074,7 +1073,7 @@ Version: 1.0;
 /*-----------------------------------------------*/
 .hot-deal-product,.new-arrivals-product,.our-blog {
 	border: 1px solid #ebebeb;
-	border-radius: 3px;
+	border-radius: 10px;
 }
 .owl-nav > div {
 	position: absolute;
@@ -1193,7 +1192,7 @@ Version: 1.0;
 .hot-del-single-product {
 	background: #fff;
 	padding: 10px;
-	border-radius: 0 0 4px 4px;
+	border-radius: 0 0 10px 10px;
 	box-shadow: 0 1px 0 #ebebeb;
 }
 .single-product.hot-deal {
@@ -1810,7 +1809,7 @@ li.right-menu .cat-mega-menu > li {
 	color: #f68b1e;
 }
 .our-blog-author > a:hover{
-    color: #4c4c4c;
+    color: #001337;
 }
 .our-blog-des > p {
 	margin-bottom: 10px;
@@ -2598,7 +2597,7 @@ li.right-menu .cat-mega-menu > li {
 }
 .button2 {
     background: none;
-	border: 1px solid #4c4c4c;
+	border: 1px solid #001337;
 	color: #001337;
 	height: 40px;
 	line-height: 40px;
@@ -2651,7 +2650,7 @@ li.right-menu .cat-mega-menu > li {
 	display: inline-block;
 	vertical-align: middle;
 	text-align: left;
-	color: #4c4c4c;
+	color: #001337;
 }
 .counter-number > h2 {
 	font-size: 30px;
@@ -2965,7 +2964,7 @@ input.checkbox {
 .wishlist-table table {
 	background: #fff;
 	border: 1px solid #ebebeb;
-	color: #4c4c4c;
+	color: #001337;
 	width: 100%;
 	border-right: 0;
 	border-radius: 5px;
@@ -3159,7 +3158,7 @@ input.checkbox {
 	margin: 0 0 10px 0;
 	width: 100%;
 	float: right;
-	color: #4c4c4c;
+	color: #001337;
 }
 .shop-table tr {
 	border-bottom: 1px solid #ebebeb;
@@ -3186,7 +3185,7 @@ input.checkbox {
 	color: #f68b1e;
 }
 .shop-table tr td a:hover{
-    color: #4c4c4c;
+    color: #001337;
 }
 .shop-table tr td:before {
     content: attr(data-title) ": ";
@@ -3358,7 +3357,7 @@ input.checkbox {
 .your-order-table table {
 	background: #fff;
 	width: 100%;
-	color: #4c4c4c;
+	color: #001337;
 	margin: 0 0 50px;
 }
 .your-order-table table tr {
@@ -3397,7 +3396,7 @@ input.checkbox {
 }
 .shipping td p {
 	font-weight: 500;
-	color: #4c4c4c;
+	color: #001337;
 	margin: 0;
 }
 .order-total td {
@@ -3572,8 +3571,8 @@ input.checkbox {
 }
 .shop-tab-menu {
 	border: 1px solid #ebebeb;
-	padding: 13px 15px;
 	border-radius: 4px;
+	margin-bottom: 20px;
 }
 .shop-tab > ul > li {
 	display: inline-block;
@@ -3609,15 +3608,14 @@ input.checkbox {
 	float: right;
 	height: 32px;
 	line-height: 30px;
-	margin: 0 0 0 15px;
+	margin: 0 15px 0 15px;
 }
 .show-result p{
-    font-size: 14px;
+    font-size: 12px;
     color: #001337;
 }
 .product-container {
 	overflow: hidden;
-    padding-bottom: 25px;
     position: relative;
 }
 .product-container:after {
@@ -3739,7 +3737,7 @@ max-width: none !important;
 	font-size: 18px;
 }
 .product-description > p {
-	margin-bottom: 25px;
+	margin-bottom: 15px;
 	color: #001337;
 	font-size: 13px;
 }
@@ -4137,13 +4135,11 @@ max-width: none !important;
 	float: left;
 }
 .pagination {
-	float: left;
-	width: 100%;
 	margin: 0 0 30px;
-	border: 1px solid #ebebeb;
 	border-radius: 4px;
 	padding: 13px 15px;
 	text-align: center;
+	
 }
 .page-number > li {
 	display: inline-block;
@@ -4228,7 +4224,7 @@ max-width: none !important;
     border-bottom: 1px solid #ebebeb;
 }
 .sidebar-menu > li > a,.recent-menu > li > a,.archive-menu > li > a,.brand-menu > li > a,.compare-menu > li > a {
-	color: #4c4c4c;
+	color: #001337;
 	margin-right: 5px;
     text-transform: capitalize;
 }
@@ -4417,7 +4413,7 @@ h3.comments-title,h3.user-comment-title {
 	background: #ebebeb;
 	border-radius: 3px;
 	box-shadow: none;
-	color: #4c4c4c;
+	color: #001337;
 	display: inline-block;
 	font-size: 12px;
 	font-weight: bold;
@@ -4612,7 +4608,7 @@ h3.comments-title,h3.user-comment-title {
     border-top: 1px solid #ebebeb;
 }
 .pricing-button {
-	border: 1px solid #4c4c4c;
+	border: 1px solid #001337;
 	padding: 0 20px;
 	line-height: 40px;
 	margin: 40px 0 0;
@@ -4620,7 +4616,7 @@ h3.comments-title,h3.user-comment-title {
 	border-radius: 3px;
 	text-transform: capitalize;
 	font-size: 14px;
-	color: #4c4c4c;
+	color: #001337;
 	height: 42px;
 	-webkit-transition: all 0.3s ease-in-out;
 	transition: all 0.3s ease-in-out;
@@ -4636,8 +4632,8 @@ h3.comments-title,h3.user-comment-title {
     border-color: #f68b1e;
 }
 .active-table .pricing-button:hover{
-    background: #4C4C4C;
-    border-color: #4C4C4C;
+    background: #001337;
+    border-color: #001337;
     color: #fff;
 }
 /*----------------------------------------*/
@@ -4706,16 +4702,18 @@ p.form-messege.success {
 }
 .panel-group .panel {
 	margin-bottom: 10px;
-	border-radius: 0;
+	border-radius: 10px;
 	border: 1px solid #ebebeb;
 }
 .panel.panel-default.active{
-    border: 1px solid #f68b1e;
+	border: 1px solid #f68b1e;
+	border-radius: 10px;
 }
 .panel-default > .panel-heading {
 	color: #001337;
 	background-color: #f8f8f8;
 	padding: 0;
+	border-radius: 10px;
 }
 .panel-title > a {
 	display: block;
@@ -4736,9 +4734,7 @@ p.form-messege.success {
 .panel-title a.collapsed:after{
     content: "\f067"
 }
-.panel-body {
-	border-top: 1px solid #ebebeb;
-}
+
 /*----------------------------------------*/
 /*  29. Error 404 Page CSS
 /*----------------------------------------*/
@@ -4747,25 +4743,22 @@ p.form-messege.success {
 	text-align: center;
 }
 .search-form-wrapper > h1 {
-	font-size: 200px;
+	font-size: 40px;
 	font-weight: 900;
 	color: #f68b1e;
-	line-height: 1.1;
-	margin: 0 0 30px;
-	letter-spacing: 10px;
 }
 .search-form-wrapper > h2 {
-	color: #4c4c4c;
+	color: #001337;
 	font-size: 35px;
 	text-transform: uppercase;
 	font-weight: 700;
 }
 .error-message > p {
-	font-size: 22px;
-	width: 60%;
+	font-size: 20px;
+	width: 80%;
 	text-align: center;
-	color: #4c4c4c;
-	margin: 20px auto 30px;
+	color: #001337;
+	margin: 20px auto 20px;
 	font-weight: 300;
 }
 .form-input {
@@ -4803,7 +4796,7 @@ p.form-messege.success {
 }
 .back-to-home a {
 	background: #f68b1e;
-	border-radius: 35px;
+	border-radius: 20px;
 	box-shadow: none;
 	color: #fff;
 	display: inline-block;
@@ -4811,16 +4804,14 @@ p.form-messege.success {
 	font-weight: 400;
 	height: 40px;
 	line-height: 40px;
-	margin-top: 60px;
 	padding: 0 30px;
 	text-shadow: none;
-	text-transform: uppercase;
 	-webkit-transition: all .3s ease;
 	transition: all .3s ease;
 	white-space: nowrap;
 }
 .back-to-home a:hover{
-    background: #d52115;
+    background: #001337;
 }
 
 

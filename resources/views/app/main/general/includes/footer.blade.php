@@ -48,11 +48,12 @@
                                 <h3>Information</h3>
                             </div>
                             <ul class="footer-info">
-                                <li><a href="about.php">About Us</a></li>
-                                <li><a href="contact.php">Contact</a></li>
-                                <li><a href="faqs.php">FAQ</a></li>
-                                <li><a href="privacy-policy.php">Privacy Policy</a></li>
-                                <li><a href="terms-and-conditions.php">T &amp; Cs</a></li>
+                                <li><a href="{{ route('show.about') }}">About Us</a></li>
+                                <li><a href="{{ route('show.contact') }}">Contact</a></li>
+                                <li><a href="{{ route('show.frequently.asked.questions') }}">FAQ</a></li>
+                                <li><a href="{{ route('show.privacy.policy') }}">Privacy Policy</a></li>
+                                <li><a href="{{ route('show.return.policy') }}">Return Policy</a></li>
+                                <li><a href="{{ route('show.terms.and.conditions') }}">T &amp; Cs</a></li>
                             </ul>
                         </div>
                     </div>
@@ -65,13 +66,13 @@
                             </div>
                             <ul class="footer-info">
                                    @if (Auth::check())
-                                        <li><a href="my-account">My Account</a></li>
+                                        <li><a href="{{ route('show.account') }}">My Account</a></li>
                                     @else
                                         <li><a href="{{ route('customer.logout') }}">Login / Register</a></li>
                                     @endif
-                                <li><a href="wishlist.php">Wishlist</a></li>
-                                <li><a href="cart.php">Shopping Cart</a></li>
-                                <li><a href="checkout.php">Checkout</a></li>
+                                <li><a href="{{ route('show.wishlist') }}">Wishlist</a></li>
+                                <li><a href="{{ route('show.cart') }}">Shopping Cart</a></li>
+                                <li><a href="{{ route('show.checkout') }}">Checkout</a></li>
                             </ul>
                         </div>
                     </div>
@@ -102,7 +103,7 @@
                     <!--Footer Left Content Start-->
                     <div class="col-md-6 col-sm-6">
                         <div class="copyright-text">
-                            <p>Copyright © 2018 - 2019 <a href="" target="_blank">Solushop Ghana Limited</a> All Rights Reserved.</p>
+                            <p>Copyright © 2018 - 2019 <a target="_blank">Solushop Ghana Limited</a> All Rights Reserved.</p>
                         </div>
                     </div>
                     <!--Footer Left Content End-->

@@ -50,7 +50,7 @@
                             @endif
                         </div>
                         <div class="register-form">
-                            <form action="#" method="POST">
+                            <form action="{{ route('login') }}" method="POST">
                                 @csrf
                                 <div class="col-lg-6" style="padding-left: 0px; padding-right: 5px;">
                                     <div class="form-fild">
@@ -74,7 +74,7 @@
                                     </div>
                                     <div class="register-submit" style="text-align:center;">
                                         <div class="lost-password" style="text-align:center; font-size: 11px">
-                                            By clicking on register you  agree to the <br><a target="_blank" href="terms-and-conditions.php">Terms and Conditions</a><br> binding the use of this platform.
+                                            By clicking on register you  agree to the <br><a target="_blank" href="{{ route('show.terms.and.conditions') }}">Terms and Conditions</a><br> binding the use of this platform.
                                         </div>
                                         <button type="submit" name="register" value="register" class="form-button" onclick="gtag_report_conversion()">Register</button>
                                         

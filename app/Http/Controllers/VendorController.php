@@ -16,4 +16,5 @@ class VendorController extends Controller
     {
         return view('portal.main.vendor.dashboard');
     }
+
 }

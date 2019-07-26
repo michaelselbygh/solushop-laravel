@@ -1,4 +1,4 @@
-@extends('app.layouts.general')
+@extends('mobile.layouts.general')
 @section('page-title')
     Reset Password
 @endsection
@@ -9,59 +9,55 @@
     Lost your password? No problem. Let's help you recover it.
 @endsection
 @section('page-content')
-    <!--Heading Banner Area Start-->
-    <section class="heading-banner-area pt-30">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="heading-banner">
-                        <div class="breadcrumbs">
-                            <ul>
-                                <li><a href="index.php">Home</a><span class="breadcome-separator">></span></li>
-                                <li>Reset Password</li>
-                            </ul>
-                        </div><br>
+    <div class="page page-home">
+        @include('mobile.main.general.includes.toolbar')
+        <div class="tabs page-content">
+            <div id="tab-1" class="tab tab-active">
+                <!-- home -->
+
+                <div class="navbar navbar-page">
+                    <div class="navbar-inner sliding">
+                        <div class="left">
+                            <a href="{{ URL::previous() }}" class="link back external">
+                                <i class="ti-arrow-left"></i>
+                            </a>
+                        </div>
+                        <div class="title">
+                            Reset password
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
-    <!--Heading Banner Area End-->
-    <!--My Account Area Start-->
-    <section class="my-account-area mt-20">
-        <div class="container">
-            <div class="row justify-content-md-center">
-                <div class="col-sm-4 col-sm-offset-4 text-center customFadeIn" style="border-radius: 50px; border: 1px solid #f68c1e; padding: 20px; margin-bottom: 40px;">
-                    <div class="customer-login-register customFadeIn" id="login">
-                        <div class="form-login-title">
-                            <h3 style="text-align:center;">Lost your password?<br> No problem.</h3><br>
-                            <div style="padding-left: 20px; padding-right: 20px">
-                                @include('app.main.general.success-and-error.message') 
-                            </div>
-                        </div>
-                        <div class="login-form">
-                        <form action="{{ route('customer.reset.password') }}" method="POST">
+
+                <div class="about segments-page">
+                    <div class="container">
+                        <div class="" style="text-align:center; margin: 0; position: absolute; top: 50%; left: 50%; -ms-transform: translate(-50%, -50%); transform: translate(-50%, -50%);">
+                            <form class="list" method="POST" action="{{ route('customer.reset.password') }}">
                                 @csrf
-                                <div class="form-fild">
-                                    <input type="text" name="email" placeholder="Enter Email" value="{{ old('email') }}" required>
+                                <div class="item-input-wrap">
+                                    <input type="email" placeholder="Email" name="email" value="{{ old('email') }}"  required>
                                 </div>
-                                <div class="form-fild">
+                                <div class="item-input-wrap no-mb">
                                     <input type="text" name="phone" placeholder="Enter Phone e.g 0544000000" value="{{ old('phone') }}" required>
-                                    <br><br>
                                 </div>
-                                <div class="login-submit" style="text-align:center;">
-                                    <button type="submit" name="solushop_rp" value='login' class="form-button">Reset Password</button>
+                                <button class="button" type="" name="login" value='login' onclick="" style="background-color: #f68b1e">Reset password</button>
+                                <br>
+                                <div class="link-sign-in-wrapper">
+                                    <p style="font-size: 12px">Don't have an account? <a href="{{ route('register') }}" style="color: #f68b1e; font-weight: 500" class="external">Register</a></p>
+                                    <p style="font-size: 12px"><a href="{{ route('login') }}" style="font-weight: 500" class="external">Login here</a></p>
                                 </div>
-                                <div class="lost-password" style="text-align:center;">
-                                        <a href="{{ route('login') }}">Login</a>
-                                        <br>
-                                    </div>
+                                <input type="hidden" name="url" value="{{ URL::previous() }}"/>
                             </form>
                         </div>
+                        @if (session()->has('error_message')) 
+                            <div id="snackbar">{{ session()->get('error_message') }}</div>
+                        @elseif(session()->has('success_message')) 
+                            <div id="snackbar">{{ session()->get('success_message') }}</div>
+                        @endif
                     </div>
+                    
                 </div>
             </div>
         </div>
-    </section>
-    <!--My Account Area End-->
-@endsection
+    </div>
+@endsection    
+    

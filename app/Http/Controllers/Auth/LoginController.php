@@ -16,6 +16,9 @@ use App\Manager;
 use App\ProductCategory;
 use App\SMS;
 
+use \Mobile_Detect;
+
+
 class LoginController extends Controller
 {
     /*
@@ -50,12 +53,33 @@ class LoginController extends Controller
 
     public function showLoginForm()
     {   
-        $search_bar_pc_options = ProductCategory::
-                            where('pc_level', 2) 
-                            ->orderBy('pc_description')     
-                            ->get(['id', 'pc_description']);
-        return view('app.main.general.login')
+        $detect = new Mobile_Detect;
+        if( $detect->isMobile() && !$detect->isTablet() ){
+            return view('mobile.main.general.login');
+        }else{
+            $search_bar_pc_options = ProductCategory::
+            where('pc_level', 2) 
+            ->orderBy('pc_description')     
+            ->get(['id', 'pc_description']);
+            return view('app.main.general.login')
                 ->with('search_bar_pc_options', $search_bar_pc_options);
+        }
+    }
+
+    public function showRegisterForm()
+    {   
+        $detect = new Mobile_Detect;
+        if( $detect->isMobile() && !$detect->isTablet() ){
+            return view('mobile.main.general.register');
+        }else{
+            $search_bar_pc_options = ProductCategory::
+            where('pc_level', 2) 
+            ->orderBy('pc_description')     
+            ->get(['id', 'pc_description']);
+            return view('app.main.general.login')
+                ->with('search_bar_pc_options', $search_bar_pc_options);
+        }
+        
     }
 
     //overriding the default login function
@@ -69,6 +93,8 @@ class LoginController extends Controller
                 'password' => 'required'
             ]);
 
+            $url = explode($_SERVER['SERVER_NAME'], $request->url);
+
             if ($validator->fails()) {
                 return redirect()->back()->withInput($request->only('email'))->with('login_error_message', 'Invalid login credentials.');
             }
@@ -77,7 +103,17 @@ class LoginController extends Controller
             if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
                 
                 //if successful, then redirect to intended location
-                return redirect()->intended(route('home'));
+                if(in_array($url[sizeof($url)-1], ['/login', '/register'])){
+                    return redirect()->route('show.shop');
+                }else{
+                    if ($url[sizeof($url)-1] == "/") {
+                        $return_url = "home";
+                    }else{
+                        $return_url = substr($url[sizeof($url)-1], 1);
+                    }
+                    return redirect($return_url)->with('welcome_message', 'Welcome back, '.Auth::user()->first_name.'.');
+                }
+                
             }
             
             //if unsuccessful then redirect back to login with the form data
@@ -103,6 +139,8 @@ class LoginController extends Controller
 
                 return redirect()->back()->withInput($request->only('r_email', 'phone', 'first_name', 'last_name'))->with($errorMessageType, $errorMessageContent);
             }
+
+
 
             //check for email existence in system
             if (Customer::where('email', $request->r_email)->first()) {
@@ -146,13 +184,13 @@ class LoginController extends Controller
 
             //add milk
             $milkObject = new Milk;
-            $milkObject->milk_customer_id = $customerID;
+            $milkObject->id = $customerID;
             $milkObject->milk_value = $milk;
             $milkObject->save();
 
             //add chocolate
             $chocolateObject = new Chocolate;
-            $chocolateObject->chocolate_customer_id = $customerID;
+            $chocolateObject->id = $customerID;
             $chocolateObject->chocolate_value = $chocolate;
             $chocolateObject->save();
 
@@ -183,19 +221,36 @@ class LoginController extends Controller
             }
 
             Auth::loginUsingId($customerID);
-            return redirect()->intended(route('home'));
+            $url = explode($_SERVER['SERVER_NAME'], $request->url);
+
+            if(in_array($url[sizeof($url)-1], ['/login', '/register'])){
+                return redirect()->route('show.shop');
+            }else{
+                if ($url[sizeof($url)-1] == "/") {
+                    $return_url = "home";
+                }else{
+                    $return_url = substr($url[sizeof($url)-1], 1);
+                }
+                return redirect($return_url)->with('welcome_message', 'Welcome to Solushop, '.ucwords(strtolower($request->first_name)).'.');
+            }
         }
         
     }
 
     public function showResetPasswordForm()
     {   
-        $search_bar_pc_options = ProductCategory::
-                            where('pc_level', 2) 
-                            ->orderBy('pc_description')     
-                            ->get(['id', 'pc_description']);
-        return view('app.main.general.reset-password')
+        $detect = new Mobile_Detect;
+        if( $detect->isMobile() && !$detect->isTablet() ){
+            return view('mobile.main.general.reset-password');
+        }else{
+            $search_bar_pc_options = ProductCategory::
+                where('pc_level', 2) 
+                ->orderBy('pc_description')     
+                ->get(['id', 'pc_description']);
+            return view('app.main.general.reset-password')
                 ->with('search_bar_pc_options', $search_bar_pc_options);
+        }
+        
     }
 
     public function resetPassword(Request $request)

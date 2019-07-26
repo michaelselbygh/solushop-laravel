@@ -1,6 +1,6 @@
 
 
-@extends('app.layouts.general')
+@extends('app.layouts.home')
 @section('page-title')
     Ghana's Most Trusted Online Store.
 @endsection
@@ -11,7 +11,7 @@
     Solushop is Ghana&#039;s most trusted Online Shopping Mall ➜Shop electronics, accessories, books, fashion &amp; more online ✔ Great customer care ✔ Top quality products ✓ super fast shipping ✓ Order now and enjoy a revolutionary shopping experience!
 @endsection
 @section('page-content')
-<section class="slider-area ptb-30 white-bg">
+<section class="slider-area pt-30 white-bg pb-10">
         <div class="container">
             <div class="row">
                 @include('app.main.general.success-and-error.message') 
@@ -111,8 +111,64 @@
                     </div>
                 </div>
                 <!--Slider End-->
-                <div class="col-md-2 col-sm-2">
+                <!--Right Side Product Start-->
+                <div class="col-md-3 col-sm-3">
+                    <!--New arrivals Product Start-->
+                    <div class="new-arrivals-product">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="new-arrivals-product-title">
+                                    <!--Section Title2 Start-->
+                                    <div class="category-heading">
+                                        <h2 style="background: #001337">Featured Products</h2>
+                                    </div>
+                                    <!--Section Title2 End-->
+                                    <!--Hot Deal Single Product Start-->
+                                    <div class="hot-del-single-product">
+                                        <div class="row">
+                                            <div class="slide-active2">
+                                                <!--Single Product Start-->
+                                                @for($i=0; $i < sizeof($featured_products); $i++) 
+                                                    <div class="col-md-12">
+                                                        <div class="single-product style-2 list">
+                                                            <div class="col-4">
+                                                                <div class="product-img">
+                                                                    <a href="{{ url('shop/'.$featured_products[$i]['vendor']['username'].'/'.$featured_products[$i]['product_slug']) }}">
+                                                                        <img class="first-img" src="{{ url('app/assets/img/products/thumbnails/'.$featured_products[$i]['images'][0]['pi_path'].'.jpg') }}" style='border-radius:10px;' alt="">
+                                                                        @if (sizeof($featured_products[$i]['images']) > 1) 
+                                                                            <img class="hover-img" src="{{ url('app/assets/img/products/thumbnails/'.$featured_products[$i]['images'][1]['pi_path'].'.jpg') }}" style='border-radius:10px;' alt="">
+                                                                        @endif
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-6">
+                                                                <div class="product-content">
+                                                                    <a href="{{ url('shop/'.$featured_products[$i]['vendor']['username'].'/'.$featured_products[$i]['product_slug']) }}">
+                                                                        {{ ucwords($featured_products[$i]['product_name']) }}
+                                                                    </a>
+                                                                    <div class="product-price">
+                                                                        <span class="new-price">GH¢ {{ $featured_products[$i]['product_selling_price'] - $featured_products[$i]['product_discount'] }}</span>
+                                                                        @if($featured_products[$i]['product_discount'] > 0)
+                                                                            <span class="old-price">GH¢ {{ $featured_products[$i]['product_selling_price'] }}</span>
+                                                                        @endif
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endfor
+                                                <!--Single Product End-->
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--Hot Deal Single Product Start-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--New arrivals Product End--> 
                 </div>
+                            <!--Right Side Product End-->
             </div>
         </div>
     </section>

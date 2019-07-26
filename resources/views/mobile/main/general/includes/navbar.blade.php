@@ -7,7 +7,7 @@
         <div class="title">
             <form class="searchbar">
                 <div class="searchbar-input-wrap">
-                    <input type="search" placeholder="Search">
+                    <input type="search" placeholder="Search e.g. Fashion">
                     <i class="searchbar-icon"></i>
                     <span class="input-clear-button"></span>
                 </div>
@@ -15,7 +15,7 @@
             </form>
         </div>
         <div class="right">
-            <a href="/notification/"><i class="ti-bell"></i></a>
+            <a href="/notification/"><i class="ti-email"></i></a>
             <span></span>
         </div>
     </div>

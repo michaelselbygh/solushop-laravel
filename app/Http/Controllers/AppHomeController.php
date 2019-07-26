@@ -14,6 +14,8 @@ use App\ProductCategory;
 use App\ProductImage;
 use App\Vendor;
 
+use Session;
+
 class AppHomeController extends Controller
 {
     public function showHome()
@@ -25,6 +27,24 @@ class AppHomeController extends Controller
             where('pc_level', 2) 
             ->orderBy('pc_description')   
             ->get(['id', 'pc_description', 'pc_slug']);
+
+        /*---selecting featured products ---*/
+         //randomization occurs every hour
+         if (null != (Session::get('seed'))) {
+            if((time() - Session::get('seed')) > 3600){
+                Session::put('seed', time());
+            }
+        }else{
+            Session::put('seed', time());
+        }
+        $featured_products = Product::
+                inRandomOrder(Session::get('seed'))
+                ->where('product_state', '1') 
+                ->with('vendor', 'images')
+                ->take(3)
+                ->get()
+                ->toArray();
+
 
         /*---creating array for the category side bar---*/
         $side_bar_pc_options = array();
@@ -133,6 +153,7 @@ class AppHomeController extends Controller
 
         return view($view)
                 ->with('sections', $sections)
+                ->with('featured_products', $featured_products)
                 ->with('search_bar_pc_options', $search_bar_pc_options)
                 ->with('side_bar_pc_options', $side_bar_pc_options);
     }

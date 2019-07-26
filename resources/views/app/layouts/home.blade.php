@@ -196,7 +196,7 @@
 				text-align:center;
 				color: #001337;
 				line-height: 30px;
-				font-size : 25px;
+				font-size : 20px;
 				position: absolute;
 				margin: auto;
 				top: 0;
@@ -308,35 +308,37 @@
 			<div class="percentage" id="precent"></div>
 		</div>
 	
-		@if(Auth::check())
-			<div class="bts-popup" role="alert">
-				<div class="bts-popup-container">
-				<img src="{{ url('app/assets/img/WelcomeToTheFamily.png') }}" alt="Welcome to the Solushop Family" width="80%" />
-					<p>Yep! It's for real! Sign up today and get <b>¢ 5.00</b> instantly for shopping on our platform! <br><br>Already a member? Login below.</p>
-						<a href="login.php">
-							<div class="bts-popup-button">
-							Login / Register
-							</div>
-						</a>
-					<a href="#0" class="bts-popup-close img-replace">Close</a>
+		<div class="wrap">
+			@if(!Auth::check())
+				<div class="bts-popup" role="alert">
+					<div class="bts-popup-container">
+					<img src="{{ url('app/assets/img/WelcomeToTheFamily.png') }}" alt="Welcome to the Solushop Family" width="80%" />
+						<p>Yep! It's for real! Sign up today and get <b>¢ 5.00</b> instantly for shopping on our platform! <br><br>Already a member? Login below.</p>
+							<a href="{{ route('login') }}">
+								<div class="bts-popup-button">
+								Login / Register
+								</div>
+							</a>
+						<a href="#0" class="bts-popup-close img-replace">Close</a>
+					</div>
 				</div>
-			</div>
-		@endif
+			@endif
 
-		<div class="wrapper">
-			<!--Header Area Start-->
-			<header>
-				<div class="header-container">
-					@include("app.main.general.includes.header-top-area")
-					@include("app.main.general.includes.header-middle-area")
-					@include("app.main.general.includes.header-bottom-area")
-					@include("app.main.general.includes.mobile-menu-area")
-				</div>
-			</header>
-			<!--Header Area End-->
-			@yield('page-content')
-			
-			@include("app.main.general.includes.footer")
+			<div class="wrapper">
+				<!--Header Area Start-->
+				<header>
+					<div class="header-container">
+						@include("app.main.general.includes.header-top-area")
+						@include("app.main.general.includes.header-middle-area")
+						@include("app.main.general.includes.header-bottom-area")
+						@include("app.main.general.includes.mobile-menu-area")
+					</div>
+				</header>
+				<!--Header Area End-->
+				@yield('page-content')
+				
+				@include("app.main.general.includes.footer")
+			</div>
 		</div>
 		<!--All Js Here-->
 		<!--Jquery 1.12.4-->
@@ -379,5 +381,85 @@
 		<script src="{{ url('app/assets/js/plugins.js') }}"></script>
 		<!--Main Js-->
 		<script src="{{ url('app/assets/js/main.js') }}"></script>
+		<script>
+			var width = 100,
+			perfData = window.performance.timing, // The PerformanceTiming interface represents timing-related performance information for the given page.
+			EstimatedTime = -(perfData.loadEventEnd - perfData.navigationStart),
+			time = parseInt((EstimatedTime/1000)%60)*100;
+
+			// Loadbar Animation
+			$(".loadbar").animate({
+			width: width + "%"
+			}, time);
+
+			// Loadbar Glow Animation
+			$(".glow").animate({
+			width: width + "%"
+			}, time);
+
+			// Percentage Increment Animation
+			var PercentageID = $("#precent"),
+					start = 0,
+					end = 100,
+					durataion = time;
+					animateValue(PercentageID, start, end, durataion);
+					
+			function animateValue(id, start, end, duration) {
+			
+				var range = end - start,
+				current = start,
+				increment = end > start? 1 : -1,
+				stepTime = Math.abs(Math.floor(duration / range)),
+				obj = $(id);
+				
+				var timer = setInterval(function() {
+					current += increment;
+					$(obj).text(current + "%");
+				//obj.innerHTML = current;
+					if (current == end) {
+						clearInterval(timer);
+					}
+				}, stepTime);
+			}
+
+			// Fading Out Loadbar on Finised
+			setTimeout(function(){
+			$('.preloader-wrap').fadeOut(300);
+			}, time);
+
+
+			jQuery(document).ready(function($){
+				// setTimeout(() => {
+				// 	alert("Test");
+				// }, 5000);
+				window.onload = function (){
+					setTimeout(() => {
+						
+							$(".bts-popup").addClass('is-visible');
+						
+					}, 10000);
+				}
+				
+				//open popup
+				$('.bts-popup-trigger').on('click', function(event){
+					event.preventDefault();
+					$('.bts-popup').addClass('is-visible');
+				});
+				
+				//close popup
+				$('.bts-popup').on('click', function(event){
+					if( $(event.target).is('.bts-popup-close') || $(event.target).is('.bts-popup') ) {
+						event.preventDefault();
+						$(this).removeClass('is-visible');
+					}
+				});
+				//close popup when clicking the esc keyboard button
+				$(document).keyup(function(event){
+					if(event.which=='27'){
+						$('.bts-popup').removeClass('is-visible');
+					}
+				});
+			});
+		</script>
 	</body>
 </html>

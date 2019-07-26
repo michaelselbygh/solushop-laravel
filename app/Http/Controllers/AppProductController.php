@@ -19,6 +19,11 @@ class AppProductController extends Controller
 {
     public function showProduct($vendorSlug, $productSlug){
 
+        //check for vendor or product
+        if (is_null(Vendor::where('username', $vendorSlug)->first()) OR is_null(Product::where('product_slug', $productSlug) ->where('product_state', '1') ->first())) {
+            return redirect()->route('page.not.found');
+        }
+
         //get vendor
         $vendor = Vendor::
             where('username', $vendorSlug)

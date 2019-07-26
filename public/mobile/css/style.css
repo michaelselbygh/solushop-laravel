@@ -106,7 +106,7 @@ ul li {
 }
 
 .md a {
-    color: #333;
+    color: #001337;
 }
 
 .md a:focus {
@@ -229,7 +229,7 @@ ul li {
 .md .toolbar .toolbar-inner .tab-link {
     padding-top: 6px;
     padding-bottom: 6px;
-    color: #333;
+    color: #001337;
 }
 .md .toolbar .toolbar-inner .tab-link i {
     font-size: 18px;
@@ -292,7 +292,6 @@ ul li {
 .md .navbar.navbar-home .navbar-inner .searchbar .searchbar-input-wrap .input-clear-button {
     width: 30px;
     height: 30px;
-    margin-top: -15px;
     right: 10px;
 }
 .md .navbar.navbar-home .navbar-inner .right i {
@@ -333,7 +332,7 @@ ul li {
     left: 36px;
     right: 36px;
     text-align: center;
-    color: #333;
+    color: #001337;
     font-size: 16px;
 }
 
@@ -423,7 +422,7 @@ ul li {
 }
 .md .panel .list ul li a {
     padding-left: 0;
-    color: #333;
+    color: #001337;
 }
 .md .panel .list ul li a .item-media {
     justify-content: center;
@@ -517,7 +516,6 @@ ul li {
 }
 .categories-home .content i {
     font-size: 18px;
-    margin-bottom: 10px;
     display: inline-block;
     width: 40px;
     height: 40px;
@@ -540,7 +538,7 @@ ul li {
     background: #f6f6f6;
     width: 100%;
     height: 2px;
-    margin: 15px 0;
+    margin: 10px 0;
 }
 
 /*categories*/
@@ -549,8 +547,8 @@ ul li {
 }
 .categories .content img {
     width: 100%;
-    height: 180px;
-    border-radius: 3px;
+    height: auto;
+    border-radius: 10px;
 }
 .categories .content .title {
     position: absolute;
@@ -565,14 +563,15 @@ ul li {
     font-weight: 700;
 }
 .categories .content .mask {
-    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5));
+    background: black;
+    opacity: 0.9;
     position: absolute;
     width: 100%;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    border-radius: 3px;
+    border-radius: 10px;
 }
 
 /*categories details*/
@@ -712,6 +711,7 @@ ul li {
 .md .product .content {
     border: 1px solid #ddd;
     border-radius: 3px;
+    min-height: 309px;
 }
 .md .product .content img {
     width: 100%;
@@ -729,7 +729,6 @@ ul li {
     color: #f68b1e;
 }
 .md .product .pagination ul li {
-    margin-right: 10px;
     list-style-type: none;
     display: inline-block;
 }
@@ -810,7 +809,7 @@ ul li {
 }
 .product-details .wrap-content .information-product-wrapper ul li span {
     float: right;
-    color: #333;
+    color: #001337;
 }
 
 .product-details .wrap-content .product-details-wrapper ul li:last-child {
@@ -818,14 +817,14 @@ ul li {
 }
 .product-details .wrap-content .product-details-wrapper ul li span {
     float: right;
-    color: #333;
+    color: #001337;
 }
 .product-details .wrap-content .share-product-wrapper ul li {
     margin-right: 8px;
     display: inline-block;
 }
 .product-details .wrap-content .share-product-wrapper ul li:first-child {
-    color: #333;
+    color: #001337;
     font-size: 16px;
     font-weight: 600;
     margin-right: 10px;
@@ -1317,7 +1316,7 @@ ul li {
 }
 .account-buyer .account-menu .list ul li a {
     padding-left: 0;
-    color: #333;
+    color: #001337;
 }
 .account-buyer .account-menu .list ul li a .item-media {
     justify-content: center;
@@ -1483,7 +1482,7 @@ ul li {
 }
 .settings .account-menu .list ul li a {
     padding-left: 0;
-    color: #333;
+    color: #001337;
 }
 .settings .account-menu .list ul li a .item-media {
     justify-content: center;
@@ -1731,7 +1730,7 @@ ul li {
     margin-right: 15px;
     font-size: 16px;
     font-weight: 600;
-    color: #333;
+    color: #001337;
 }
 .blog-single .share-blog-wrapper ul li a i {
     width: 30px;
@@ -1806,7 +1805,7 @@ ul li {
     font-size: 14px;
     font-weight: 400;
     border-radius: 3px 3px 0 0;
-    color: #333;
+    color: #001337;
 }
 .md .order-history .accordion-list .accordion-item .accordion-item-toggle span {
     float: right;
@@ -1844,7 +1843,7 @@ ul li {
 }
 .md .order-history .accordion-list .accordion-item .accordion-item-content .info-product-order-wrapper .data-table table {
     background: #ddd;
-    color: #333;
+    color: #001337;
     border-radius: 3px;
 }
 .md .order-history .accordion-list .accordion-item .accordion-item-content .info-product-order-wrapper .data-table table thead th {
@@ -1887,8 +1886,8 @@ ul li {
     padding: 0 16px;
     font-size: 14px;
     font-weight: 400;
-    border-radius: 3px 3px 0 0;
-    color: #333;
+    border-radius: 5px 5px 5px 5px;
+    color: #001337;
 }
 .md .tracking-order .accordion-list .accordion-item .accordion-item-toggle span {
     float: right;
@@ -1899,10 +1898,10 @@ ul li {
     font-size: 16px;
 }
 .md .tracking-order .accordion-list .accordion-item .accordion-item-content {
-    border-width: 0 1px 1px 1px;
+    border-width: 0 0 0 0;
     border-style: solid;
     border-color: #eee;
-    border-radius: 0 0 3px 3px;
+    border-radius: 0 0 5px 5px;
     padding: 0 16px;
 }
 .md .tracking-order .accordion-list .accordion-item .accordion-item-content .info-product-order-wrapper {
@@ -1910,7 +1909,7 @@ ul li {
 }
 .md .tracking-order .accordion-list .accordion-item .accordion-item-content .info-product-order-wrapper .data-table table {
     background: #ddd;
-    color: #333;
+    color: #001337;
     border-radius: 3px;
 }
 .md .tracking-order .accordion-list .accordion-item .accordion-item-content .info-product-order-wrapper .data-table table thead th {
@@ -1943,7 +1942,7 @@ ul li {
 }
 .md .tracking-order .accordion-list .accordion-item .accordion-item-content .shipment-status-wrapper .data-table table {
     background: #ddd;
-    color: #333;
+    color: #001337;
     border-radius: 3px;
 }
 .md .tracking-order .accordion-list .accordion-item .accordion-item-content .shipment-status-wrapper .data-table table thead th {
@@ -2033,7 +2032,7 @@ ul li {
 }
 
 .search .list .content-text .price {
-    color: #333;
+    color: #001337;
     font-weight: 600;
     font-size: 14px;
 }
@@ -2255,7 +2254,7 @@ ul li {
     background: #eee;
     border-radius: 3px;
     padding: 3px 20px;
-    color: #333;
+    color: #001337;
     height: 30px;
 }
 

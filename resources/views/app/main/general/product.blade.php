@@ -278,51 +278,49 @@
                         </div><br>
 
                         <a style='color:#f68b1e' href="{{ url('shop/'.$product['vendor']['username']) }}">
-                        <div class='single-product-quantity' style=' padding: 10px; border-radius: 10px; line-height: 16px; background: #f7f7f7 !important; margin-bottom:20px;'>
-                        <h4 style='text-align: center; font-size: 14px;'>
-                            <img src='{{ url('app/assets/img/vendor-banner/'.$product['product_vid'].'.jpg') }}' style='width:100%; height:auto; border-radius: 5px;'/>
-                            <br><br>
-                            <span style='font-size: 12px; color:#363f4d;'>Sold By</span> 
-                            <br>
-                            <a style='color:#f68b1e' href="{{ url('shop/'.$product['vendor']['username']) }}"><span style='font-weight: 400; font-size:13px;'>{{ $product['vendor']['name'] }}</span></a>
-                            <br>
-                            <span style='font-size: 11px;'>Joined <span style='font-weight: 450'>{{ $product['vendor_date_joined'] }}</span></span>
-                        </h4>
-                        <br>
-
-                        @if(isset($product['vendor_rating']))
-                            @if ($product['vendor_rating'] > 0 OR $product['vendor_rating_count'] > 0) 
-                                <h4 style='text-align: center; font-size: 13px;'>
-                                    {{ $product['vendor_sales_and_rating_header'] }}
+                            <div class='single-product-quantity' style=' padding: 10px; border-radius: 10px; line-height: 16px; background: #f7f7f7 !important; margin-bottom:20px;'>
+                                <h4 style='text-align: center; font-size: 14px;'>
+                                    <img src='{{ url('app/assets/img/vendor-banner/'.$product['product_vid'].'.jpg') }}' style='width:100%; height:auto; border-radius: 5px;'/>
+                                    <br><br>
+                                    <span style='font-size: 12px; color:#363f4d;'>Sold By</span> 
+                                    <br>
+                                    <a style='color:#f68b1e' href="{{ url('shop/'.$product['vendor']['username']) }}"><span style='font-weight: 400; font-size:13px;'>{{ $product['vendor']['name'] }}</span></a>
+                                    <br>
+                                    <span style='font-size: 11px;'>Joined <span style='font-weight: 450'>{{ $product['vendor_date_joined'] }}</span></span>
                                 </h4>
-                                <h5 style="text-align: center; font-weight: 300">
-                                    <span style='font-size: 11px;'>
-                                        @if($product['vendor_purchases'] > 0)
-                                            <span style='font-weight: 450'>{{ $product['vendor_purchases'] }}</span> successful 
-                                            @if($product['vendor_purchases'] > 1)
-                                                {{ str_plural('purchase') }}
-                                            @else
-                                                purchase
-                                            @endif
-                                        @endif
+                                <br>
 
-                                        @if($product['vendor_rating_count'] > 0)
-                                            <br>
-                                            <span style='padding:2px; border-radius: 5px; color:white; background-color:#f68b1e;'><span style='font-weight: 450'>{{ $product['vendor_rating'] }} % </span></span>&nbsp; 
-                                            ( {{ $product['vendor_rating_count'] }}  
-                                                @if($product['vendor_rating_count'] > 1)
-                                                    {{ str_plural('review') }}
+                                @if ($product['vendor_purchases'] > 0 OR isset($product['vendor_rating_count'])) 
+                                    <h4 style='text-align: center; font-size: 13px;'>
+                                        {{ $product['vendor_sales_and_rating_header'] }}
+                                    </h4>
+                                    <h5 style="text-align: center; font-weight: 300">
+                                        <span style='font-size: 11px;'>
+                                            @if($product['vendor_purchases'] > 0)
+                                                <span style='font-weight: 450'>{{ $product['vendor_purchases'] }}</span> successful 
+                                                @if($product['vendor_purchases'] > 1)
+                                                    {{ str_plural('purchase') }}
                                                 @else
-                                                    review
+                                                    purchase
                                                 @endif
-                                            )
-                                        @endif
-                                    </span>
-                                </h5>
-                            @endif
-                        @endif
-                            </a>
-                        </div>
+                                            @endif
+
+                                            @if(isset($product['vendor_rating_count']))
+                                                <br>
+                                                <span style='padding:2px; border-radius: 5px; color:white; background-color:#f68b1e;'><span style='font-weight: 450'>{{ $product['vendor_rating'] }} % </span></span>&nbsp; 
+                                                ( {{ $product['vendor_rating_count'] }}  
+                                                    @if($product['vendor_rating_count'] > 1)
+                                                        {{ str_plural('review') }}
+                                                    @else
+                                                        review
+                                                    @endif
+                                                )
+                                            @endif
+                                        </span>
+                                    </h5>
+                                @endif
+                            </div>
+                        </a>
                     <div>
                 </div>
             </div>

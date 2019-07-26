@@ -26,7 +26,7 @@
             </div>
         </div>
     </section>
-    <!--Heading Banner Area End-->
+    <!--Heading Banner Area End--> 
     <!--My Account Area Start-->
     <section class="my-account-area mt-20">
         <div class="container">
@@ -40,7 +40,7 @@
                             </div>
                         </div>
                         <div class="login-form">
-                        <form action="{{ route('customer.reset.password') }}" method="POST">
+                            <form action="{{ route('customer.reset.password') }}" method="POST">
                                 @csrf
                                 <div class="form-fild">
                                     <input type="text" name="email" placeholder="Enter Email" value="{{ old('email') }}" required>

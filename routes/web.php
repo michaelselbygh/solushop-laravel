@@ -21,14 +21,35 @@ Auth::routes();
 
 
 
-//app routes
+//home and auth routes
 Route::get('/', 'AppHomeController@showHome')->name('home');
 Route::get('/logout', 'Auth\LoginController@logout')->name('customer.logout');
 Route::get('/login', 'Auth\LoginController@showLoginForm')->name('login');
+Route::get('/register', 'Auth\LoginController@showRegisterForm')->name('register');
 Route::post('/login', 'Auth\LoginController@login')->name('customer.login.submit');
 Route::get('/reset-password', 'Auth\LoginController@showResetPasswordForm')->name('customer.reset.password');
 Route::post('/reset-password', 'Auth\LoginController@resetPassword')->name('customer.reset.password.submit');
+
+//shop, products and vendors routes
 Route::get('/shop/{vendorSlug}/{productSlug}', 'AppProductController@showProduct')->name('show.product');
+Route::get('/shop/{vendorSlug}', 'AppVendorController@showVendor')->name('show.vendor');
+Route::get('/shops', 'AppVendorController@showVendors')->name('show.vendors');
+Route::get('/shop', 'AppShopController@showProducts')->name('show.shop');
+
+//my account routes
+Route::get('/my-account', 'AppMyAccountPagesController@showProfile')->name('show.account');
+
+//general pages 
+Route::get('/wishlist', 'AppGeneralPagesController@showWishlist')->name('show.wishlist');
+Route::get('/cart', 'AppGeneralPagesController@showCart')->name('show.cart');
+Route::get('/checkout', 'AppGeneralPagesController@showCheckout')->name('show.checkout');
+Route::get('/about', 'AppGeneralPagesController@showAbout')->name('show.about');
+Route::get('/contact', 'AppGeneralPagesController@showContact')->name('show.contact');
+Route::get('/terms-and-conditions', 'AppGeneralPagesController@showTNC')->name('show.terms.and.conditions');
+Route::get('/privacy-policy', 'AppGeneralPagesController@showPrivacyPolicy')->name('show.privacy.policy');
+Route::get('/return-policy', 'AppGeneralPagesController@showReturnPolicy')->name('show.return.policy');
+Route::get('/frequently-asked-questions', 'AppGeneralPagesController@showFAQ')->name('show.frequently.asked.questions');
+Route::get('/page-not-found', 'AppGeneralPagesController@show404')->name('page.not.found');
 
 
 //portal routes

@@ -127,9 +127,13 @@
                                 </div>
                             </a>
                         </div>
+                        <a href="{{ url('my-account/messages/'.$product['vendor']['username'].'/'.$product['product_slug']) }}" class="external">
+                            <button class="button" style="font-weight: 400"> Ask {{ $product['vendor']['name'] }} a question.</button>
+                        </a>
+                        <br><br>
                     </div>
                     
-                    @if(sizeof($product["related_products"]) > 0)
+                    @if(sizeof($product["related_products"]) > 0 AND !(sizeof($product["related_products"]) == 1 AND $product["related_products"][0]['id'] == $product["id"]))
                         <div class="related-product">
                             <div class="wrap-title">
                                 <h3>Related Products</h3>
@@ -223,6 +227,9 @@
                             </div>
                             <br><br>
                         </div>
+                    @endif
+                    @if (session()->has('welcome_message')) 
+                        <div id="snackbar">{{ session()->get('welcome_message') }}</div>
                     @endif
                 </div>
                 <!-- end product details -->
