@@ -13,17 +13,10 @@
             <!--Search Box Start-->
             <div class="col-md-7 col-sm-5 col-xs-12">
                 <div class="search-box-area">
-                    <form action="shop.php" method="POST">
-                        <div class="select-area">
-                           <select name='search_category' data-placeholder="Choose Category" class="select" tabindex="1" required>
-                               <option value='All'>Select Category</option>
-                                @foreach ($search_bar_pc_options as $search_bar_pc_option)
-                                    <option value='{{ $search_bar_pc_option->id }}'>{{ $search_bar_pc_option->pc_description }}</option>
-                                @endforeach
-                           </select>
-                        </div>
+                    <form action="{{ route('show.shop.search') }}" method="POST">
+                        @csrf
                         <div class="search-box">
-                            <input type="text" name="search_value" id="search" placeholder="Search for something e.g. Perfumes" value=''>
+                            <input type="text" name="search_query_string" id="search" placeholder="Search for something e.g. Perfumes" value=''>
                             <button name="Search" type="submit"><i class="ion-ios-search-strong"></i></button>
                         </div>
                     </form>

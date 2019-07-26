@@ -1,6 +1,6 @@
 @extends('app.layouts.general')
 @section('page-title')
-    Shop
+    Shop @if(isset($category['pc_description'])) {{ $category['pc_description'] }} @endif
 @endsection
 @section('page-image')
     {{ url('app/assets/img/Solushop.jpg') }}
@@ -17,8 +17,8 @@
                     <div class="heading-banner">
                         <div class="breadcrumbs">
                             <ul>
-                                <li><a href="index.php">Home</a><span class="breadcome-separator">></span></li>
-                                <li>Shop</li>
+                                <li><a href="{{ route('home') }}">Home</a><span class="breadcome-separator">></span></li>
+                                <li>Shop @if(isset($category['pc_description'])) {{ $category['pc_description'] }} @endif </li>
                             </ul>
                         </div><br>
                     </div>
@@ -33,6 +33,9 @@
             <div class="row">
                 <!--Shop Product Area Start-->
                 <div class="col-lg-12 col-md-12" >
+                    @if(isset($category['pc_description']))
+                        <h3 style="text-align: center;"> {{ $category['pc_description'] }} </h3><br>
+                    @endif
                     @include('app.main.general.success-and-error.message') 
                     <!--Shop Tab Menu Start-->
                     <div class="shop-tab-menu">
@@ -49,19 +52,19 @@
                             <div class="col-md-7 col-sm-7 col-lg-6 hidden-xs text-right">
                                 <div class="show-result">
                                     <p>
-                                            Showing 
-                                            <span style='font-weight: 450'>
-                                                {{($product->currentPage()-1)* $product->perPage() + 1}}
-                                            </span>
-                                            to 
-                                            <span style='font-weight: 450'>
-                                                {{ ($product->currentPage()-1)* $product->perPage() + $product->perPage() }} 
-                                            </span>
-                                            of   
-                                            <span style='font-weight: 450'>
-                                                {{ $product->total() }} 
-                                            </span>
-                                            records.
+                                        Showing 
+                                        <span style='font-weight: 450'>
+                                            {{($product->currentPage()-1)* $product->perPage() + 1}}
+                                        </span>
+                                        to 
+                                        <span style='font-weight: 450'>
+                                            {{ ($product->currentPage()-1)* $product->perPage() + $product->perPage() }} 
+                                        </span>
+                                        of   
+                                        <span style='font-weight: 450'>
+                                            {{ $product->total() }} 
+                                        </span>
+                                        records.
                                     </p>
                                 </div>
                             </div>

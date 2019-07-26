@@ -79,7 +79,7 @@
                             <div class="row">
                                 <div class="col-25">
                                     <div class="content">
-                                        <a href="/categories-details/">
+                                        <a href=" {{ url('shop/category/books') }} " class="external">
                                             <i class="ti-book"></i>
                                             <span>Books</span>
                                         </a>
@@ -87,7 +87,7 @@
                                 </div>
                                 <div class="col-25">
                                     <div class="content">
-                                        <a href="/categories-details/">
+                                        <a href=" {{ url('shop/category/womens-fashion') }} " class="external">
                                             <i class="ti-heart"></i>
                                             <span>Women</span>
                                         </a>
@@ -95,7 +95,7 @@
                                 </div>
                                 <div class="col-25">
                                     <div class="content">
-                                        <a href="/categories-details/">
+                                        <a href=" {{ url('shop/category/kitchenware') }} " class="external">
                                             <i class="ti-plug"></i>
                                             <span>Kitchenware</span>
                                         </a>
@@ -103,7 +103,7 @@
                                 </div>
                                 <div class="col-25">
                                     <div class="content">
-                                        <a href="/categories-details/">
+                                        <a href=" {{ url('shop/category/mens-fashion') }} " class="external">
                                             <i class="ti-user"></i>
                                             <span>Men</span>
                                         </a>
@@ -113,7 +113,7 @@
                             <div class="row">
                                 <div class="col-25">
                                     <div class="content">
-                                        <a href="/categories-details/">
+                                        <a href=" {{ url('shop/category/phones') }} " class="external">
                                             <i class="ti-mobile"></i>
                                             <span>Phones</span>
                                         </a>
@@ -121,7 +121,7 @@
                                 </div>
                                 <div class="col-25">
                                     <div class="content">
-                                        <a href="/categories-details/">
+                                        <a href=" {{ url('shop/category/tablets') }} " class="external">
                                             <i class="ti-tablet"></i>
                                             <span>Tablets</span>
                                         </a>
@@ -129,7 +129,7 @@
                                 </div>
                                 <div class="col-25">
                                     <div class="content">
-                                        <a href="/categories-details/">
+                                        <a href=" {{ url('shop/category/home-and-living') }} " class="external">
                                             <i class="ti-home"></i>
                                             <span>Home</span>
                                         </a>
@@ -137,7 +137,7 @@
                                 </div>
                                 <div class="col-25">
                                     <div class="content">
-                                        <a href="/categories-details/">
+                                        <a href=" {{ url('shop/category/grocery') }} " class="external">
                                             <i class="ti-gift"></i>
                                             <span>Grocery</span>
                                         </a>
@@ -161,11 +161,11 @@
                                 <div class="swiper-wrapper">
                                     @for ($j = 0; $j < sizeof($sections['products'][$i]); $j++)
                                         <div class="swiper-slide">
-                                            <a href="{{ url('shop/'.$sections['products'][$i][$j]['vendor_slug'].'/'.$sections['products'][$i][$j]['product_slug'])}}" class="external">
+                                            <a href="{{ url('shop/'.$sections['products'][$i][$j]['vendor']['username'].'/'.$sections['products'][$i][$j]['product_slug'])}}" class="external">
                                                 <div class="content">
                                                     <img src="{{ url('app/assets/img/products/thumbnails/'.$sections['products'][$i][$j]['images'][0]['pi_path'].'.jpg') }}" alt="{{ ucwords($sections['products'][$i][$j]['product_name']) }}">
                                                     <div class="text">
-                                                        <a href="{{ url('shop/'.$sections['products'][$i][$j]['vendor_slug'].'/'.$sections['products'][$i][$j]['product_slug'])}}" class="external">
+                                                        <a href="{{ url('shop/'.$sections['products'][$i][$j]['vendor']['username'].'/'.$sections['products'][$i][$j]['product_slug'])}}" class="external">
                                                             <p>{{ ucwords($sections['products'][$i][$j]['product_name']) }}</p>
                                                         </a>
                                                         <span class="price">

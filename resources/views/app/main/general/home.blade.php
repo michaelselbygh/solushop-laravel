@@ -200,7 +200,7 @@
                                                 <div class="col-md-12 item-col">
                                                     <div class="single-product" style=' text-align:center;'>
                                                         <div class="product-img">
-                                                            <a href="{{ url('shop/'.$sections['products'][$i][$j]['vendor_slug'].'/'.$sections['products'][$i][$j]['product_slug'])}}">
+                                                            <a href="{{ url('shop/'.$sections['products'][$i][$j]['vendor']['username'].'/'.$sections['products'][$i][$j]['product_slug'])}}">
                                                                 <img class="first-img" src="{{ url('app/assets/img/products/thumbnails/'.$sections['products'][$i][$j]['images'][0]['pi_path'].'.jpg') }}" style='border-radius:10px;' alt="">
 
                                                                 @if (sizeof($sections['products'][$i][$j]['images']) > 1) 
@@ -214,7 +214,7 @@
                                                             </a>
                                                         </div>
                                                         <div class="product-content">
-                                                            <a href="{{ url('shop/'.$sections['products'][$i][$j]['vendor_slug'].'/'.$sections['products'][$i][$j]['product_slug'])}}">{{ ucwords($sections['products'][$i][$j]['product_name']) }}</a>
+                                                            <a href="{{ url('shop/'.$sections['products'][$i][$j]['vendor']['username'].'/'.$sections['products'][$i][$j]['product_slug'])}}">{{ ucwords($sections['products'][$i][$j]['product_name']) }}</a>
                                                             <div class="product-price">
                                                                 <span class="new-price">GH¢ {{ $sections['products'][$i][$j]['product_selling_price'] - $sections['products'][$i][$j]['product_discount'] }}</span>
                                                                 @if($sections['products'][$i][$j]['product_discount'] > 0)

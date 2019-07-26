@@ -24,19 +24,42 @@
                 <div class="product-details">
                     <div class="wrap-action">
                         <div class="row">
-                            <div class="col-15">
+                            <div class="col-20" style="text-align:center">
                                 <div class="content-icon">
-                                    <a href="#"><i class="ti-heart"></i></a>
+                                    <a href=""><i class="ti-heart"></i></a> 
+                                    {{-- <button class="button bts-popup-trigger" value="{{ $product['id'] }}" type="submit" name='add_to_wishlist'><i class="ti-heart"></button> --}}
                                 </div>
                             </div>
-                            <div class="col-15">
-                                <div class="content-icon">
-                                    <a href="#" @click="showToastBottom"><i class="ti-shopping-cart"></i></a>
-                                </div>
-                            </div>
-                            <div class="col-70">
+                            <div class="col-80">
                                 <div class="content-button">
-                                    <button class="button">Buy Now GH¢ {{ $product['product_selling_price'] - $product['product_discount'] }}</button>
+                                    @if ($product["stock_status"] == 0) 
+                                        @if($product['product_type'] == 0)
+                                            <button class="button" type="submit" name='add_to_cart' value='NoValue'>Add to Cart - GH¢ {{ $product['product_selling_price'] - $product['product_discount'] }}</button>
+                                        @elseif($product['product_type'] == 1)
+                                            <button class="button bts-popup-trigger" type="button">Add to Cart - GH¢ {{ $product['product_selling_price'] - $product['product_discount'] }}</button>
+                                        @endif
+                                        
+                                        @if (Auth::check()) 
+                                            <div class="bts-popup" role="alert" >
+                                                <div class="bts-popup-container"style='background-color:white;'>
+                                                    <img src="{{ url('app/assets/img/caution.png') }}" alt="" width="35%" />
+                                                    <p style='margin-bottom:0px; padding-bottom:0px;'>
+                                                        This item is <b>available only on pre-order.</b><br> We suggest you <b>confirm</b> with the vendor on its <b>availability</b>. At your <b>discretion</b>, you may add item to cart and proceed to checkout.<br><br>
+                                                    </p>
+                                                    <div class="quantity" style='text-align:center'>
+                                                        <a href="{{ url('my-account/messages/'.$product['vendor']['username'].'/'.$product['product_slug']) }}">
+                                                            <button class="quantity-button" type='button' style='border-radius:15px; margin-right:20px; display:inline-block;'><i style='padding-right:5px; font-size: 18px;' class='fa fa-comments-o'></i> Ask Vendor</button>
+                                                        </a>&nbsp;&nbsp;
+                                                        <button class="quantity-button" style='border-radius:15px; display:inline-block;' type="submit" name='add_to_cart' value='NoValue'><i style='padding-right:5px; font-size: 18px;' class='ion-android-cart'></i> Add to Cart</button>
+                                                    </div>
+                                                    <p>A refund to your <b>Solushop Wallet</b> will be done if ordered item is unavailable after order placement.</p>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    @else
+                                        <button class="button" style="background-color: red" disabled>Out of Stock</button>
+                                    @endif
+                                    
                                 </div>
                             </div>
                         </div>
@@ -89,7 +112,39 @@
                                 @endfor
                             </ul>
                         </div>
-                        <div class="information-product-wrapper section-wrapper">
+                        <div class="description-product-wrapper section-wrapper">
+                            <form action="#" method="POST">
+                            
+                                @if ($product['variation_show'] == 0 AND $product['stock_status'] == 0) 
+                                    <div class="wrap-title">
+                                        <h3>Select Variation</h3>
+                                    </div>
+                                
+                                    <div class="input-group">
+                                        <div id="radioBtn" class="btn-group">
+                                            @for ($i = 0; $i < sizeof($product['skus']); $i++)
+                                                @if($product['skus'][$i]['sku_stock_left'] > 0 AND strtolower(trim($product['skus'][$i]['sku_variant_description'])) != "none")
+                                                    @if($i == $product['sku_first'])
+                                                        <a class="btn rbtn btn-sm active" data-toggle="ProductSKU" data-title="{{ $product['skus'][$i]['id'] }}">
+                                                            {{ $product['skus'][$i]['sku_variant_description'] }}
+                                                        </a>
+                                                    @else
+                                                        <a class="btn rbtn btn-sm notActive" data-toggle="ProductSKU" data-title="{{ $product['skus'][$i]['id'] }}">
+                                                            {{ $product['skus'][$i]['sku_variant_description'] }}
+                                                        </a>
+                                                    @endif
+                                                @endif
+                                            @endfor
+                                            <input type="hidden" name="ProductSKU" id="ProductSKU" value="{{ $product['skus'][$product['sku_first']]['id'] }}">
+                                        </div>
+                                    </div>
+                                    <br>
+                                @elseif($product['variation_show'] == 1 AND $product['stock_status'] == 0)
+                                    <input type='hidden' value = '{{ $product['skus'][0]['id'] }}' name='ProductSKU'>
+                                @endif
+                            </form>
+                        </div>
+                        <div class="information-product-wrapper section-wrapper">   
                             <div class="wrap-title">
                                 <h3>Availability &amp; Delivery</h3>
                             </div>
@@ -118,7 +173,7 @@
                         </div>
     
                         <div class="author-wrapper">
-                            <a  href="{{ url('shop/'.$product['vendor']['username']) }}">
+                            <a  href="{{ url('shop/'.$product['vendor']['username']) }}" class="external">
                             <img src="{{ url('app/assets/img/icon/vendor.png') }}" alt="">
                                 <div class="title-name">
                                     <span class="location" style="font-size: 12px;">Sold by</span>

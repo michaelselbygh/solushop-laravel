@@ -17,7 +17,7 @@
                     <div class="heading-banner">
                         <div class="breadcrumbs">
                             <ul>
-                                <li><a href="index.php">Home</a><span class="breadcome-separator">></span></li>
+                                <li><a href="{{ route('home') }}">Home</a><span class="breadcome-separator">></span></li>
                                 <li>Let's get talking</li>
                             </ul>
                         </div><br>

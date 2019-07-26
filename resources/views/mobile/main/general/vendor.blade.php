@@ -1,12 +1,12 @@
 @extends('mobile.layouts.general')
 @section('page-title')
-    Shop @if(isset($category['pc_description'])) {{ $category['pc_description'] }} @endif
+    {{ $vendor['name'] }}
 @endsection
 @section('page-image')
-    {{ url('app/assets/img/Solushop.jpg') }}
+    {{ url('app/assets/img/vendor-banners'.$vendor['id'].'.jpg') }}
 @endsection
 @section('page-description')
-    Solushop is Ghana&#039;s most trusted Online Shopping Mall ➜Shop electronics, accessories, books, fashion &amp; more online ✔ Great customer care ✔ Top quality products ✓ super fast shipping ✓ Order now and enjoy a revolutionary shopping experience!
+    Visit {{ $vendor['name'] }} on Solushop today!
 @endsection
 @section('page-content')
     <div class="page page-home">
@@ -19,28 +19,28 @@
                     <div id="tab-11" class="tab tab-active">
                         @include('mobile.main.general.includes.sidebar')
                         <div class="container">
-                            @if(isset($category['pc_description']))
-                                <h5 style="text-align: center;"> {{ $category['pc_description'] }} </h5><br>
-                            @endif
                             <div class="row">
-                                @for ($i = 0; $i < sizeof($product); $i++)
+                                <div class="content section-wrapper" style="min-height:0px;">
+                                    <img src="{{ url('app/assets/img/vendor-banner/'.$vendor['id'].'.jpg') }}" alt="">
+                                </div>
+                                @for ($i = 0; $i < sizeof($vendor['products']); $i++)
                                     @if ($i > 0 AND $i % 2 == 0)
                                         </div>
                                         <div class="row">
                                     @endif
                                     <div class="col-50">
-                                        <a href="{{ url('shop/'.$product[$i]['vendor']['username'].'/'.$product[$i]['product_slug'])}}" class="external">
+                                        <a href="{{ url('shop/'.$vendor['username'].'/'.$vendor['products'][$i]['product_slug'])}}" class="external">
                                             <div class="content">
-                                                <img src="{{ url('app/assets/img/products/thumbnails/'.$product[$i]['images'][0]['pi_path'].'.jpg') }}" alt="">
+                                                <img src="{{ url('app/assets/img/products/thumbnails/'.$vendor['products'][$i]['images'][0]['pi_path'].'.jpg') }}" alt="">
                                                 <div class="text">
-                                                    <a href="{{ url('shop/'.$product[$i]['vendor']['username'].'/'.$product[$i]['product_slug'])}}" class="external">
-                                                        <p>{{ ucwords($product[$i]['product_name']) }}</p>
+                                                    <a href="{{ url('shop/'.$vendor['username'].'/'.$vendor['products'][$i]['product_slug'])}}" class="external">
+                                                        <p>{{ ucwords($vendor['products'][$i]['product_name']) }}</p>
                                                     </a>
                                                     <span class="price">
-                                                        GH¢ {{ $product[$i]['product_selling_price'] - $product[$i]['product_discount'] }} 
-                                                        @if($product[$i]['product_discount'] > 0)
+                                                        GH¢ {{ $vendor['products'][$i]['product_selling_price'] - $vendor['products'][$i]['product_discount'] }} 
+                                                        @if($vendor['products'][$i]['product_discount'] > 0)
                                                             <span style="color: #a4a4a4; text-decoration: line-through; margin-right: 5px; font-size: 10px;">
-                                                                GH¢ {{ $product[$i]['product_selling_price'] }}
+                                                                GH¢ {{ $vendor['products'][$i]['product_selling_price'] }}
                                                             </span>
                                                         @endif
                                                     </span>
@@ -51,7 +51,7 @@
                                 @endfor
                             </div>
                             <div class="pagination" style="text-align: center;">
-                                {{ $product->links('mobile.pagination.links') }}
+                                {{ $vendor['products']->links('mobile.pagination.links') }}
                             </div>
                             @if (session()->has('welcome_message')) 
                                 <div id="snackbar">{{ session()->get('welcome_message') }}</div>

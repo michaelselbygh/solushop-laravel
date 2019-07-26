@@ -31,10 +31,12 @@ Route::get('/reset-password', 'Auth\LoginController@showResetPasswordForm')->nam
 Route::post('/reset-password', 'Auth\LoginController@resetPassword')->name('customer.reset.password.submit');
 
 //shop, products and vendors routes
+Route::get('/shop/category/{categorySlug}', 'AppShopController@showCategoryProducts')->name('show.shop.category');
 Route::get('/shop/{vendorSlug}/{productSlug}', 'AppProductController@showProduct')->name('show.product');
 Route::get('/shop/{vendorSlug}', 'AppVendorController@showVendor')->name('show.vendor');
 Route::get('/shops', 'AppVendorController@showVendors')->name('show.vendors');
 Route::get('/shop', 'AppShopController@showProducts')->name('show.shop');
+Route::post('/shop', 'AppShopController@showSearchProducts')->name('show.shop.search');
 
 //my account routes
 Route::get('/my-account', 'AppMyAccountPagesController@showProfile')->name('show.account');

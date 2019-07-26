@@ -231,14 +231,15 @@ Version: 1.0;
 	border-radius: 25px 0 0 25px;
 }
 .search-box {
-	width: 70%;
+	width: 100%;
 	float: left;
     position: relative;
     background: #fff;
 	height: 30px;
-	border-radius: 0 30px 30px 0;
+	border-radius: 30px;
 }
 .search-box input {
+	border-radius: 30px;
 	border-left: 1px solid #ebebeb;
 	padding: 0 95px 0 20px;
 	float: left;

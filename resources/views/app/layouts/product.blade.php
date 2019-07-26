@@ -194,10 +194,12 @@
 			}
 			.bts-popup-container img {
 			}
+			
 			.bts-popup-container p {
 				color: #363f4d;;
 				padding: 10px 40px;
 			}
+
 			.bts-popup-container .bts-popup-button {
 				padding: 5px 25px;
 				border-radius: 20px;
@@ -219,6 +221,7 @@
 				width: 30px;
 				height: 30px;
 			}
+
 			.bts-popup-container .bts-popup-close::before, .bts-popup-container .bts-popup-close::after {
 				content: '';
 				position: absolute;
@@ -227,6 +230,7 @@
 				height: 3px;
 				background-color: white;
 			}
+
 			.bts-popup-container .bts-popup-close::before {
 				-webkit-transform: rotate(45deg);
 				-moz-transform: rotate(45deg);
@@ -235,6 +239,7 @@
 				transform: rotate(45deg);
 				left: 8px;
 			}
+
 			.bts-popup-container .bts-popup-close::after {
 				-webkit-transform: rotate(-45deg);
 				-moz-transform: rotate(-45deg);
@@ -244,6 +249,7 @@
 				right: 6px;
 				top: 13px;
 			}
+
 			.is-visible .bts-popup-container {
 				-webkit-transform: translateY(0);
 				-moz-transform: translateY(0);
@@ -259,7 +265,6 @@
 					margin: 8em auto;
 				}
 			}
-
 		</style>
 		<!-- Modernizr Js -->
 		<script src="{{ url('app/assets/js/vendor/modernizr-2.8.3.min.js') }}"></script>
@@ -390,8 +395,6 @@
 			}
 
 			jQuery(document).ready(function($){
-						
-				
 				//open popup
 				$('.bts-popup-trigger').on('click', function(event){
 					event.preventDefault();

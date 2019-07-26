@@ -17,7 +17,7 @@
                         <div class="breadcrumbs">
                             <ul>
                                 <li><a href="{{ route('home') }}">Home</a><span class="breadcome-separator">></span></li>
-                                <li><a href="shop.php">Shop</a><span class="breadcome-separator">></span></li>
+                                <li><a href="{{ route('show.shop') }}">Shop</a><span class="breadcome-separator">></span></li>
                                 @for ($i = sizeof($product['breadcrumb']) -1; $i >= 0 ; $i--)
                                     <li>
                                         <a href="{{ url($product['breadcrumb'][$i]['url']) }}">
@@ -86,6 +86,7 @@
                         <div class="single-product-content">
                             <div class="form-register-title">
                                 <h3>
+                                    
                                     {{ ucwords($product['product_name']) }}
                                 </h3>
                                 
