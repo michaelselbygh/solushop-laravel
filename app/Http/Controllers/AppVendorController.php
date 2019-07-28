@@ -55,6 +55,10 @@ class AppVendorController extends Controller
                 ->paginate(30)
                 ->onEachSide(2);
 
+        if (sizeof($vendor['products']) == 0) {
+            return redirect()->route('page.not.found');
+        }
+
          //process vendor joined date
          $vendor['vendor_date_joined'] = date('F Y', strtotime(substr($vendor['id'], 0, 2)."-".substr($vendor['id'], 2, 2)."-".substr($vendor['id'], 4, 4)));
 

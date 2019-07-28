@@ -19,7 +19,7 @@
             #snackbar {
                 visibility: hidden; /* Hidden by default. Visible on click */
                 min-width: 250px; /* Set a default minimum width */
-                margin-left: -125px; /* Divide value of min-width by 2 */
+                margin-left: -135px; /* Divide value of min-width by 2 */
                 background-color: rgba(0, 19, 55, 0.8); /* Blue black background color */
                 color: #fff; /* White text color */
                 text-align: center; /* Centered text */

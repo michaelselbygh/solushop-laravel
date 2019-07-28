@@ -7,13 +7,15 @@ use Illuminate\Http\Request;
 use \Mobile_Detect;
 use Auth;
 
+use App\CartItem;
 use App\Customer;
-use App\Vendor;
+use App\OrderItem;
 use App\Product;
 use App\ProductCategory;
 use App\ProductReview;
-use App\OrderItem;
 use App\StockKeepingUnit;
+use App\WishlistItem;
+use App\Vendor;
 
 class AppProductController extends Controller
 {
@@ -276,5 +278,95 @@ class AppProductController extends Controller
         
 
         
+    }
+
+    public function processProductAction(Request $request){
+        if(isset($request->product_action)){
+            $product = [];
+            if($request->product_action == "add_to_cart"){
+                if (!Auth::check()) {
+                    $messageType = 'error_message';
+                    $messageContent = "Login to access your cart.";
+                } else {
+                    $product['id_check'] = Product::
+                        where('id', $request->product_id)
+                        ->where('product_state', '1')
+                        ->first();
+
+                    if ($product['id_check'] == null) {
+                        //product does not exist
+                        $messageType = 'error_message';
+                        $messageContent = "Sorry, product not found.";
+                    } else {
+                        $product['name'] = ucwords($product['id_check']->product_name);
+                        $product['cart_check'] = CartItem::
+                            where('ci_customer_id', Auth::user()->id)
+                            ->where('ci_sku', $request->product_sku)
+                            ->first();
+
+                        
+                        if (!is_null($product['cart_check'])) { 
+                            //Item already in customers cart.
+                            $messageType = 'error_message';
+                            $messageContent = 'Product already found in cart.';
+                        }else{
+
+                            $cartItem = new CartItem;
+                            $cartItem->ci_customer_id = Auth::user()->id;
+                            $cartItem->ci_sku = $request->product_sku;
+                            $cartItem->ci_quantity = $request->product_quantity;
+                            $cartItem->save();
+
+                            $messageType = 'success_message';
+                            $messageContent = 'Product added to cart.';
+                        }
+                    }
+                }
+            }elseif($request->product_action == "add_to_wishlist"){
+
+                if (!Auth::check()) {
+                    $messageType = 'error_message';
+                    $messageContent = "Login to access your wishlist.";
+                } else {
+                    $product['id_check'] = Product::
+                        where('id', $request->product_id)
+                        ->where('product_state', '1')
+                        ->first();
+
+                    if ($product['id_check'] == null) {
+                        //product does not exist
+                        $messageType = 'error_message';
+                        $messageContent = "Sorry, product not found.";
+                    } else {
+                        $product['name'] = ucwords($product['id_check']->product_name);
+                        $product['wishlist_check'] = WishlistItem::
+                            where('wi_customer_id', Auth::user()->id)
+                            ->where('wi_product_id', $request->product_id)
+                            ->first();
+
+                        
+                        if (!is_null($product['wishlist_check'])) { 
+                            //Item already in customers wishlist.
+                            $messageType = 'error_message';
+                            $messageContent = 'Product already found in wishlist.';
+                        }else{
+
+                            $wishlistItem = new WishlistItem;
+                            $wishlistItem->wi_customer_id = Auth::user()->id;
+                            $wishlistItem->wi_product_id = $request->product_id;
+                            $wishlistItem->save();
+
+                            $messageType = 'success_message';
+                            $messageContent = 'Product added to wishlist.';
+                        }
+                    }
+                }
+            }
+        }else{
+            $messageType = 'error_message';
+            $messageContent = 'Something went wrong. Please try again.';
+        }
+
+        return redirect()->back()->with($messageType, $messageContent);
     }
 }

@@ -79,6 +79,9 @@ class AppShopController extends Controller
         ->paginate(30)
         ->onEachSide(2);
 
+        if(sizeof($category['products']) == 0){
+            return redirect()->route('page.not.found');
+        }
         $product = $category['products'];
 
         /*---selecting search bar categories (level 2 categories)---*/

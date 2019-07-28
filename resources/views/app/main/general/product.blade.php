@@ -127,12 +127,12 @@
 
                             <!--Product Quantity Start-->
                             <div class="single-product-quantity">
-                                <form action="#" method="POST">
-                                    
+                                <form action="{{ url('shop/'.$product['vendor']['username'].'/'.$product['product_slug']) }}" method="POST">
+                                    @csrf
                                     @if ($product['variation_show'] == 0 AND $product['stock_status'] == 0) 
                                         <div class='quantity'>
                                             <label>Quantity</label>
-                                            <input class='input-text' style='padding-right:10px;' name='quantity' value='1' min='1' max='' type='number'/><span style='padding-left:10px; font-size:13px;'><br><br><label>Select Variation</label>
+                                            <input class='input-text' style='padding-right:10px;' name='product_quantity' value='1' min='1' max='' type='number'/><span style='padding-left:10px; font-size:13px;'><br><br><label>Select Variation</label>
                                         
                                             <div class="input-group">
                                                 <div id="radioBtn" class="btn-group">
@@ -149,7 +149,7 @@
                                                             @endif
                                                         @endif
                                                     @endfor
-                                                    <input type="hidden" name="ProductSKU" id="ProductSKU" value="{{ $product['skus'][$product['sku_first']]['id'] }}">
+                                                    <input type="hidden" name="product_sku" id="ProductSKU" value="{{ $product['skus'][$product['sku_first']]['id'] }}">
                                                 </div>
                                             </div>
                                         </span>
@@ -157,11 +157,11 @@
                                     @elseif($product['variation_show'] == 1 AND $product['stock_status'] == 0)
                                         <div class='quantity'>
                                             <label>Quantity</label>
-                                                <input class='input-text' style='padding-right:10px;' name='quantity' value='1' min='1' max='{{ $product['skus'][0]['sku_stock_left'] }}' type='number'>
+                                                <input class='input-text' style='padding-right:10px;' name='product_quantity' value='1' min='1' max='{{ $product['skus'][0]['sku_stock_left'] }}' type='number'>
                                                 @if($product['product_type'] == 0)
                                                     <span style='padding-left:10px; font-size:16px;'>( {{ $product['skus'][0]['sku_stock_left'] }} left )</span>
                                                 @endif
-                                            <input type='hidden' value = '{{ $product['skus'][0]['sku_stock_left'] }}' name='ProductSKU'>
+                                            <input type='hidden' value = '{{ $product['skus'][0]['id'] }}' name='product_sku'>
                                         </div>
                                     @endif
                                     <span>
@@ -195,8 +195,16 @@
                                                 Out of Stock
                                             </button>
                                         @endif
-
-                                        <button value="{{ $product['id'] }}" data-toggle="tooltip" style="padding: auto" title="Save For Later" class="sfl-button" type="submit" name='add_to_wishlist'><i style='padding-right:auto; font-size: 20px;' class="ion-android-favorite-outline" ></i></button>
+                                    </span>
+                                    <input type="hidden" name="product_action" value="add_to_cart" />
+                                    <input type="hidden" name="product_id" value="{{ $product['id'] }}" />
+                                </form>
+                                <form action="{{ url('shop/'.$product['vendor']['username'].'/'.$product['product_slug']) }}" method="POST">
+                                    @csrf
+                                    <span>
+                                        <input type="hidden" name="product_action" value="add_to_wishlist" />
+                                        <input type="hidden" name="product_id" value="{{ $product['id'] }}" />
+                                        <button data-toggle="tooltip" style="padding: auto" title="Save For Later" class="sfl-button" type="submit" name='add_to_wishlist'><i style='padding-right:auto; font-size: 20px;' class="ion-android-favorite-outline" ></i></button>
                                     </span>
                                 </form>
                             </div>

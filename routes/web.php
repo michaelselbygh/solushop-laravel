@@ -33,6 +33,7 @@ Route::post('/reset-password', 'Auth\LoginController@resetPassword')->name('cust
 //shop, products and vendors routes
 Route::get('/shop/category/{categorySlug}', 'AppShopController@showCategoryProducts')->name('show.shop.category');
 Route::get('/shop/{vendorSlug}/{productSlug}', 'AppProductController@showProduct')->name('show.product');
+Route::post('/shop/{vendorSlug}/{productSlug}', 'AppProductController@processProductAction')->name('process.product.action');
 Route::get('/shop/{vendorSlug}', 'AppVendorController@showVendor')->name('show.vendor');
 Route::get('/shops', 'AppVendorController@showVendors')->name('show.vendors');
 Route::get('/shop', 'AppShopController@showProducts')->name('show.shop');

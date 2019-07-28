@@ -26,17 +26,16 @@
                         <div class="row">
                             <div class="col-20" style="text-align:center">
                                 <div class="content-icon">
-                                    <a href=""><i class="ti-heart"></i></a> 
-                                    {{-- <button class="button bts-popup-trigger" value="{{ $product['id'] }}" type="submit" name='add_to_wishlist'><i class="ti-heart"></button> --}}
+                                    <a href="" onclick="document.getElementById('wishlist-form').submit();"><i class="ti-heart"></i></a> 
                                 </div>
                             </div>
                             <div class="col-80">
                                 <div class="content-button">
                                     @if ($product["stock_status"] == 0) 
                                         @if($product['product_type'] == 0)
-                                            <button class="button" type="submit" name='add_to_cart' value='NoValue'>Add to Cart - GH¢ {{ $product['product_selling_price'] - $product['product_discount'] }}</button>
+                                            <button class="button" onclick="document.getElementById('cart-form').submit();">Add to Cart - GH¢ {{ $product['product_selling_price'] - $product['product_discount'] }}</button>
                                         @elseif($product['product_type'] == 1)
-                                            <button class="button bts-popup-trigger" type="button">Add to Cart - GH¢ {{ $product['product_selling_price'] - $product['product_discount'] }}</button>
+                                            <button class="button bts-popup-trigger" >Add to Cart - GH¢ {{ $product['product_selling_price'] - $product['product_discount'] }}</button>
                                         @endif
                                         
                                         @if (Auth::check()) 
@@ -50,7 +49,7 @@
                                                         <a href="{{ url('my-account/messages/'.$product['vendor']['username'].'/'.$product['product_slug']) }}">
                                                             <button class="quantity-button" type='button' style='border-radius:15px; margin-right:20px; display:inline-block;'><i style='padding-right:5px; font-size: 18px;' class='fa fa-comments-o'></i> Ask Vendor</button>
                                                         </a>&nbsp;&nbsp;
-                                                        <button class="quantity-button" style='border-radius:15px; display:inline-block;' type="submit" name='add_to_cart' value='NoValue'><i style='padding-right:5px; font-size: 18px;' class='ion-android-cart'></i> Add to Cart</button>
+                                                        <button class="quantity-button" style='border-radius:15px; display:inline-block;' onclick="document.getElementById('cart-form').submit();"><i style='padding-right:5px; font-size: 18px;' class='ion-android-cart'></i> Add to Cart</button>
                                                     </div>
                                                     <p>A refund to your <b>Solushop Wallet</b> will be done if ordered item is unavailable after order placement.</p>
                                                 </div>
@@ -113,8 +112,8 @@
                             </ul>
                         </div>
                         <div class="description-product-wrapper section-wrapper">
-                            <form action="#" method="POST">
-                            
+                            <form action="{{ url('shop/'.$product['vendor']['username'].'/'.$product['product_slug']) }}" method="POST" id="cart-form">
+                                @csrf
                                 @if ($product['variation_show'] == 0 AND $product['stock_status'] == 0) 
                                     <div class="wrap-title">
                                         <h3>Select Variation</h3>
@@ -135,13 +134,22 @@
                                                     @endif
                                                 @endif
                                             @endfor
-                                            <input type="hidden" name="ProductSKU" id="ProductSKU" value="{{ $product['skus'][$product['sku_first']]['id'] }}">
+                                            <input type="hidden" name="product_sku" id="ProductSKU" value="{{ $product['skus'][$product['sku_first']]['id'] }}">
                                         </div>
                                     </div>
                                     <br>
                                 @elseif($product['variation_show'] == 1 AND $product['stock_status'] == 0)
-                                    <input type='hidden' value = '{{ $product['skus'][0]['id'] }}' name='ProductSKU'>
+                                    <input type='hidden' value = '{{ $product['skus'][0]['id'] }}' name='product_sku'>
                                 @endif
+
+                                <input type='hidden' value = '{{ $product['id'] }}' name='product_id'>
+                                <input type='hidden' value = '1' name='product_quantity'>
+                                <input type="hidden" name="product_action" value="add_to_cart" />
+                            </form>
+                            <form action="{{ url('shop/'.$product['vendor']['username'].'/'.$product['product_slug']) }}" method="POST" id='wishlist-form'>
+                                @csrf
+                                <input type="hidden" name="product_action" value="add_to_wishlist" />
+                                <input type="hidden" name="product_id" value="{{ $product['id'] }}" />
                             </form>
                         </div>
                         <div class="information-product-wrapper section-wrapper">   
@@ -287,8 +295,14 @@
                         <div id="snackbar">{{ session()->get('welcome_message') }}</div>
                     @endif
                 </div>
+                
                 <!-- end product details -->
             </div>
+            @if (session()->has('error_message')) 
+                <div id="snackbar">{{ session()->get('error_message') }}</div>
+            @elseif (session()->has('success_message')) 
+                <div id="snackbar">{{ session()->get('success_message') }}</div>
+            @endif
         </div>
     </div>
 @endsection

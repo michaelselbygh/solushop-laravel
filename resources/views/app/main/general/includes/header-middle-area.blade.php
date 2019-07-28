@@ -5,7 +5,7 @@
             <!--Logo Start-->
             <div class="col-md-2 col-sm-3 col-xs-12">
                 <div class="logo">
-                    <a href="index.php"><img src="{{ url('app/assets/img/logo/logo.png') }}" alt="Solushop Logo" style="width: 120px;
+                    <a href="{{ route('home') }}"><img src="{{ url('app/assets/img/logo/logo.png') }}" alt="Solushop Logo" style="width: 120px;
                         height: auto;"></a>
                 </div>
             </div>
