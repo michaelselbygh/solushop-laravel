@@ -259,6 +259,29 @@ class AppProductController extends Controller
                 where('pc_level', 2) 
                 ->orderBy('pc_description')   
                 ->get(['id', 'pc_description', 'pc_slug']);
+
+                /*---retrieving customer information if logged in---*/
+                if (Auth::check()) {
+                    $customer_information_object = Customer::
+                        where('id', Auth::user()->id)
+                        ->with('milk', 'chocolate', 'cart', 'wishlist')
+                        ->first()
+                        ->toArray();
+
+                    //calculate account balance
+                    $customer_information['wallet_balance'] = round(($customer_information_object['milk']['milk_value'] * $customer_information_object['milkshake']) - $customer_information_object['chocolate']['chocolate_value'], 2);
+
+                    //get cart count
+                    $customer_information['cart_count'] = sizeof($customer_information_object['cart']);
+
+                    //get wishlist count
+                    $customer_information['wishlist_count'] = sizeof($customer_information_object['wishlist']);
+
+                }else{
+                    $customer_information['wallet_balance'] = 0;
+                    $customer_information['cart_count'] = 0;
+                    $customer_information['wishlist_count'] = 0;
+                }
                 
                 $detect = new Mobile_Detect;
                 if( $detect->isMobile() && !$detect->isTablet() ){
@@ -267,10 +290,12 @@ class AppProductController extends Controller
                     $view = 'app.main.general.product';
                 }
 
-
+                
                 return view($view)
-                    ->with('search_bar_pc_options', $search_bar_pc_options)
-                    ->with('product', $product);
+                ->with('search_bar_pc_options', $search_bar_pc_options)
+                ->with('product', $product)
+                ->with('customer_information', $customer_information);
+                
             }
         }
       

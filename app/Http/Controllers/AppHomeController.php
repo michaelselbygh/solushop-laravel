@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use \Mobile_Detect;
-
+use Auth;
 
 use App\Customer;
 use App\Chocolate;
@@ -20,7 +20,28 @@ class AppHomeController extends Controller
 {
     public function showHome()
     {
-        
+        /*---retrieving customer information if logged in---*/
+        if (Auth::check()) {
+            $customer_information_object = Customer::
+                where('id', Auth::user()->id)
+                ->with('milk', 'chocolate', 'cart', 'wishlist')
+                ->first()
+                ->toArray();
+
+            //calculate account balance
+            $customer_information['wallet_balance'] = round(($customer_information_object['milk']['milk_value'] * $customer_information_object['milkshake']) - $customer_information_object['chocolate']['chocolate_value'], 2);
+
+            //get cart count
+            $customer_information['cart_count'] = sizeof($customer_information_object['cart']);
+
+            //get wishlist count
+            $customer_information['wishlist_count'] = sizeof($customer_information_object['wishlist']);
+
+        }else{
+            $customer_information['wallet_balance'] = 0;
+            $customer_information['cart_count'] = 0;
+            $customer_information['wishlist_count'] = 0;
+        }
 
         /*---selecting search bar categories (level 2 categories)---*/
         $search_bar_pc_options = ProductCategory::
@@ -38,12 +59,12 @@ class AppHomeController extends Controller
             Session::put('seed', time());
         }
         $featured_products = Product::
-                inRandomOrder(Session::get('seed'))
-                ->where('product_state', '1') 
-                ->with('vendor', 'images')
-                ->take(3)
-                ->get()
-                ->toArray();
+            inRandomOrder(Session::get('seed'))
+            ->where('product_state', '1') 
+            ->with('vendor', 'images')
+            ->take(3)
+            ->get()
+            ->toArray();
 
 
         /*---creating array for the category side bar---*/
@@ -121,6 +142,7 @@ class AppHomeController extends Controller
                 ->with('sections', $sections)
                 ->with('featured_products', $featured_products)
                 ->with('search_bar_pc_options', $search_bar_pc_options)
-                ->with('side_bar_pc_options', $side_bar_pc_options);
+                ->with('side_bar_pc_options', $side_bar_pc_options)
+                ->with('customer_information', $customer_information);
     }
 }

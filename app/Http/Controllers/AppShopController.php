@@ -4,15 +4,41 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+
+use App\Customer;
 use App\Product;
 use App\ProductCategory;
 
+use Auth;
 use \Mobile_Detect;
 use Session;
 
 class AppShopController extends Controller
 {
     public function showProducts(){
+        /*---retrieving customer information if logged in---*/
+        if (Auth::check()) {
+            $customer_information_object = Customer::
+                where('id', Auth::user()->id)
+                ->with('milk', 'chocolate', 'cart', 'wishlist')
+                ->first()
+                ->toArray();
+
+            //calculate account balance
+            $customer_information['wallet_balance'] = round(($customer_information_object['milk']['milk_value'] * $customer_information_object['milkshake']) - $customer_information_object['chocolate']['chocolate_value'], 2);
+
+            //get cart count
+            $customer_information['cart_count'] = sizeof($customer_information_object['cart']);
+
+            //get wishlist count
+            $customer_information['wishlist_count'] = sizeof($customer_information_object['wishlist']);
+
+        }else{
+            $customer_information['wallet_balance'] = 0;
+            $customer_information['cart_count'] = 0;
+            $customer_information['wishlist_count'] = 0;
+        }
+
         /*--- Get products ---*/
         //randomization occurs every hour
         if (null != (Session::get('seed'))) {
@@ -44,14 +70,39 @@ class AppShopController extends Controller
 
         return view($view)
                 ->with('product', $product)
-                ->with('search_bar_pc_options', $search_bar_pc_options);
+                ->with('search_bar_pc_options', $search_bar_pc_options)
+                ->with('customer_information', $customer_information);
     }
 
     public function showCategoryProducts($categorySlug){
         
+        
         //check for Category
         if (is_null(ProductCategory::where('pc_slug', $categorySlug)->first())) {
             return redirect()->route('page.not.found');
+        }
+
+        /*---retrieving customer information if logged in---*/
+        if (Auth::check()) {
+            $customer_information_object = Customer::
+                where('id', Auth::user()->id)
+                ->with('milk', 'chocolate', 'cart', 'wishlist')
+                ->first()
+                ->toArray();
+
+            //calculate account balance
+            $customer_information['wallet_balance'] = round(($customer_information_object['milk']['milk_value'] * $customer_information_object['milkshake']) - $customer_information_object['chocolate']['chocolate_value'], 2);
+
+            //get cart count
+            $customer_information['cart_count'] = sizeof($customer_information_object['cart']);
+
+            //get wishlist count
+            $customer_information['wishlist_count'] = sizeof($customer_information_object['wishlist']);
+
+        }else{
+            $customer_information['wallet_balance'] = 0;
+            $customer_information['cart_count'] = 0;
+            $customer_information['wishlist_count'] = 0;
         }
 
         $category = ProductCategory::where('pc_slug', $categorySlug)->first()->toArray();
@@ -96,12 +147,14 @@ class AppShopController extends Controller
             $view = 'mobile.main.general.shop';
             return view('mobile.main.general.shop')
                 ->with('category', $category)
-                ->with('product', $product);
+                ->with('product', $product)
+                ->with('customer_information', $customer_information);
         }else{
             return view('app.main.general.shop')
                 ->with('category', $category)
                 ->with('product', $product)
-                ->with('search_bar_pc_options', $search_bar_pc_options);
+                ->with('search_bar_pc_options', $search_bar_pc_options)
+                ->with('customer_information', $customer_information);
         }
     }
 
@@ -133,6 +186,29 @@ class AppShopController extends Controller
 
             if (!isset($search_result_product_ids)) {
                 return redirect()->route('page.not.found');
+            }
+
+            /*---retrieving customer information if logged in---*/
+            if (Auth::check()) {
+                $customer_information_object = Customer::
+                    where('id', Auth::user()->id)
+                    ->with('milk', 'chocolate', 'cart', 'wishlist')
+                    ->first()
+                    ->toArray();
+
+                //calculate account balance
+                $customer_information['wallet_balance'] = round(($customer_information_object['milk']['milk_value'] * $customer_information_object['milkshake']) - $customer_information_object['chocolate']['chocolate_value'], 2);
+
+                //get cart count
+                $customer_information['cart_count'] = sizeof($customer_information_object['cart']);
+
+                //get wishlist count
+                $customer_information['wishlist_count'] = sizeof($customer_information_object['wishlist']);
+
+            }else{
+                $customer_information['wallet_balance'] = 0;
+                $customer_information['cart_count'] = 0;
+                $customer_information['wishlist_count'] = 0;
             }
 
             /*--- Get products ---*/
@@ -169,10 +245,7 @@ class AppShopController extends Controller
 
         return view($view)
                 ->with('product', $product)
-                ->with('search_bar_pc_options', $search_bar_pc_options);
-    }
-
-    public function showError404Page(){
-        return view('app.main.general.404');
+                ->with('search_bar_pc_options', $search_bar_pc_options)
+                ->with('customer_information', $customer_information);
     }
 }

@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Http\Request;
+
+use App\Customer;
 use App\Vendor;
 use App\Product;
 use App\ProductCategory;
 
+use Auth;
 use \Mobile_Detect;
 use Session;
 
@@ -35,7 +38,6 @@ class AppVendorController extends Controller
             //vendor not subscribed
             return redirect()->route('page.not.found');
         }
-
         
         /*--- Get Vendor Products---*/
 
@@ -59,10 +61,33 @@ class AppVendorController extends Controller
             return redirect()->route('page.not.found');
         }
 
-         //process vendor joined date
-         $vendor['vendor_date_joined'] = date('F Y', strtotime(substr($vendor['id'], 0, 2)."-".substr($vendor['id'], 2, 2)."-".substr($vendor['id'], 4, 4)));
+        /*---retrieving customer information if logged in---*/
+        if (Auth::check()) {
+            $customer_information_object = Customer::
+                where('id', Auth::user()->id)
+                ->with('milk', 'chocolate', 'cart', 'wishlist')
+                ->first()
+                ->toArray();
 
-         /*--- vendor sales and ratings ---*/
+            //calculate account balance
+            $customer_information['wallet_balance'] = round(($customer_information_object['milk']['milk_value'] * $customer_information_object['milkshake']) - $customer_information_object['chocolate']['chocolate_value'], 2);
+
+            //get cart count
+            $customer_information['cart_count'] = sizeof($customer_information_object['cart']);
+
+            //get wishlist count
+            $customer_information['wishlist_count'] = sizeof($customer_information_object['wishlist']);
+
+        }else{
+            $customer_information['wallet_balance'] = 0;
+            $customer_information['cart_count'] = 0;
+            $customer_information['wishlist_count'] = 0;
+        }
+
+        //process vendor joined date
+        $vendor['vendor_date_joined'] = date('F Y', strtotime(substr($vendor['id'], 0, 2)."-".substr($vendor['id'], 2, 2)."-".substr($vendor['id'], 4, 4)));
+
+        /*--- vendor sales and ratings ---*/
         $vendorPurchases = DB::select(
             "SELECT sum(oi_quantity) purchases from order_items, orders, stock_keeping_units, products where stock_keeping_units.sku_product_id = products.id and order_items.oi_order_id = orders.id and order_items.oi_sku = stock_keeping_units.id and products.product_vid = :vendor_id and ( order_items.oi_state = '2' OR order_items.oi_state = '3' OR order_items.oi_state = '4')",
             ['vendor_id' => $vendor['id']]
@@ -89,7 +114,8 @@ class AppVendorController extends Controller
         $detect = new Mobile_Detect;
         if( $detect->isMobile() && !$detect->isTablet() ){
             return view('mobile.main.general.vendor')
-                ->with('vendor', $vendor);
+                ->with('vendor', $vendor)
+                ->with('customer_information', $customer_information);
         }else{
             /*---selecting search bar categories (level 2 categories)---*/
             $search_bar_pc_options = ProductCategory::
@@ -98,14 +124,36 @@ class AppVendorController extends Controller
             ->get(['id', 'pc_description', 'pc_slug']);
             return view('app.main.general.vendor')
                 ->with('search_bar_pc_options', $search_bar_pc_options)
-                ->with('vendor', $vendor);
+                ->with('vendor', $vendor)
+                ->with('customer_information', $customer_information);
         }
-
-        
-
     }
 
     public function showVendors(){
+        /*---retrieving customer information if logged in---*/
+        if (Auth::check()) {
+            $customer_information_object = Customer::
+                where('id', Auth::user()->id)
+                ->with('milk', 'chocolate', 'cart', 'wishlist')
+                ->first()
+                ->toArray();
+
+            //calculate account balance
+            $customer_information['wallet_balance'] = round(($customer_information_object['milk']['milk_value'] * $customer_information_object['milkshake']) - $customer_information_object['chocolate']['chocolate_value'], 2);
+
+            //get cart count
+            $customer_information['cart_count'] = sizeof($customer_information_object['cart']);
+
+            //get wishlist count
+            $customer_information['wishlist_count'] = sizeof($customer_information_object['wishlist']);
+
+        }else{
+            $customer_information['wallet_balance'] = 0;
+            $customer_information['cart_count'] = 0;
+            $customer_information['wishlist_count'] = 0;
+        }
+
+
         /*--- Get Active Vendors with products  ---*/
         //randomization occurs every hour
         if (null != (Session::get('seed'))) {
@@ -156,7 +204,8 @@ class AppVendorController extends Controller
         if( $detect->isMobile() && !$detect->isTablet() ){
 
             return view('mobile.main.general.vendors')
-                    ->with('vendors', $vendors);
+                    ->with('vendors', $vendors)
+                    ->with('customer_information', $customer_information);
         }else{
             /*---selecting search bar categories (level 2 categories)---*/
             $search_bar_pc_options = ProductCategory::
@@ -166,7 +215,8 @@ class AppVendorController extends Controller
 
             return view('app.main.general.vendors')
                     ->with('search_bar_pc_options', $search_bar_pc_options)
-                    ->with('vendors', $vendors);
+                    ->with('vendors', $vendors)
+                    ->with('customer_information', $customer_information);
         }
 
     }

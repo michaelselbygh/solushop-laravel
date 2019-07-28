@@ -38,7 +38,7 @@
                             <li class="wallet">
                                 <a href="my-account/wallet.php">
                                     <span style='color:white; padding-right: 10px;'>
-                                        <b>¢ 0.00 </b>
+                                        <b>GH¢ {{ $customer_information["wallet_balance"] }}</b>
                                     </span>
                                 </a>
                             </li>
@@ -55,7 +55,7 @@
                                         </a>
                                     </li>
                                     <li><a href="my-account/">My Account</a></li>
-                                    <li><a href="my-account/wallet.php">Wallet: <b>¢ 0.00</b></a></li>
+                                    <li><a href="my-account/wallet.php">Wallet: <b>GH¢ {{ $customer_information["wallet_balance"] }}</b></a></li>
                                     <li><a href="{{ route('logout') }}">Logout</a></li>
                                 </ul>
                             </li>

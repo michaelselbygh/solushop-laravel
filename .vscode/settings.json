@@ -1,5 +1,6 @@
 {
     "cSpell.words": [
+        "SKUID",
         "authenticatable",
         "conv",
         "csvs",
@@ -9,6 +10,8 @@
         "hashify",
         "icono",
         "id",
+        "lbdate",
+        "lbday",
         "michaelselbygh",
         "neglmanagement",
         "order",
@@ -21,6 +24,8 @@
         "skus",
         "solushop",
         "table",
+        "ubdate",
+        "ubday",
         "vs",
         "vspq",
         "wtu",

@@ -7,15 +7,15 @@
             </a>
             <a href="{{ route('show.shop') }}" class="tab-link external">
                 <i class="ti-gift"></i>
-                <span class="tabbar-label">Shop</span>
+                <span class="tabbar-label">Shop </span>
             </a>
             <a href="/cart" class="tab-link external">
                 <i class="ti-shopping-cart"></i>
-                <span class="tabbar-label">Cart</span>
+                <span class="tabbar-label">Cart @if($customer_information['cart_count'] > 0)({{$customer_information['cart_count']}})@endif</span>
             </a>
             <a href="/wishlist" class="tab-link external">
                 <i class="ti-heart "></i>
-                <span class="tabbar-label">Wishlist</span>
+                <span class="tabbar-label">Wishlist @if($customer_information['wishlist_count'] > 0)({{$customer_information['wishlist_count']}})@endif</span>
             </a>
             
             @if(Auth::check())

@@ -55,4 +55,25 @@ class Customer extends Authenticatable
     {
         return $this->hasMany('App\ProductReview', 'pr_customer_id', 'id' );
     }
+
+    public function milk()
+    {
+        return $this->hasOne('App\Milk', 'id', 'id' );
+    }
+
+    public function chocolate()
+    {
+        return $this->hasOne('App\Chocolate', 'id', 'id' );
+    }
+
+    public function wishlist()
+    {
+        return $this->hasMany('App\WishlistItem', 'wi_customer_id', 'id' );
+    }
+
+    public function cart()
+    {
+        return $this->hasMany('App\CartItem', 'ci_customer_id', 'id' );
+    }
+
 }
