@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Spatie\Activitylog\Contracts\Activity;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use \Mobile_Detect;
@@ -342,6 +343,16 @@ class AppProductController extends Controller
                             $cartItem->ci_quantity = $request->product_quantity;
                             $cartItem->save();
 
+                            //Log activity
+                            activity()
+                            ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
+                            ->tap(function(Activity $activity) {
+                                $activity->subject_type = 'System';
+                                $activity->subject_id = '0';
+                                $activity->log_name = 'Cart Item Added';
+                            })
+                            ->log(Auth::user()->email.' added item '.$request->product_sku.' to cart.');
+
                             $messageType = 'success_message';
                             $messageContent = 'Product added to cart.';
                         }
@@ -380,6 +391,16 @@ class AppProductController extends Controller
                             $wishlistItem->wi_customer_id = Auth::user()->id;
                             $wishlistItem->wi_product_id = $request->product_id;
                             $wishlistItem->save();
+
+                            //Log activity
+                            activity()
+                            ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
+                            ->tap(function(Activity $activity) {
+                                $activity->subject_type = 'System';
+                                $activity->subject_id = '0';
+                                $activity->log_name = 'Wishlist Item Added';
+                            })
+                            ->log(Auth::user()->email.' added item '.$request->product_id.' to wishlist.');
 
                             $messageType = 'success_message';
                             $messageContent = 'Product added to wishlist.';

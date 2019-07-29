@@ -42,7 +42,7 @@
                             </a>
                         </div>
                     @else
-                        @if(sizeof($wishlist['wishlist_items']) < 1)
+                        @if(!isset($wishlist['wishlist_items']) OR sizeof($wishlist['wishlist_items']) < 1)
                         <div class="content" style="text-align:center; margin: 0; position: absolute; top: 50%; left: 50%; -ms-transform: translate(-50%, -50%); transform: translate(-50%, -50%);">
                             
                                 <div class="error-message">

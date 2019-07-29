@@ -51,7 +51,7 @@
                         </div>
                     </div>
                 @else
-                    @if(sizeof($wishlist['wishlist_items']) < 1)
+                    @if(!isset($wishlist['wishlist_items']) OR sizeof($wishlist['wishlist_items']) < 1)
                         <div class="col-sm-6 col-sm-offset-3"> 
                             <div class="search-form-wrapper mtb-70" style="text-align: center;">
                                 <div class="error-message">

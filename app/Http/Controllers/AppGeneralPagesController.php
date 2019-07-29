@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Spatie\Activitylog\Contracts\Activity;
 use \Mobile_Detect;
 use Auth;
 
@@ -55,7 +56,9 @@ class AppGeneralPagesController extends Controller
             }
 
             if (sizeof($cart['cart_items_id_array']) < 1) {
+                $cart['cart_items'] = [];
                 $detect = new Mobile_Detect;
+
                 if( $detect->isMobile() && !$detect->isTablet() ){
                     return view('mobile.main.general.cart')
                     ->with('customer_information', $customer_information)
@@ -153,6 +156,17 @@ class AppGeneralPagesController extends Controller
 
                 $customer->icono = NULL;
                 $customer->save();
+
+                //Log activity
+                activity()
+                ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Sales Coupon Removed';
+                })
+                ->log(Auth::user()->email.' removed sales coupon.');
+
                 return redirect()->back()->with('success_message', 'Coupon removed successfully.');
                 break;
             case 'remove_cart_item':
@@ -162,6 +176,17 @@ class AppGeneralPagesController extends Controller
                         ['ci_customer_id', "=", Auth::user()->id]
                 ])
                 ->delete();
+
+                //Log activity
+                activity()
+                ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Cart Item Removed';
+                })
+                ->log(Auth::user()->email.' removed item '.$request->cart_item_sku.' from cart.');
+
                 return redirect()->back()->with('success_message', 'Item removed successfully.');
                 break;
             case 'update_cart':
@@ -181,6 +206,16 @@ class AppGeneralPagesController extends Controller
                         'ci_quantity' => $cart_quantity
                     ]);
                 }
+                //Log activity
+                activity()
+                ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Cart Updated';
+                })
+                ->log(Auth::user()->email.' updated their cart.');
+
                 return redirect()->back()->with('success_message', 'Cart updated successfully.');
                 break;
             case 'apply_coupon':
@@ -201,11 +236,33 @@ class AppGeneralPagesController extends Controller
 
                             $customer->icono = $coupon->coupon_code;
                             $customer->save();
+
+                            //Log activity
+                            activity()
+                            ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
+                            ->tap(function(Activity $activity) {
+                                $activity->subject_type = 'System';
+                                $activity->subject_id = '0';
+                                $activity->log_name = 'Sales Coupon Applied';
+                            })
+                            ->log(Auth::user()->email.' applied sales coupon '.$coupon->coupon_code);
+
+
                             return redirect()->back()->with('success_message', 'Coupon applied successfully.');
                         }elseif(substr($coupon->coupon_code, 10, 1) == 'W'){
                             //check if coupon is not used
                             if ($coupon->coupon_state == 3) {
                                 //coupon is used
+                                //Log activity
+                                activity()
+                                ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
+                                ->tap(function(Activity $activity) {
+                                    $activity->subject_type = 'System';
+                                    $activity->subject_id = '0';
+                                    $activity->log_name = 'Wallet Coupon Redeem Attempt';
+                                })
+                                ->log(Auth::user()->email.' attempted to redeem already used coupon '.$coupon->coupon_code);
+
                                 return redirect()->back()->with('error_message', 'Coupon already redeemed.');
                             }elseif($coupon->coupon_state == 2){
                                 //update customer balance
@@ -220,6 +277,7 @@ class AppGeneralPagesController extends Controller
                                 $customer->save();
 
                                 //update coupon state
+                                $coupon_code = $coupon->coupon_code;
                                 $coupon_value = $coupon->coupon_value;
                                 $coupon->coupon_state = 3;
                                 $coupon->save();
@@ -235,6 +293,15 @@ class AppGeneralPagesController extends Controller
                                 $sms->sms_state = 1;
                                 $sms->save();
 
+                                //Log activity
+                                activity()
+                                ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
+                                ->tap(function(Activity $activity) {
+                                    $activity->subject_type = 'System';
+                                    $activity->subject_id = '0';
+                                    $activity->log_name = 'Wallet Coupon Redeemed';
+                                })
+                                ->log(Auth::user()->email.' redeemed wallet coupon '.$coupon_code);
                                 return redirect()->back()->with('success_message', 'Coupon redeemed successfully.');
                             }else{
                                 return redirect()->back()->with('error_message', 'Please enter a valid coupon.');
@@ -369,6 +436,16 @@ class AppGeneralPagesController extends Controller
                     ['wi_product_id', '=', $request->wishlist_item_id]
                 ])
             ->delete();
+            //Log activity
+            activity()
+            ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
+            ->tap(function(Activity $activity) {
+                $activity->subject_type = 'System';
+                $activity->subject_id = '0';
+                $activity->log_name = 'Wishlist Item Removed';
+            })
+            ->log(Auth::user()->email.' removed item '.$request->wishlist_item_id.' from wishlist.');
+
             return redirect()->back()->with('success_message', 'Item removed successfully.');
         }else{
             return redirect()->back()->with('error_message', 'Something went wrong, please try again');

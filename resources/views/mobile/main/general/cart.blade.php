@@ -42,9 +42,8 @@
                             </a>
                         </div>
                     @else
-                        @if(sizeof($cart['cart_items']) < 1)
-                        <div class="content" style="text-align:center; margin: 0; position: absolute; top: 50%; left: 50%; -ms-transform: translate(-50%, -50%); transform: translate(-50%, -50%);">
-                            
+                        @if(!isset($cart['cart_items']) OR sizeof($cart['cart_items']) < 1)
+                            <div class="content" style="text-align:center; margin: 0; position: absolute; top: 50%; left: 50%; -ms-transform: translate(-50%, -50%); transform: translate(-50%, -50%);">
                                 <div class="error-message">
                                     <h6>
                                         Your cart is empty.
@@ -114,7 +113,7 @@
                                             </div>
                                             <div class="col-20">
                                                 <div class="content-info">
-                                                    <span class="price">GH¢{{ $cart['icono_discount'] }}</span>
+                                                    <span class="price">GH¢ {{ $cart['icono_discount'] }}</span>
                                                     <br>
                                                 </div>
                                             </div>                        
@@ -152,13 +151,17 @@
                                 <button class="button" type="submit" style="">Apply Coupon</button>
                             </form>
                             <br>
-                            <div class="small-divider"></div>
-                            <div class="wrap-title">
-                                <h3>Checkout</h3>
-                            </div>
-                            <a href="{{ route('show.checkout') }}" class="external">
-                                <button class="button" style="background-color: #f68b1e">Proceed To Checkout ( GH¢ {{ $cart['sub_total'] }} )</button>
-                            </a>
+                            @if(isset($cart['sub_total']))
+                                <div class="small-divider"></div>
+                                <div class="wrap-title">
+                                    <h3>Checkout</h3>
+                                </div>
+                                <a href="{{ route('show.checkout') }}" class="external">
+                                    
+                                    <button class="button" style="background-color: #f68b1e">Proceed To Checkout ( GH¢ {{ $cart['sub_total'] }} )</button>
+                                    
+                                </a>
+                            @endif
                         </div>
                         <br><br>
                     @endif

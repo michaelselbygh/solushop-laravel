@@ -51,7 +51,7 @@
                         </div>
                     </div>
                 @else
-                    @if(sizeof($cart['cart_items']) < 1)
+                    @if(!isset($cart) OR sizeof($cart['cart_items']) < 1)
                         <div class="col-sm-6 col-sm-offset-3"> 
                             <div class="search-form-wrapper mtb-70" style="text-align: center;">
                                 <div class="error-message">
@@ -186,7 +186,11 @@
                                         <td data-title="Sub-Total">
                                             <span>
                                                 <strong>
-                                                    GH¢ {{ $cart['sub_total'] }}
+                                                    @if(isset($cart['sub_total']))
+                                                        GH¢ {{ $cart['sub_total'] }}
+                                                    @else
+                                                        GH¢ 0.00
+                                                    @endif
                                                 </strong>
                                             </span>
                                         </td>
@@ -194,7 +198,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        @if (sizeof($cart['cart_items']) > 0) 
+                        @if (isset($cart['cart_items']) AND sizeof($cart['cart_items']) > 0) 
                             <div class="proceed-to-checkout">
                                 <a class="checkout-button" href="{{ route('show.checkout') }}">Proceed to Checkout</a>
                             </div>

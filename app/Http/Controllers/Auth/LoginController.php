@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Spatie\Activitylog\Contracts\Activity;
 use Auth;
 
 use App\Customer;
@@ -166,6 +167,16 @@ class LoginController extends Controller
                     }else{
                         $return_url = substr($url[sizeof($url)-1], 1);
                     }
+                    //Log activity
+                    activity()
+                    ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
+                    ->tap(function(Activity $activity) {
+                        $activity->subject_type = 'System';
+                        $activity->subject_id = '0';
+                        $activity->log_name = 'Customer Login';
+                    })
+                    ->log(Auth::user()->email.' logged in as a customer');
+                    
                     return redirect($return_url)->with('welcome_message', 'Welcome back, '.Auth::user()->first_name.'.');
                 }
                 
@@ -402,6 +413,16 @@ class LoginController extends Controller
 
 
     public function logout(){
+        //Log activity
+        activity()
+        ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
+        ->tap(function(Activity $activity) {
+            $activity->subject_type = 'System';
+            $activity->subject_id = '0';
+            $activity->log_name = 'Customer Logout';
+        })
+        ->log(Auth::user()->email.' logged out');
+
         Auth::guard('web')->logout();
         return redirect(route('home'));
     }
