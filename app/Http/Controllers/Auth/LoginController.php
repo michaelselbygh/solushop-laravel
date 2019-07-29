@@ -39,7 +39,7 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
+    protected $redirectTo = 'home';
 
     /**
      * Create a new controller instance.
@@ -48,36 +48,91 @@ class LoginController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest')->except('logout');
+        // $this->middleware('guest')->except('logout');
     }
 
     public function showLoginForm()
     {   
+        /*---retrieving customer information if logged in---*/
+        if (Auth::check()) {
+            $customer_information_object = Customer::
+                where('id', Auth::user()->id)
+                ->with('milk', 'chocolate', 'cart', 'wishlist')
+                ->first()
+                ->toArray();
+
+            //calculate account balance
+            $customer_information['wallet_balance'] = round(($customer_information_object['milk']['milk_value'] * $customer_information_object['milkshake']) - $customer_information_object['chocolate']['chocolate_value'], 2);
+
+            //get cart count
+            $customer_information['cart_count'] = sizeof($customer_information_object['cart']);
+
+            //get wishlist count
+            $customer_information['wishlist_count'] = sizeof($customer_information_object['wishlist']);
+
+            return redirect()->route('show.shop');
+
+        }else{
+            $customer_information['wallet_balance'] = 0;
+            $customer_information['cart_count'] = 0;
+            $customer_information['wishlist_count'] = 0;
+        }
+
         $detect = new Mobile_Detect;
         if( $detect->isMobile() && !$detect->isTablet() ){
-            return view('mobile.main.general.login');
+            return view('mobile.main.general.login')
+            ->with('customer_information', $customer_information);
         }else{
             $search_bar_pc_options = ProductCategory::
             where('pc_level', 2) 
             ->orderBy('pc_description')     
             ->get(['id', 'pc_description']);
             return view('app.main.general.login')
-                ->with('search_bar_pc_options', $search_bar_pc_options);
+                ->with('search_bar_pc_options', $search_bar_pc_options)
+                ->with('customer_information', $customer_information);
         }
     }
 
     public function showRegisterForm()
     {   
+
+        /*---retrieving customer information if logged in---*/
+        if (Auth::check()) {
+            $customer_information_object = Customer::
+                where('id', Auth::user()->id)
+                ->with('milk', 'chocolate', 'cart', 'wishlist')
+                ->first()
+                ->toArray();
+
+            //calculate account balance
+            $customer_information['wallet_balance'] = round(($customer_information_object['milk']['milk_value'] * $customer_information_object['milkshake']) - $customer_information_object['chocolate']['chocolate_value'], 2);
+
+            //get cart count
+            $customer_information['cart_count'] = sizeof($customer_information_object['cart']);
+
+            //get wishlist count
+            $customer_information['wishlist_count'] = sizeof($customer_information_object['wishlist']);
+
+            return redirect()->route('show.shop');
+
+        }else{
+            $customer_information['wallet_balance'] = 0;
+            $customer_information['cart_count'] = 0;
+            $customer_information['wishlist_count'] = 0;
+        }
+
         $detect = new Mobile_Detect;
         if( $detect->isMobile() && !$detect->isTablet() ){
-            return view('mobile.main.general.register');
+            return view('mobile.main.general.register')
+            ->with('customer_information', $customer_information);
         }else{
             $search_bar_pc_options = ProductCategory::
             where('pc_level', 2) 
             ->orderBy('pc_description')     
             ->get(['id', 'pc_description']);
             return view('app.main.general.login')
-                ->with('search_bar_pc_options', $search_bar_pc_options);
+                ->with('search_bar_pc_options', $search_bar_pc_options)
+                ->with('customer_information', $customer_information);
         }
         
     }
@@ -168,7 +223,7 @@ class LoginController extends Controller
             $exp       = rand(1, 5);
             $milk      = pow(10, $exp);
             $chocolate = rand(1, 100);
-            $milkshake = (5 + rand(1, 100)) / pow(10, $exp);
+            $milkshake = (5 + $chocolate) / $milk;
 
             //add customer
             $customer = new Customer;
@@ -199,7 +254,7 @@ class LoginController extends Controller
             $count->save();
 
             //queue customer message
-            $sms_message = "Hi ".ucwords(strtolower($request->first_name)).", a warm welcome to the Solushop family. Your Solushop Wallet has been credited with 5 cedis as your signup bonus. If you need any assistance, kindly call or whatsapp customer care on 0506753093. Happy Shopping!";
+            $sms_message = "Hi ".ucwords(strtolower($request->first_name)).", a warm welcome to the Solushop family. Your Solushop Wallet has been credited with 5 cedis as your signup bonus. If you need any assistance, kindly call or Whatsapp customer care on 0506753093. Happy Shopping!";
             $sms_phone = "233".substr($request->phone, 1);
 
             $sms = new SMS;
@@ -238,17 +293,42 @@ class LoginController extends Controller
     }
 
     public function showResetPasswordForm()
-    {   
+    {   /*---retrieving customer information if logged in---*/
+        if (Auth::check()) {
+            $customer_information_object = Customer::
+                where('id', Auth::user()->id)
+                ->with('milk', 'chocolate', 'cart', 'wishlist')
+                ->first()
+                ->toArray();
+
+            //calculate account balance
+            $customer_information['wallet_balance'] = round(($customer_information_object['milk']['milk_value'] * $customer_information_object['milkshake']) - $customer_information_object['chocolate']['chocolate_value'], 2);
+
+            //get cart count
+            $customer_information['cart_count'] = sizeof($customer_information_object['cart']);
+
+            //get wishlist count
+            $customer_information['wishlist_count'] = sizeof($customer_information_object['wishlist']);
+
+            return redirect()->route('show.shop');
+        }else{
+            $customer_information['wallet_balance'] = 0;
+            $customer_information['cart_count'] = 0;
+            $customer_information['wishlist_count'] = 0;
+        }
+
         $detect = new Mobile_Detect;
         if( $detect->isMobile() && !$detect->isTablet() ){
-            return view('mobile.main.general.reset-password');
+            return view('mobile.main.general.reset-password')
+            ->with('customer_information', $customer_information);
         }else{
             $search_bar_pc_options = ProductCategory::
                 where('pc_level', 2) 
                 ->orderBy('pc_description')     
                 ->get(['id', 'pc_description']);
             return view('app.main.general.reset-password')
-                ->with('search_bar_pc_options', $search_bar_pc_options);
+                ->with('search_bar_pc_options', $search_bar_pc_options)
+                ->with('customer_information', $customer_information);
         }
         
     }

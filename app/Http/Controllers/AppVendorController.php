@@ -20,7 +20,7 @@ class AppVendorController extends Controller
     public function showVendor($vendorSlug){
         /*--- Vendor Check ---*/
         if (is_null(Vendor::where('username', $vendorSlug)->first())) {
-            //vendor doesnt exist
+            //vendor doesn't exist
             return redirect()->route('page.not.found');
         }
 

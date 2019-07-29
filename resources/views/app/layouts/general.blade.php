@@ -43,6 +43,10 @@
 		<link rel="stylesheet" href="{{ url('app/assets/css/responsive.css') }}">
 		<style>
 			#register { display:none; }
+
+			td{
+				padding-bottom: 5px;
+			}
 		</style>
 		<!-- Modernizr Js -->
 		<script src="{{ url('app/assets/js/vendor/modernizr-2.8.3.min.js') }}"></script>

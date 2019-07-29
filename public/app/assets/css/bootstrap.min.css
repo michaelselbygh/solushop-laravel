@@ -2824,7 +2824,8 @@ caption {
 }
 
 th {
-    text-align: left
+    text-align: left;
+    font-weight: 400;
 }
 
 .table {

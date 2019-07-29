@@ -35,7 +35,7 @@
                             <div class="error-message">
                                 <h4>We can't seem to find what you're looking for.</h4>
                             </div>
-                            <a href="{{ url("/shop") }}" class="external">
+                            <a href="{{ route("show.shop") }}" class="external">
                                 <button class="button" style="background-color:#f68b1e; width:100%">Back to Shop</button>
                             </a>
                         </div>

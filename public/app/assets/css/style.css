@@ -3028,7 +3028,7 @@ input.checkbox {
 	background: #001337;
 	box-shadow: none;
 	border: 0;
-	border-radius: 3px;
+	border-radius: 5px;
 	color: #fff;
 	display: block;
 	font-size: 12px;
@@ -3077,7 +3077,7 @@ input.checkbox {
 .shopping-cart-table table tr td.product-quantity input.input-text {
 	width: 60px;
 	border: 2px solid #ebebeb;
-	border-radius: 0;
+	border-radius: 5px;
 	height: 42px;
 	padding: 0 0 0 10px;
 	text-align: center;
@@ -3091,15 +3091,15 @@ input.checkbox {
 }
 .input-copun {
 	border: 1px solid #d3ced2;
-	border-radius: 0;
+	border-radius: 5px;
 	width: 200px;
 	float: left;
 	padding: 6px 15px 6px;
 	margin: 0 4px 0 0;
 	line-height: 1;
 	height: 42px;
-	font-size: 14px;
-	font-weight: 500;
+	font-size: 12px;
+	font-weight: 300;
 }
 .coupon {
 	overflow: hidden;
@@ -3108,16 +3108,16 @@ input.checkbox {
 	padding-bottom: 10px;
 }
 .wishlist-btn.shopping-btn {
-	font-size: 14px;
+	font-size: 12px;
 }
 .update-btn {
 	background: #001337;
 	box-shadow: none;
 	border: 0;
-	border-radius: 3px;
+	border-radius: 5px;
 	color: #fff;
 	display: block;
-	font-size: 14px;
+	font-size: 12px;
 	font-weight: 400;
 	height: 42px;
 	line-height: 42px;
@@ -3146,13 +3146,12 @@ input.checkbox {
 }
 .shopping-cart-total > h2 {
 	font-size: 14px;
-	text-transform: uppercase;
-	font-weight: 500;
+	font-weight: 400;
 	background: #f5f5f5;
-	padding: 10px 20px;
+	padding: 5px 20px;
 	border-radius: 5px;
 	border: 1px solid #ebebeb;
-	line-height: 40px;
+	line-height: 34px;
 }
 .shop-table table {
 	text-align: right;
@@ -3172,7 +3171,7 @@ input.checkbox {
 .shop-table tr td span {
 	font-weight: 500;
 	color: #001337;
-	font-size: 16px;
+	font-size: 12px;
 }
 .shop-table tr.order-total {
 	display: block;
@@ -3190,7 +3189,7 @@ input.checkbox {
 }
 .shop-table tr td:before {
     content: attr(data-title) ": ";
-    font-weight: 700;
+    font-weight: 400;
     float: left;
 }
 .shop-table tr.order-total td span {
@@ -3207,9 +3206,9 @@ input.checkbox {
 	color: #fff;
 	margin: 0 !important;
 	border: 0;
-	border-radius: 3px;
+	border-radius: 5px;
 	display: inline-block;
-	font-size: 1em;
+	font-size: 12px;
 	font-weight: 400;
 	height: 42px;
 	line-height: 42px;

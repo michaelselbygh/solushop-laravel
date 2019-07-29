@@ -28,7 +28,7 @@
                 <div class="mini-cart-area" style="text-align: center;">
                     <ul>
                         <li >
-                            <a href="wishlist.php">
+                            <a href="{{ route('show.wishlist') }}">
                                 <i class="ion-android-star" style="color:white;"></i>
                                 <span class="cart-add" style="color:white;">
                                     {{ $customer_information["wishlist_count"] }}
@@ -36,7 +36,7 @@
                             </a>
                         </li>
                         <li>
-                            <a href="cart.php">
+                            <a href="{{ route('show.cart') }}">
                                 <i class="ion-android-cart"></i>
                                 <span class="cart-add">
                                    {{ $customer_information["cart_count"] }}

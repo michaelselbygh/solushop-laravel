@@ -44,7 +44,9 @@ Route::get('/my-account', 'AppMyAccountPagesController@showProfile')->name('show
 
 //general pages 
 Route::get('/wishlist', 'AppGeneralPagesController@showWishlist')->name('show.wishlist');
+Route::post('/wishlist', 'AppGeneralPagesController@processWishlistAction')->name('process.wishlist.action');
 Route::get('/cart', 'AppGeneralPagesController@showCart')->name('show.cart');
+Route::post('/cart', 'AppGeneralPagesController@processCartAction')->name('process.cart.action');
 Route::get('/checkout', 'AppGeneralPagesController@showCheckout')->name('show.checkout');
 Route::get('/about', 'AppGeneralPagesController@showAbout')->name('show.about');
 Route::get('/contact', 'AppGeneralPagesController@showContact')->name('show.contact');
