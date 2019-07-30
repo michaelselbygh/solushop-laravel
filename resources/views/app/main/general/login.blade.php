@@ -31,7 +31,7 @@
     <section class="my-account-area mt-20">
         <div class="container">
             <div class="row justify-content-md-center">
-                <div class="col-sm-4 col-sm-offset-4 text-center customFadeIn" style="border-radius: 50px; border: 1px solid #f68c1e; padding: 20px; margin-bottom: 40px;">
+                <div class="col-sm-4 col-sm-offset-4 text-center customFadeIn" style="border-radius: 10px; border: 1px solid #f68c1e; padding: 20px; margin-bottom: 40px;">
                     <div class="customer-login-register customFadeIn" id="register"
                      @if (session()->has('register_error_message')) 
                         style="display:block;" 

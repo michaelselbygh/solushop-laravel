@@ -2943,7 +2943,7 @@ li.right-menu .cat-mega-menu > li {
 }
 .form-fild > input {
 	border: 1px solid #e5e5e5;
-	border-radius: 20px;
+	border-radius: 5px;
 	height: 35px;
 	padding: 0 0 0 10px;
 }
@@ -3165,8 +3165,8 @@ input.checkbox {
 	text-align: right;
 }
 .shop-table tr td {
-	text-align: right;
-	padding: 10px 0;
+	text-align: left;
+	padding: 2px 10px;
 }
 .shop-table tr td span {
 	font-weight: 500;
@@ -3188,8 +3188,7 @@ input.checkbox {
     color: #001337;
 }
 .shop-table tr td:before {
-    content: attr(data-title) ": ";
-    font-weight: 400;
+    font-weight: 300;
     float: left;
 }
 .shop-table tr.order-total td span {
@@ -3378,20 +3377,19 @@ input.checkbox {
 	border-right: none;
 	border-top: none;
 	font-size: 14px;
-	padding: 15px 0;
-    text-transform: uppercase;
+	padding: 5px 0;
 }
 .your-order-table table tr th,.cart-subtotal td{
-   font-weight: 500; 
+   font-weight: 400; 
 }
 .your-order-table table tr.cart-subtotal th,.your-order-table table tr.shipping th,.your-order-table table tr.order-total th {
-	font-weight: 700;
+	font-weight: 400;
 }
 .your-order-table table tr td {
 	text-transform: none;
 }
 .your-order-table table tr.order-total th,.your-order-table table tr.order-total td{
-    font-size: 18px;
+    font-size: 15px;
     border-bottom: none;
 }
 .shipping td p {

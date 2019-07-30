@@ -48,6 +48,7 @@ Route::post('/wishlist', 'AppGeneralPagesController@processWishlistAction')->nam
 Route::get('/cart', 'AppGeneralPagesController@showCart')->name('show.cart');
 Route::post('/cart', 'AppGeneralPagesController@processCartAction')->name('process.cart.action');
 Route::get('/checkout', 'AppGeneralPagesController@showCheckout')->name('show.checkout');
+Route::post('/checkout', 'AppGeneralPagesController@processCheckout')->name('process.checkout');
 Route::get('/about', 'AppGeneralPagesController@showAbout')->name('show.about');
 Route::get('/contact', 'AppGeneralPagesController@showContact')->name('show.contact');
 Route::get('/terms-and-conditions', 'AppGeneralPagesController@showTNC')->name('show.terms.and.conditions');

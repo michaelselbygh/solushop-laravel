@@ -443,25 +443,24 @@ a.button-small:after {
 a.button-small:hover::after { width: 100% }
 .form-button,.readmore-button,.price-button,.compare-btn {
 	background: #001337;
-	box-shadow: none;
-	border: 0;
-	border-radius: 20px;
-	color: #fff;
-	display: inline-block;
-	font-size: 1em;
-	font-weight: 400;
-	height: 25px;
-	overflow: hidden;
-	padding: 0 25px;
-	text-shadow: none;
-	text-transform: capitalize;
-	text-align: center;
-	-webkit-transition: all .4s ease-out;
-	-moz-transition: all .4s ease-out;
-	-ms-transition: all .4s ease-out;
-	-o-transition: all .4s ease-out;
-	vertical-align: middle;
-	white-space: nowrap;
+    box-shadow: none;
+    border: 0;
+    border-radius: 5px;
+    color: #fff;
+    display: inline-block;
+    font-size: 1em;
+    font-weight: 400;
+    overflow: hidden;
+    padding: 7px 20px;
+    text-shadow: none;
+    text-transform: capitalize;
+    text-align: center;
+    -webkit-transition: all .4s ease-out;
+    -moz-transition: all .4s ease-out;
+    -ms-transition: all .4s ease-out;
+    -o-transition: all .4s ease-out;
+    vertical-align: middle;
+    white-space: nowrap;
 }
 .action-btn.big,.action-btn.small {
     background: #001337;

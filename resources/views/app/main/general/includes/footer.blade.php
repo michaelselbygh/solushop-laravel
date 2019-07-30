@@ -44,9 +44,6 @@
                     <!--Single Footer Start-->
                     <div class="col-md-2 col-sm-6">
                         <div class="single-footer mt-30">
-                            <div class="footer-title">
-                                <h3>Information</h3>
-                            </div>
                             <ul class="footer-info">
                                 <li><a href="{{ route('show.about') }}">About Us</a></li>
                                 <li><a href="{{ route('show.contact') }}">Contact</a></li>
@@ -61,9 +58,6 @@
                     <!--Single Footer Start-->
                     <div class="col-md-2 col-sm-6">
                         <div class="single-footer mt-30">
-                            <div class="footer-title">
-                                <h3>My Account</h3>
-                            </div>
                             <ul class="footer-info">
                                    @if (Auth::check())
                                         <li><a href="{{ route('show.account') }}">My Account</a></li>

@@ -11,6 +11,7 @@ use Auth;
 use App\CartItem;
 use App\Coupon;
 use App\Customer;
+use App\CustomerAddress;
 use App\ProductCategory;
 use App\SMS;
 use App\StockKeepingUnit;
@@ -19,7 +20,130 @@ use App\WishlistItem;
 
 class AppGeneralPagesController extends Controller
 {
-   
+   public function showCheckout(){
+        if(!Auth::check()){
+            return redirect()->route('login');
+        }else{
+            /*--- Checkout Items ---*/
+            $checkout["checkout_items_id_object"] = CartItem::
+                where('ci_customer_id', Auth::user()->id)
+                ->with('sku')
+                ->get()
+                ->toArray();
+
+            if(sizeof($checkout["checkout_items_id_object"]) < 1){
+                return redirect()->route('show.shop');
+            }
+
+            $checkout['checkout_items_id_array'] = $checkout['ci_quantity'] = [];
+            for ($i=0; $i < sizeof($checkout['checkout_items_id_object']); $i++) { 
+                $checkout['checkout_items_id_array'][$i] = $checkout['checkout_items_id_object'][$i]['ci_sku'];
+                $checkout['ci_quantity'][$i] = $checkout['checkout_items_id_object'][$i]['ci_quantity'];
+            }
+
+            //select checkout items
+            $checkout['checkout_items'] = StockKeepingUnit::
+                join('products', 'stock_keeping_units.sku_product_id', '=', 'products.id')
+                ->join('vendors', 'products.product_vid', '=', 'vendors.id')
+                ->whereIn('stock_keeping_units.id', $checkout['checkout_items_id_array'])
+                ->with('product', 'product_images')
+                ->orderBy('stock_keeping_units.id')
+                ->get()
+                ->toArray();
+
+            /*--- Get Customer information ---*/
+            $customer_information_object = Customer::
+                where('id', Auth::user()->id)
+                ->with('milk', 'chocolate', 'cart', 'wishlist')
+                ->first()
+                ->toArray();
+
+            //wallet balance
+            $customer_information['wallet_balance'] = round(($customer_information_object['milk']['milk_value'] * $customer_information_object['milkshake']) - $customer_information_object['chocolate']['chocolate_value'], 2);
+
+            //cart count
+            $customer_information['cart_count'] = sizeof($customer_information_object['cart']);
+
+            //wishlist count
+            $customer_information['wishlist_count'] = sizeof($customer_information_object['wishlist']);
+
+            //customer addresses
+            $customer_information['addresses'] = CustomerAddress::
+                where('ca_customer_id', Auth::user()->id)
+                ->get()
+                ->toArray();
+            
+
+            /*--- calculating checkout totals ---*/
+            //items total
+            $checkout['sub_total'] = 0;
+            $checkout['shipping_product'] = 0;
+            for ($i=0; $i < sizeof($checkout['checkout_items']); $i++) { 
+
+                $checkout['sub_total'] += $checkout["ci_quantity"][$i] * ($checkout['checkout_items'][$i]['product_selling_price'] - $checkout['checkout_items'][$i]['product_discount'] );
+
+                $checkout['shipping_product'] += $checkout['checkout_items'][$i]['product_dc'];
+            }
+
+            //considering icono discount
+            if(isset(Auth::user()->icono) AND Auth::user()->icono != "NULL" AND Auth::user()->icono != NULL){
+                $checkout["icono_discount"] = 0.01 * $checkout['sub_total'];
+                $checkout['sub_total'] = 0.99 * $checkout['sub_total'];
+            }
+
+            
+            //calculating shipping
+            if(isset(Auth::user()->default_address) and !is_null(Auth::user()->default_address)){
+                $checkout_sf_object = CustomerAddress::
+                    where('ca_customer_id', Auth::user()->id)
+                    ->with('shipping_fare')
+                    ->first()
+                    ->toArray();
+
+                $checkout["shipping_base"] = $checkout_sf_object['shipping_fare']['sf_fare'];
+            }else{
+                $checkout["shipping_base"] = 15;
+            }
+
+            //adding shipping to subtotal
+            $checkout['shipping'] = $checkout['shipping_product'] + $checkout['shipping_base'];
+            $checkout["sub_total"] += $checkout['shipping'];
+
+            /*--- calculating total due (from wallet and payable) ---*/
+            if($customer_information['wallet_balance'] > 0){
+                if ($customer_information['wallet_balance'] >= $checkout['sub_total']) {
+                    $checkout['due_from_wallet'] = $checkout['sub_total'];
+                    $checkout['total_due'] = 0;
+                }else{
+                    $checkout['due_from_wallet'] = $customer_information['wallet_balance'];
+                    $checkout['total_due'] = $checkout['sub_total'] - $checkout['due_from_wallet'];
+                }
+            }else{
+                $checkout['total_due'] = $checkout['sub_total'];
+            }
+
+            $detect = new Mobile_Detect;
+            if( $detect->isMobile() && !$detect->isTablet() ){
+                return view('mobile.main.general.checkout')
+                ->with('customer_information', $customer_information)
+                ->with('checkout', $checkout);
+            }else{
+                /*---selecting search bar categories (level 2 categories)---*/
+                $search_bar_pc_options = ProductCategory::
+                where('pc_level', 2) 
+                ->orderBy('pc_description')   
+                ->get(['id', 'pc_description', 'pc_slug']);
+                return view('app.main.general.checkout')
+                        ->with('search_bar_pc_options', $search_bar_pc_options)
+                        ->with('customer_information', $customer_information)
+                        ->with('checkout', $checkout);
+            }
+        }
+   }
+
+   public function processCheckout(){
+
+   }
     
     public function showCart(){
         /*---retrieving customer information if logged in---*/
@@ -451,7 +575,6 @@ class AppGeneralPagesController extends Controller
             return redirect()->back()->with('error_message', 'Something went wrong, please try again');
         }
     }
-    
     
     public function showAbout(){
         /*---retrieving customer information if logged in---*/
