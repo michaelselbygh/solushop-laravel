@@ -56,6 +56,12 @@ Route::get('/return-policy', 'AppGeneralPagesController@showReturnPolicy')->name
 Route::get('/frequently-asked-questions', 'AppGeneralPagesController@showFAQ')->name('show.frequently.asked.questions');
 Route::get('/page-not-found', 'AppGeneralPagesController@show404')->name('page.not.found');
 
+//crons
+Route::get('/cron/reports', 'CronsController@generateReports');
+Route::get('/cron/process-sms-queue', 'CronsController@processSMSQueue');
+Route::get('/cron/update-counts', 'CronsController@updateCounts');
+Route::get('/cron/vendor-subscriptions-check', 'CronsController@checkVendorSubscriptions');
+
 
 //portal routes
 Route::prefix('portal')->group(function(){

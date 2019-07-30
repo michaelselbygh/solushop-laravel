@@ -287,6 +287,19 @@ class LoginController extends Controller
             }
 
             Auth::loginUsingId($customerID);
+
+            //Log activity
+            activity()
+            ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
+            ->tap(function(Activity $activity) {
+                $activity->subject_type = 'System';
+                $activity->subject_id = '0';
+                $activity->log_name = 'Customer Sign Up';
+            })
+            ->log(Auth::user()->email.' registered as a customer');
+
+
+            
             $url = explode($_SERVER['SERVER_NAME'], $request->url);
 
             if(in_array($url[sizeof($url)-1], ['/login', '/register'])){

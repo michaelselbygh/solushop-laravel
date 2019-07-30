@@ -172,6 +172,7 @@
                                 </div>
                                 
                                 <button class='update-btn' onclick="document.getElementById('update-cart-form').submit();" >Update cart</button>
+                                <br><br><br>
                             @endif
                         </div>
                     </div>

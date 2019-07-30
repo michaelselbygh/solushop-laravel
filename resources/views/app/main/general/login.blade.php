@@ -84,6 +84,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                <input type="hidden" name="url" value="{{ URL::previous() }}"/>
                             </form>
                         </div>
                     </div>
@@ -124,6 +125,7 @@
                                     <br>
                                     <span style="font-size: 11px">Not registered yet? <a id="toggleRegister" style="color: #f68c1e; cursor:pointer;">Register here</a></span>
                                 </div>
+                                <input type="hidden" name="url" value="{{ URL::previous() }}"/>
                             </form>
                         </div>
                     </div>
