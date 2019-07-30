@@ -2,9 +2,7 @@
 @section('page-title')
     {{ $product['product_name'] }}
 @endsection
-@section('page-image')
-    {{ url('/app/assets/img/products/thumbnails/'.$product['images'][0]['pi_path'].'.jpg') }}
-@endsection
+@section('page-image'){{ url('/app/assets/img/products/thumbnails/'.$product['images'][0]['pi_path'].'.jpg') }}@endsection
 @section('page-description')
     Buy {{ $product['product_name'] }} from Solushop - Ghana's Most Trusted Online Store
 @endsection
@@ -22,7 +20,7 @@
     
                 <!-- product details -->
                 <div class="product-details">
-                    <div class="wrap-action">
+                    {{-- <div class="wrap-action">
                         <div class="row">
                             <div class="col-20" style="text-align:center">
                                 <div class="content-icon">
@@ -62,7 +60,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="header">
                         <div data-pagination='{"el": ".swiper-pagination"}' data-space-between="0" class="swiper-container swiper-init swiper-container-horizontal">
                             <div class="swiper-pagination"></div>
@@ -151,6 +149,43 @@
                                 <input type="hidden" name="product_action" value="add_to_wishlist" />
                                 <input type="hidden" name="product_id" value="{{ $product['id'] }}" />
                             </form>
+                        </div>
+                        <div class="row">
+                            <div class="col-80">
+                                <div class="content-button">
+                                    @if ($product["stock_status"] == 0) 
+                                        @if($product['product_type'] == 0)
+                                            <button class="button" onclick="document.getElementById('cart-form').submit();">Add to Cart - GH¢ {{ $product['product_selling_price'] - $product['product_discount'] }}</button>
+                                        @elseif($product['product_type'] == 1)
+                                            <button class="button bts-popup-trigger" >Add to Cart - GH¢ {{ $product['product_selling_price'] - $product['product_discount'] }}</button>
+                                        @endif
+                                        
+                                        @if (Auth::check()) 
+                                            <div class="bts-popup" role="alert" >
+                                                <div class="bts-popup-container"style='background-color:white;'>
+                                                    <img src="{{ url('app/assets/img/caution.png') }}" alt="" width="35%" />
+                                                    <p style='margin-bottom:0px; padding-bottom:0px;'>
+                                                        This item is <b>available only on pre-order.</b><br> We suggest you <b>confirm</b> with the vendor on its <b>availability</b>. At your <b>discretion</b>, you may add item to cart and proceed to checkout.<br><br>
+                                                    </p>
+                                                    <div class="quantity" style='text-align:center'>
+                                                        <a href="{{ url('my-account/messages/'.$product['vendor']['username'].'/'.$product['product_slug']) }}">
+                                                            <button class="quantity-button" type='button' style='border-radius:15px; margin-right:20px; display:inline-block;'><i style='padding-right:5px; font-size: 18px;' class='fa fa-comments-o'></i> Ask Vendor</button>
+                                                        </a>&nbsp;&nbsp;
+                                                        <button class="quantity-button" style='border-radius:15px; display:inline-block;' onclick="document.getElementById('cart-form').submit();"><i style='padding-right:5px; font-size: 18px;' class='ion-android-cart'></i> Add to Cart</button>
+                                                    </div>
+                                                    <p>A refund to your <b>Solushop Wallet</b> will be done if ordered item is unavailable after order placement.</p>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    @else
+                                        <button class="button" style="background-color: red" disabled>Out of Stock</button>
+                                    @endif
+                                    
+                                </div>
+                            </div>
+                            <div class="col-20" style="text-align:center">
+                                <button class="button" onclick="document.getElementById('wishlist-form').submit();" style="background-color: #f68b1e" ><i class="ti-heart" style="margin-right: 0px;"></i></button>
+                            </div>
                         </div>
                         <div class="information-product-wrapper section-wrapper">   
                             <div class="wrap-title">

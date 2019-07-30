@@ -56,7 +56,7 @@ Route::get('/return-policy', 'AppGeneralPagesController@showReturnPolicy')->name
 Route::get('/frequently-asked-questions', 'AppGeneralPagesController@showFAQ')->name('show.frequently.asked.questions');
 Route::get('/page-not-found', 'AppGeneralPagesController@show404')->name('page.not.found');
 
-//crons
+//crons for testing purposes
 Route::get('/cron/reports', 'CronsController@generateReports');
 Route::get('/cron/process-sms-queue', 'CronsController@processSMSQueue');
 Route::get('/cron/update-counts', 'CronsController@updateCounts');

@@ -756,7 +756,7 @@ ul li {
 
 /*product details*/
 .product-details .wrap-action {
-    position: fixed;
+    position: absolute;
     left: 0;
     right: 0;
     bottom: 0;
