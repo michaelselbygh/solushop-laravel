@@ -184,7 +184,7 @@
                             <table>
                                 <tbody>
                                     <tr class="order-total">
-                                        <td data-title="Sub-Total">
+                                        <td data-title="Sub-Total" style="text-align: right;">
                                             <span>
                                                 <strong>
                                                     @if(isset($cart['sub_total']))

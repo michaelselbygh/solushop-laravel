@@ -2,16 +2,27 @@
 
 namespace App\Http\Controllers;
 
+require base_path('vendor/autoload.php');
+
+use Slydepay\Order\Order as SlydepayOrder;
+use Slydepay\Order\OrderItem as SlydepayOrderItem;
+use Slydepay\Order\OrderItems as SlydepayOrderItems;
+use Slydepay\Slydepay;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Spatie\Activitylog\Contracts\Activity;
+use Illuminate\Support\Facades\Validator;
 use \Mobile_Detect;
 use Auth;
 
 use App\CartItem;
+use App\Count;
 use App\Coupon;
 use App\Customer;
 use App\CustomerAddress;
+use App\Order;
+use App\OrderItem;
 use App\ProductCategory;
 use App\SMS;
 use App\StockKeepingUnit;
@@ -141,8 +152,318 @@ class AppGeneralPagesController extends Controller
         }
    }
 
-   public function processCheckout(){
+   public function processCheckout(Request $request){
+        switch ($request->checkout_action) {
 
+            case 'update_personal_details':
+                $validator = Validator::make($request->all(), [
+                    'first_name' => 'required',
+                    'last_name' => 'required',
+                    'phone' => 'required|digits:10',
+                    'email' => 'required|email'
+                ]);
+
+                if ($validator->fails()) {
+                    $errorMessageType = "error_message";
+                    $errorMessageContent = "";
+
+                    foreach ($validator->messages()->getMessages() as $field_name => $messages)
+                    {
+                        $errorMessageContent .= $messages[0]." "; 
+                    }
+
+                    return redirect()->back()->withInput($request->only('email', 'phone', 'first_name', 'last_name'))->with($errorMessageType, $errorMessageContent);
+                }
+
+                $customer = Customer::
+                    where("id", Auth::user()->id)
+                    ->first();
+
+                $customer->first_name = $request->first_name;
+                $customer->last_name = $request->last_name;
+                $customer->email = $request->email;
+                $customer->phone = "233".substr($request->phone, 1);
+
+                $customer->save();
+
+                //Log activity
+                activity()
+                ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Personal Details Updated';
+                })
+                ->log(Auth::user()->email.' updated their personal details.');
+
+                return redirect()->back()->with("success_message", "Details updated successfully.");
+
+                break;
+
+            case 'update_default_address':
+                $customer = Customer::
+                where("id", Auth::user()->id)
+                ->first();
+
+                $customer->default_address = $request->default_address;
+
+                $customer->save();
+
+                //Log activity
+                activity()
+                ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Default Address updated.';
+                })
+                ->log(Auth::user()->email.' updated their default address.');
+
+                return redirect()->back()->with("success_message", "Address updated successfully.");
+                break;
+
+            case 'remove_checkout_item':
+                CartItem::where([
+                        ['ci_sku', "=", $request->checkout_item_sku],
+                        ['ci_customer_id', "=", Auth::user()->id]
+                ])
+                ->delete();
+
+                //Log activity
+                activity()
+                ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Checkout Item Removed';
+                })
+                ->log(Auth::user()->email.' removed item '.$request->checkout_item_sku.' at checkout.');
+                return redirect()->back()->with("success_message", "Address updated successfully.");
+                break;
+
+            case 'process_checkout':
+                if(!Auth::check()){
+                    return redirect()->route('login');
+                }else{
+                    /*--- Checkout Items ---*/
+                    $checkout["checkout_items_id_object"] = CartItem::
+                        where('ci_customer_id', Auth::user()->id)
+                        ->with('sku')
+                        ->get()
+                        ->toArray();
+        
+                    if(sizeof($checkout["checkout_items_id_object"]) < 1){
+                        return redirect()->route('show.shop');
+                    }
+        
+                    $checkout['checkout_items_id_array'] = $checkout['ci_quantity'] = [];
+                    for ($i=0; $i < sizeof($checkout['checkout_items_id_object']); $i++) { 
+                        $checkout['checkout_items_id_array'][$i] = $checkout['checkout_items_id_object'][$i]['ci_sku'];
+                        $checkout['ci_quantity'][$i] = $checkout['checkout_items_id_object'][$i]['ci_quantity'];
+                    }
+        
+                    //select checkout items
+                    $checkout['checkout_items'] = StockKeepingUnit::
+                        join('products', 'stock_keeping_units.sku_product_id', '=', 'products.id')
+                        ->join('vendors', 'products.product_vid', '=', 'vendors.id')
+                        ->whereIn('stock_keeping_units.id', $checkout['checkout_items_id_array'])
+                        ->with('product', 'product_images')
+                        ->orderBy('stock_keeping_units.id')
+                        ->get()
+                        ->toArray();
+        
+                    /*--- Get Customer information ---*/
+                    $customer_information_object = Customer::
+                        where('id', Auth::user()->id)
+                        ->with('milk', 'chocolate', 'cart', 'wishlist')
+                        ->first()
+                        ->toArray();
+        
+                    //wallet balance
+                    $customer_information['wallet_balance'] = round(($customer_information_object['milk']['milk_value'] * $customer_information_object['milkshake']) - $customer_information_object['chocolate']['chocolate_value'], 2);
+        
+                    //cart count
+                    $customer_information['cart_count'] = sizeof($customer_information_object['cart']);
+        
+                    //wishlist count
+                    $customer_information['wishlist_count'] = sizeof($customer_information_object['wishlist']);
+        
+                    //customer addresses
+                    $customer_information['addresses'] = CustomerAddress::
+                        where('ca_customer_id', Auth::user()->id)
+                        ->get()
+                        ->toArray();
+                    
+        
+                    /*--- calculating checkout totals ---*/
+                    //items total
+                    $checkout['sub_total'] = $checkout['order_total'] = 0;
+                    $checkout['shipping_product'] = 0;
+                    for ($i=0; $i < sizeof($checkout['checkout_items']); $i++) { 
+        
+                        $checkout['sub_total'] += $checkout["ci_quantity"][$i] * ($checkout['checkout_items'][$i]['product_selling_price'] - $checkout['checkout_items'][$i]['product_discount'] );
+        
+                        $checkout['shipping_product'] += $checkout['checkout_items'][$i]['product_dc'];
+                    }
+
+                    $checkout['order_total'] = $checkout['sub_total'];
+        
+                    //considering icono discount
+                    if(isset(Auth::user()->icono) AND Auth::user()->icono != "NULL" AND Auth::user()->icono != NULL){
+                        $checkout["icono_discount"] = 0.01 * $checkout['sub_total'];
+                        $checkout['sub_total'] = 0.99 * $checkout['sub_total'];
+                    }
+
+                    
+        
+                    
+                    //calculating shipping
+                    if(isset(Auth::user()->default_address) and !is_null(Auth::user()->default_address)){
+                        $checkout_sf_object = CustomerAddress::
+                            where('ca_customer_id', Auth::user()->id)
+                            ->with('shipping_fare')
+                            ->first()
+                            ->toArray();
+        
+                        $checkout["shipping_base"] = $checkout_sf_object['shipping_fare']['sf_fare'];
+                    }else{
+                        $checkout["shipping_base"] = 15;
+                    }
+        
+                    //adding shipping to subtotal
+                    $checkout['shipping'] = $checkout['shipping_product'] + $checkout['shipping_base'];
+                    $checkout["sub_total"] += $checkout['shipping'];
+        
+                    /*--- calculating total due (from wallet and payable) ---*/
+                    if($customer_information['wallet_balance'] > 0){
+                        if ($customer_information['wallet_balance'] >= $checkout['sub_total']) {
+                            $checkout['due_from_wallet'] = $checkout['sub_total'];
+                            $checkout['total_due'] = 0;
+                        }else{
+                            $checkout['due_from_wallet'] = $customer_information['wallet_balance'];
+                            $checkout['total_due'] = $checkout['sub_total'] - $checkout['due_from_wallet'];
+                        }
+                    }else{
+                        $checkout['total_due'] = $checkout['sub_total'];
+                    }
+
+                    /*--- generate order internally ---*/
+                    //generating order id eg OD010720190191
+                    $count = Count::first();
+                    $count->order_count++;
+                    $order_id = "OD".date('Ymd').substr("0000".$count->order_count, strlen(strval($count->order_count)));
+
+                    //insert order
+                    $order = new Order;
+                    $order->id = $order_id;
+                    $order->order_type = 0;
+                    $order->order_customer_id = Auth::user()->id;
+                    $order->order_address_id = Auth::user()->default_address;
+                    $order->order_subtotal = $checkout['order_total'];
+                    $order->order_shipping = $checkout['shipping'];
+
+                    if(trim($request->order_ad) != ""){
+                        $order->order_ad = ucfirst($request->order_ad);
+                    }else{
+                        $order->order_ad = NULL;
+                    }
+
+                    $order->order_token = NULL;
+                    
+                    if(isset(Auth::user()->icono) AND Auth::user()->icono != "NULL" AND Auth::user()->icono != NULL){
+                        $order->order_scoupon = Auth::user()->icono;
+                    }else{
+                        $order->order_scoupon = NULL;
+                    }
+
+                    $order->order_state = 1;
+                    $order->order_date = date('Y-m-d H:i:s');
+
+                    $order->save();
+                    $count->save();
+
+                    //inserting order items
+                    for ($i=0; $i < sizeof($checkout['checkout_items']); $i++) {
+                        $order_item = new OrderItem;
+                        $order_item->oi_order_id            = $order_id;
+                        $order_item->oi_sku                 = $checkout['checkout_items_id_array'][$i];
+                        $order_item->oi_name                = $checkout["checkout_items"][$i]["product_name"];
+                        if (trim(strtolower($checkout["checkout_items"][$i]["sku_variant_description"] )) != "none") {
+                            $order_item->oi_name .= " - ".$checkout["checkout_items"][$i]["sku_variant_description"];
+                        }
+                        $checkout["checkout_items"][$i]["product_name"] = $order_item->oi_name;
+                        $order_item->oi_selling_price       = $checkout["checkout_items"][$i]["product_selling_price"];
+                        $order_item->oi_settlement_price    = $checkout["checkout_items"][$i]["product_settlement_price"];
+                        $order_item->oi_discount            = $checkout["checkout_items"][$i]["product_discount"];
+                        $order_item->oi_quantity            = $checkout['ci_quantity'][$i];
+                        $order_item->oi_state               = 1;
+                        $order_item->save();
+                    }
+
+                    //deleting cart items
+                    CartItem::
+                    where("ci_customer_id", Auth::user()->id)
+                    ->delete();
+
+
+                    if ($checkout['total_due'] > 0) {
+                        /*--- generate order externally (Slydepay) ---*/
+                        $slydepay = new Slydepay("ceo@solutekworld.com", "1466854163614");
+
+                        //build array of local order items
+                        $order_items_local = [];
+                        for ($i=0; $i < sizeof($checkout['checkout_items']); $i++) {
+                            $order_items_local[$i] = new SlydepayOrderItem($checkout['checkout_items_id_array'][$i], $checkout["checkout_items"][$i]["product_name"], ($checkout["checkout_items"][$i]["product_selling_price"] - $checkout["checkout_items"][$i]["product_discount"]), $checkout['ci_quantity'][$i]);
+                        }
+
+                        if ($customer_information['wallet_balance'] > 0) {
+                            $order_items_local[$i] = new SlydepayOrderItem("SWBD", "Deducted from Solushop Wallet", ($customer_information['wallet_balance'] - (2 * $customer_information['wallet_balance'])), 1);
+                        }
+
+                        $order_items = new SlydepayOrderItems($order_items_local);
+
+                        $shipping_cost = $checkout['shipping']; 
+                        $tax = 0;
+
+                        // Create the Order object for this transaction. 
+                        $slydepay_order = SlydepayOrder::createWithId(
+                            $order_items,
+                            $order_id."-".rand(1000, 9999), 
+                            $shipping_cost,
+                            $tax,
+                            "Payment to Solushop Ghana for Order $order_id",
+                            "No comment"
+                        );
+
+                        try{
+                            $response = $slydepay->processPaymentOrder($slydepay_order);
+                            $redirect_url = $response->redirectUrl();
+                            $redirect_url_break = explode("=", $redirect_url);
+
+                            Order::
+                            where('id', $order_id)
+                            ->update([
+                                'order_token' => $redirect_url_break[1]
+                            ]);
+
+                            return redirect($redirect_url);
+                        } catch (Slydepay\Exception\ProcessPayment $e) {
+                            echo $e->getMessage();
+                        }
+
+                        
+
+
+                    }else{
+                        /*--- process payment internally ---*/
+                    }
+                    
+                }
+                break;
+            default:
+                # code...
+                break;
+        }
    }
     
     public function showCart(){

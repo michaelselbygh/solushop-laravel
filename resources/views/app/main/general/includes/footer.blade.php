@@ -60,7 +60,7 @@
                         <div class="single-footer mt-30">
                             <ul class="footer-info">
                                    @if (Auth::check())
-                                        <li><a href="{{ route('show.account') }}">My Account</a></li>
+                                        <li><a href="{{ route('show.account.dashboard') }}">My Account</a></li>
                                     @else
                                         <li><a href="{{ route('customer.logout') }}">Login / Register</a></li>
                                     @endif

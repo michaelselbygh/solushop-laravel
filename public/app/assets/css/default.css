@@ -449,7 +449,7 @@ a.button-small:hover::after { width: 100% }
     color: #fff;
     display: inline-block;
     font-size: 1em;
-    font-weight: 400;
+    font-weight: 300;
     overflow: hidden;
     padding: 7px 20px;
     text-shadow: none;

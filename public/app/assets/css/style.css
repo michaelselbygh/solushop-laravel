@@ -3475,7 +3475,7 @@ input.checkbox {
 	-o-transition: all .4s ease-out;
 	vertical-align: middle;
 	white-space: nowrap;
-    font-weight: 400;
+    font-weight: 300;
     width: 100%;
 }
 .order-btn:hover{

@@ -20,9 +20,9 @@ class CreateOrdersTable extends Migration
             $table->string('order_address_id', '10');
             $table->double('order_subtotal');
             $table->double('order_shipping');
-            $table->text('order_ad');
-            $table->string('order_token');
-            $table->string('order_scoupon', '50');
+            $table->text('order_ad')->nullable();
+            $table->string('order_token')->nullable();
+            $table->string('order_scoupon', '50')->nullable();
             $table->integer('order_state');
             $table->dateTime('order_date');
             $table->timestamp('created_at')->useCurrent();
