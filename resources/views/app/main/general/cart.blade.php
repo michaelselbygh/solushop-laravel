@@ -2,9 +2,7 @@
 @section('page-title')
     Cart
 @endsection
-@section('page-image')
-    {{ url('app/assets/img/Solushop.jpg') }}
-@endsection
+@section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
 @section('page-description')
     Your cart on Solushop Ghana.
 @endsection

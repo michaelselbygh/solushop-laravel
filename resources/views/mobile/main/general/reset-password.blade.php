@@ -2,9 +2,7 @@
 @section('page-title')
     Reset Password
 @endsection
-@section('page-image')
-    {{ url('app/assets/img/Solushop.jpg') }}
-@endsection
+@section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
 @section('page-description')
     Lost your password? No problem. Let's help you recover it.
 @endsection

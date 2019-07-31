@@ -2,9 +2,7 @@
 @section('page-title')
     {{ $product['product_name'] }}
 @endsection
-@section('page-image')
-    {{ url('/app/assets/img/products/thumbnails/'.$product['images'][0]['pi_path'].'.jpg') }}
-@endsection
+@section('page-image'){{ url('/app/assets/img/products/thumbnails/'.$product['images'][0]['pi_path'].'.jpg') }}@endsection
 @section('page-description')
     Buy {{ $product['product_name'] }} from Solushop - Ghana's Most Trusted Online Store
 @endsection

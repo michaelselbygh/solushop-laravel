@@ -2,9 +2,7 @@
 @section('page-title')
     Our Amazing Vendors 
 @endsection
-@section('page-image')
-    {{ url('app/assets/img/Solushop.jpg') }}
-@endsection
+@section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
 @section('page-description')
     Check out our amazing vendors on Solushop Ghana.
 @endsection

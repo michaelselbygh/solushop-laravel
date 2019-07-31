@@ -2,9 +2,7 @@
 @section('page-title')
     {{ $vendor['name'] }}
 @endsection
-@section('page-image')
-    {{ url('app/assets/img/vendor-banners'.$vendor['id'].'.jpg') }}
-@endsection
+@section('page-image'){{ url('app/assets/img/vendor-banners'.$vendor['id'].'.jpg') }}@endsection
 @section('page-description')
     Visit {{ $vendor['name'] }} on Solushop today!
 @endsection

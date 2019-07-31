@@ -2,9 +2,7 @@
 @section('page-title')
     Login
 @endsection
-@section('page-image')
-    {{ url('app/assets/img/Solushop.jpg') }}
-@endsection
+@section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
 @section('page-description')
     Login to Solushop, Ghana's Most Trusted Store.
 @endsection

@@ -79,6 +79,14 @@ class AppGeneralPagesController extends Controller
             //wishlist count
             $customer_information['wishlist_count'] = sizeof($customer_information_object['wishlist']);
 
+            //unread messages
+            $customer_id = Auth::user()->id;
+            $unread_messages = DB::select(
+                "SELECT count(*) AS unread FROM messages, conversations WHERE conversations.id = messages.message_conversation_id AND message_sender <> '$customer_id' AND (message_read NOT LIKE '%$customer_id%') AND conv_key LIKE '%$customer_id%'"
+            );
+
+            $customer_information['unread_messages'] = $unread_messages[0]->unread;
+
             //customer addresses
             $customer_information['addresses'] = CustomerAddress::
                 where('ca_customer_id', Auth::user()->id)
@@ -295,6 +303,14 @@ class AppGeneralPagesController extends Controller
         
                     //wishlist count
                     $customer_information['wishlist_count'] = sizeof($customer_information_object['wishlist']);
+
+                    //unread messages
+                    $customer_id = Auth::user()->id;
+                    $unread_messages = DB::select(
+                        "SELECT count(*) AS unread FROM messages, conversations WHERE conversations.id = messages.message_conversation_id AND message_sender <> '$customer_id' AND (message_read NOT LIKE '%$customer_id%') AND conv_key LIKE '%$customer_id%'"
+                    );
+
+                    $customer_information['unread_messages'] = $unread_messages[0]->unread;
         
                     //customer addresses
                     $customer_information['addresses'] = CustomerAddress::
@@ -556,6 +572,14 @@ class AppGeneralPagesController extends Controller
             $customer_information['wishlist_count'] = sizeof($customer_information_object['wishlist']);
 
             $cart['logged_in'] = 0;
+
+            //unread messages
+            $customer_id = Auth::user()->id;
+            $unread_messages = DB::select(
+                "SELECT count(*) AS unread FROM messages, conversations WHERE conversations.id = messages.message_conversation_id AND message_sender <> '$customer_id' AND (message_read NOT LIKE '%$customer_id%') AND conv_key LIKE '%$customer_id%'"
+            );
+
+            $customer_information['unread_messages'] = $unread_messages[0]->unread;
 
             //get cart items
             $cart['cart_items_id_object'] = CartItem::
@@ -855,6 +879,14 @@ class AppGeneralPagesController extends Controller
             //get wishlist count
             $customer_information['wishlist_count'] = sizeof($customer_information_object['wishlist']);
 
+            //unread messages
+            $customer_id = Auth::user()->id;
+            $unread_messages = DB::select(
+                "SELECT count(*) AS unread FROM messages, conversations WHERE conversations.id = messages.message_conversation_id AND message_sender <> '$customer_id' AND (message_read NOT LIKE '%$customer_id%') AND conv_key LIKE '%$customer_id%'"
+            );
+
+            $customer_information['unread_messages'] = $unread_messages[0]->unread;
+
             //get wishlist items
             if ($customer_information['wishlist_count'] < 1) {
                 $detect = new Mobile_Detect;
@@ -986,6 +1018,14 @@ class AppGeneralPagesController extends Controller
             //get wishlist count
             $customer_information['wishlist_count'] = sizeof($customer_information_object['wishlist']);
 
+            //unread messages
+            $customer_id = Auth::user()->id;
+            $unread_messages = DB::select(
+                "SELECT count(*) AS unread FROM messages, conversations WHERE conversations.id = messages.message_conversation_id AND message_sender <> '$customer_id' AND (message_read NOT LIKE '%$customer_id%') AND conv_key LIKE '%$customer_id%'"
+            );
+
+            $customer_information['unread_messages'] = $unread_messages[0]->unread;
+
         }else{
             $customer_information['wallet_balance'] = 0;
             $customer_information['cart_count'] = 0;
@@ -1028,6 +1068,14 @@ class AppGeneralPagesController extends Controller
             //get wishlist count
             $customer_information['wishlist_count'] = sizeof($customer_information_object['wishlist']);
 
+            //unread messages
+            $customer_id = Auth::user()->id;
+            $unread_messages = DB::select(
+                "SELECT count(*) AS unread FROM messages, conversations WHERE conversations.id = messages.message_conversation_id AND message_sender <> '$customer_id' AND (message_read NOT LIKE '%$customer_id%') AND conv_key LIKE '%$customer_id%'"
+            );
+
+            $customer_information['unread_messages'] = $unread_messages[0]->unread;
+
         }else{
             $customer_information['wallet_balance'] = 0;
             $customer_information['cart_count'] = 0;
@@ -1067,6 +1115,14 @@ class AppGeneralPagesController extends Controller
 
             //get wishlist count
             $customer_information['wishlist_count'] = sizeof($customer_information_object['wishlist']);
+
+            //unread messages
+            $customer_id = Auth::user()->id;
+            $unread_messages = DB::select(
+                "SELECT count(*) AS unread FROM messages, conversations WHERE conversations.id = messages.message_conversation_id AND message_sender <> '$customer_id' AND (message_read NOT LIKE '%$customer_id%') AND conv_key LIKE '%$customer_id%'"
+            );
+
+            $customer_information['unread_messages'] = $unread_messages[0]->unread;
 
         }else{
             $customer_information['wallet_balance'] = 0;
@@ -1108,6 +1164,14 @@ class AppGeneralPagesController extends Controller
             //get wishlist count
             $customer_information['wishlist_count'] = sizeof($customer_information_object['wishlist']);
 
+            //unread messages
+            $customer_id = Auth::user()->id;
+            $unread_messages = DB::select(
+                "SELECT count(*) AS unread FROM messages, conversations WHERE conversations.id = messages.message_conversation_id AND message_sender <> '$customer_id' AND (message_read NOT LIKE '%$customer_id%') AND conv_key LIKE '%$customer_id%'"
+            );
+
+            $customer_information['unread_messages'] = $unread_messages[0]->unread;
+
         }else{
             $customer_information['wallet_balance'] = 0;
             $customer_information['cart_count'] = 0;
@@ -1147,6 +1211,14 @@ class AppGeneralPagesController extends Controller
 
             //get wishlist count
             $customer_information['wishlist_count'] = sizeof($customer_information_object['wishlist']);
+
+            //unread messages
+            $customer_id = Auth::user()->id;
+            $unread_messages = DB::select(
+                "SELECT count(*) AS unread FROM messages, conversations WHERE conversations.id = messages.message_conversation_id AND message_sender <> '$customer_id' AND (message_read NOT LIKE '%$customer_id%') AND conv_key LIKE '%$customer_id%'"
+            );
+
+            $customer_information['unread_messages'] = $unread_messages[0]->unread;
 
         }else{
             $customer_information['wallet_balance'] = 0;
@@ -1188,6 +1260,14 @@ class AppGeneralPagesController extends Controller
             //get wishlist count
             $customer_information['wishlist_count'] = sizeof($customer_information_object['wishlist']);
 
+            //unread messages
+            $customer_id = Auth::user()->id;
+            $unread_messages = DB::select(
+                "SELECT count(*) AS unread FROM messages, conversations WHERE conversations.id = messages.message_conversation_id AND message_sender <> '$customer_id' AND (message_read NOT LIKE '%$customer_id%') AND conv_key LIKE '%$customer_id%'"
+            );
+
+            $customer_information['unread_messages'] = $unread_messages[0]->unread;
+
         }else{
             $customer_information['wallet_balance'] = 0;
             $customer_information['cart_count'] = 0;
@@ -1227,6 +1307,14 @@ class AppGeneralPagesController extends Controller
 
             //get wishlist count
             $customer_information['wishlist_count'] = sizeof($customer_information_object['wishlist']);
+
+            //unread messages
+            $customer_id = Auth::user()->id;
+            $unread_messages = DB::select(
+                "SELECT count(*) AS unread FROM messages, conversations WHERE conversations.id = messages.message_conversation_id AND message_sender <> '$customer_id' AND (message_read NOT LIKE '%$customer_id%') AND conv_key LIKE '%$customer_id%'"
+            );
+
+            $customer_information['unread_messages'] = $unread_messages[0]->unread;
 
         }else{
             $customer_information['wallet_balance'] = 0;

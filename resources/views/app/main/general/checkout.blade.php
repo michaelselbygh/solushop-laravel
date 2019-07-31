@@ -111,7 +111,7 @@
                             <input type="hidden" name="checkout_action" value="update_default_address"/>
                             <div class="register-submit" style="text-align:center;">
                                 <button type="submit" name="UpdateDefaultAddress" class="form-button">Update Default Address</button>&nbsp;
-                                <a href='my-account/add-address.php'>
+                                <a href='{{ route("show.account.add.address") }}'>
                                     <button name="add-address" type='submit' class="form-button">Add New Address</button>
                                 </a>
                             </div>
@@ -120,7 +120,7 @@
                         <h4 style='text-align:center; margin-top:50px'>Oops! Looks like you have no addresses set up</h4><br>
                         <td class="product-add-to-cart" >
                             <div style='text-align:center;'>
-                                <a href='add-address.php'><button type="submit" name="add-address" class="form-button">Add New Address</button></a>
+                                <a href='{{ route("show.account.add.address") }}'><button type="submit" name="add-address" class="form-button">Add New Address</button></a>
                             </div>
                         </td>
                     @endif

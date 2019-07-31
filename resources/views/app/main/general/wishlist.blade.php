@@ -2,9 +2,7 @@
 @section('page-title')
     Wishlist
 @endsection
-@section('page-image')
-    {{ url('app/assets/img/Solushop.jpg') }}
-@endsection
+@section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
 @section('page-description')
     Your wishlist on Solushop Ghana.
 @endsection

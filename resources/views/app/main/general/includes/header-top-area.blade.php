@@ -6,10 +6,10 @@
             <div class="col-md-6 col-sm-6 col-xs-12">
                 <div class="header-top-menu">
                     <ul>
-                        <li style="padding-right:10px; margin-right:0px;"><a href="shop.php"><i class="fa fa-shopping-cart"></i> &nbsp;Shop</a></li>
+                        <li style="padding-right:10px; margin-right:0px;"><a href="{{ route('show.shop') }}"><i class="fa fa-shopping-cart"></i> &nbsp;Shop</a></li>
                         @if (Auth::check())
                             <li style="padding-right:10px; margin-right:0px;" class="">
-                                <a href="my-account/"><i class="fa fa-user"></i>&nbsp;&nbsp; My Account </a>
+                                <a href="{{ route('show.account.dashboard') }}"><i class="fa fa-user"></i>&nbsp;&nbsp; My Account </a>
                             </li>
                             <li style="padding-right:10px; margin-right:0px;" class="">
                                 <a href="{{ route('customer.logout') }}">&nbsp;&nbsp; Logout </a>
@@ -36,7 +36,7 @@
                         @if (Auth::check())
                             {{-- Return wallet balance from controller --}}
                             <li class="wallet">
-                                <a href="my-account/wallet.php">
+                                <a href="{{ route('show.account.wallet') }}">
                                     <span style='color:white; padding-right: 10px;'>
                                         <b>GH¢ {{ $customer_information["wallet_balance"] }}</b>
                                     </span>
@@ -47,15 +47,20 @@
                                 <a href=""> {{ Auth::user()->first_name }} <i class="fa fa-angle-down"></i></a>
                                 <ul class="ht-dropdown">
                                     <li>
-                                        <a href="checkout.php"> Checkout</a>
+                                        <a href="{{ route('show.checkout') }}"> Checkout</a>
                                     </li>
                                     <li>
-                                        <a href="my-account/messages-area.php">
-                                            <span style='color:white; background-color: red; padding: 4px 4px 4px 8px; border-radius:20px; margin-right:3px;'> 2 </span> Messages
+                                        <a href="{{ route('show.account.messages') }}">
+                                            @if(isset($customer_information["unread_messages"]) and $customer_information["unread_messages"]>0)
+                                                <span style='color:white; background-color: red; padding: 4px 4px 4px 8px; border-radius:20px; margin-right:3px;'> 
+                                                    {{ $customer_information["unread_messages"] }}
+                                                </span>
+                                            @endif
+                                            Messages
                                         </a>
                                     </li>
-                                    <li><a href="my-account/">My Account</a></li>
-                                    <li><a href="my-account/wallet.php">Wallet: <b>GH¢ {{ $customer_information["wallet_balance"] }}</b></a></li>
+                                    <li><a href="{{ route('show.account.dashboard') }}">My Account</a></li>
+                                    <li><a href="{{ route('show.account.wallet') }}">Wallet: <b>GH¢ {{ $customer_information["wallet_balance"] }}</b></a></li>
                                     <li><a href="{{ route('logout') }}">Logout</a></li>
                                 </ul>
                             </li>

@@ -2,9 +2,7 @@
 @section('page-title')
     Return Policy
 @endsection
-@section('page-image')
-    {{ url('app/assets/img/Solushop.jpg') }}
-@endsection
+@section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
 @section('page-description')
     How we handle returns and refunds.
 @endsection

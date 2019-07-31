@@ -6,11 +6,11 @@
                 <div class="mobile-menu">
                     <nav>
                         <ul>
-                            <li><a href="index.php">Home</a></li>
-                            <li><a href="shop.php">Shop</a></li>
-                            <li><a href="about.php">About Us</a></li>
-                            <li><a href="vendors.php">Vendors</a></li>
-                            <li><a href="contact.php">Contact Us</a></li>
+                            <li><a href="{{ route('home') }}">Home</a></li>
+                            <li><a href="{{ route('show.shop') }}">Shop</a></li>
+                            <li><a href="{{ route('show.about') }}">About Us</a></li>
+                            <li><a href="{{ route('show.vendors') }}">Vendors</a></li>
+                            <li><a href="{{ route('show.contact') }}">Contact Us</a></li>
                         </ul>
                     </nav>
                 </div>

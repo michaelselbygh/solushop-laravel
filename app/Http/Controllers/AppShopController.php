@@ -33,6 +33,14 @@ class AppShopController extends Controller
             //get wishlist count
             $customer_information['wishlist_count'] = sizeof($customer_information_object['wishlist']);
 
+            //unread messages
+            $customer_id = Auth::user()->id;
+            $unread_messages = DB::select(
+                "SELECT count(*) AS unread FROM messages, conversations WHERE conversations.id = messages.message_conversation_id AND message_sender <> '$customer_id' AND (message_read NOT LIKE '%$customer_id%') AND conv_key LIKE '%$customer_id%'"
+            );
+
+            $customer_information['unread_messages'] = $unread_messages[0]->unread;
+
         }else{
             $customer_information['wallet_balance'] = 0;
             $customer_information['cart_count'] = 0;
@@ -98,6 +106,14 @@ class AppShopController extends Controller
 
             //get wishlist count
             $customer_information['wishlist_count'] = sizeof($customer_information_object['wishlist']);
+
+            //unread messages
+            $customer_id = Auth::user()->id;
+            $unread_messages = DB::select(
+                "SELECT count(*) AS unread FROM messages, conversations WHERE conversations.id = messages.message_conversation_id AND message_sender <> '$customer_id' AND (message_read NOT LIKE '%$customer_id%') AND conv_key LIKE '%$customer_id%'"
+            );
+
+            $customer_information['unread_messages'] = $unread_messages[0]->unread;
 
         }else{
             $customer_information['wallet_balance'] = 0;
@@ -204,6 +220,14 @@ class AppShopController extends Controller
 
                 //get wishlist count
                 $customer_information['wishlist_count'] = sizeof($customer_information_object['wishlist']);
+
+                //unread messages
+                $customer_id = Auth::user()->id;
+                $unread_messages = DB::select(
+                    "SELECT count(*) AS unread FROM messages, conversations WHERE conversations.id = messages.message_conversation_id AND message_sender <> '$customer_id' AND (message_read NOT LIKE '%$customer_id%') AND conv_key LIKE '%$customer_id%'"
+                );
+
+                $customer_information['unread_messages'] = $unread_messages[0]->unread;
 
             }else{
                 $customer_information['wallet_balance'] = 0;

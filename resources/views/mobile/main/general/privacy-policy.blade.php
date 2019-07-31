@@ -2,9 +2,7 @@
 @section('page-title')
     Privacy Policy
 @endsection
-@section('page-image')
-    {{ url('app/assets/img/Solushop.jpg') }}
-@endsection
+@section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
 @section('page-description')
     How we acquire and use your data on Solushop Ghana.
 @endsection

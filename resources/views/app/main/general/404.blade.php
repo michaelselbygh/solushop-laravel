@@ -2,9 +2,7 @@
 @section('page-title')
     Page not found
 @endsection
-@section('page-image')
-    {{ url('app/assets/img/Solushop.jpg') }}
-@endsection
+@section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
 @section('page-description')
     Resource unaivailable or moved to different location.
 @endsection

@@ -15,7 +15,7 @@ class CreateConversationsTable extends Migration
     {
         Schema::create('conversations', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('conv_key_structure', '10');
+            $table->string('conv_key_structure', '10')->default("C|V");
             $table->string('conv_key', '100');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();

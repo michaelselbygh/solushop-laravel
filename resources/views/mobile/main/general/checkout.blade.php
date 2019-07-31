@@ -90,7 +90,7 @@
                                                             <button class="button" type="submit">Update Default</button>
                                                     </div>
                                                     <div class="col-50">
-                                                        <a href='my-account/add-address.php'>
+                                                        <a href='{{ route("show.account.add.address") }}'>
                                                             <button class="button" >Add New Address</button>
                                                         </a>
                                                     </div>
@@ -100,7 +100,7 @@
                                             <h5 style='text-align:center; margin-top:50px'>Oops! Looks like you have no addresses set up</h5>
                                             <td class="product-add-to-cart" >
                                                 <div style='text-align:center;'>
-                                                    <a href='my-account/add-address.php'>
+                                                    <a href='{{ route("show.account.add.address") }}'>
                                                         <button class="button" >Add New Address</button>
                                                     </a>
                                                     <br><br>

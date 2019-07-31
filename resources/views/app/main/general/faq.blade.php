@@ -2,9 +2,7 @@
 @section('page-title')
     Frequently asked questions.
 @endsection
-@section('page-image')
-    {{ url('app/assets/img/Solushop.jpg') }}
-@endsection
+@section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
 @section('page-description')
     Check out these frequently asked questions on Solushop Ghana.
 @endsection

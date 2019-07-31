@@ -2,9 +2,7 @@
 @section('page-title')
     Terms and Conditions
 @endsection
-@section('page-image')
-    {{ url('app/assets/img/Solushop.jpg') }}
-@endsection
+@section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
 @section('page-description')
     Terms and conditions governing the use of Solushop.
 @endsection
