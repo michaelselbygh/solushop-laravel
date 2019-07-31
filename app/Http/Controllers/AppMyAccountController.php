@@ -21,8 +21,8 @@ class AppMyAccountController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function showDashboard()
     {
-        return view('home');
+        
     }
 }

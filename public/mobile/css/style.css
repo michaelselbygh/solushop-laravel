@@ -206,6 +206,7 @@ ul li {
     height: 36px;
     line-height: 36px;
     text-transform: none;
+    font-weight: 300;
 }
 
 .button i {
@@ -1882,12 +1883,12 @@ ul li {
 .md .tracking-order .accordion-list .accordion-item .accordion-item-toggle {
     height: 35px;
     line-height: 35px;
-    background: #eee;
+    background: #001337;
     padding: 0 16px;
     font-size: 14px;
     font-weight: 400;
     border-radius: 5px 5px 5px 5px;
-    color: #001337;
+    color: white;
 }
 .md .tracking-order .accordion-list .accordion-item .accordion-item-toggle span {
     float: right;

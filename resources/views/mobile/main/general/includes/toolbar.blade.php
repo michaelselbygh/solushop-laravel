@@ -19,7 +19,7 @@
             </a>
             
             @if(Auth::check())
-                <a href="/my-account/" class="tab-link external">
+                <a href="{{ route('show.account.dashboard') }}" class="tab-link external">
                     <i class="ti-user"></i>
                     <span class="tabbar-label">Account</span>
                 </a>

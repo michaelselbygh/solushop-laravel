@@ -40,13 +40,13 @@ Route::get('/shop', 'AppShopController@showProducts')->name('show.shop');
 Route::post('/shop', 'AppShopController@showSearchProducts')->name('show.shop.search');
 
 //my account routes
-Route::get('/my-account', 'AppMyAccountPagesController@showDashboard')->name('show.account.dashboard');
-Route::get('/my-account/messages', 'AppMyAccountPagesController@showDashboard')->name('show.account.messages');
-Route::get('/my-account/personal-details', 'AppMyAccountPagesController@showDashboard')->name('show.account.personal.details');
-Route::get('/my-account/orders', 'AppMyAccountPagesController@showDashboard')->name('show.account.orders');
-Route::get('/my-account/login-and-security', 'AppMyAccountPagesController@showDashboard')->name('show.account.login.and.security');
-Route::get('/my-account/addresses', 'AppMyAccountPagesController@showDashboard')->name('show.account.addresses');
-Route::get('/my-account/s-wallet', 'AppMyAccountPagesController@showDashboard')->name('show.account.s.wallet');
+Route::get('/my-account', 'AppMyAccountController@showDashboard')->name('show.account.dashboard');
+Route::get('/my-account/messages', 'AppMyAccountController@showDashboard')->name('show.account.messages');
+Route::get('/my-account/personal-details', 'AppMyAccountController@showDashboard')->name('show.account.personal.details');
+Route::get('/my-account/orders', 'AppMyAccountController@showDashboard')->name('show.account.orders');
+Route::get('/my-account/login-and-security', 'AppMyAccountController@showDashboard')->name('show.account.login.and.security');
+Route::get('/my-account/addresses', 'AppMyAccountController@showDashboard')->name('show.account.addresses');
+Route::get('/my-account/s-wallet', 'AppMyAccountController@showDashboard')->name('show.account.s.wallet');
 
 //general pages 
 Route::get('/wishlist', 'AppGeneralPagesController@showWishlist')->name('show.wishlist');

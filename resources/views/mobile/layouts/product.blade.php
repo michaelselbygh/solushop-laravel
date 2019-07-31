@@ -145,6 +145,7 @@
 				margin-top: 2px;
 				margin-right: 3px;
 				transition: all 0.3s ease-out 0s;
+				display: inline-block;
 			}
 
 			#radioBtn .notActive{

@@ -21,6 +21,7 @@ use App\Count;
 use App\Coupon;
 use App\Customer;
 use App\CustomerAddress;
+use App\Manager;
 use App\Order;
 use App\OrderItem;
 use App\ProductCategory;
@@ -104,9 +105,12 @@ class AppGeneralPagesController extends Controller
 
             
             //calculating shipping
-            if(isset(Auth::user()->default_address) and !is_null(Auth::user()->default_address)){
+            if(isset(Auth::user()->default_address) and strtolower((Auth::user()->default_address)) != "none"){
                 $checkout_sf_object = CustomerAddress::
-                    where('ca_customer_id', Auth::user()->id)
+                    where([
+                        ['ca_customer_id',"=", Auth::user()->id],
+                        ['id',"=", Auth::user()->default_address]
+                    ])
                     ->with('shipping_fare')
                     ->first()
                     ->toArray();
@@ -154,7 +158,7 @@ class AppGeneralPagesController extends Controller
 
    public function processCheckout(Request $request){
         switch ($request->checkout_action) {
-
+           
             case 'update_personal_details':
                 $validator = Validator::make($request->all(), [
                     'first_name' => 'required',
@@ -238,7 +242,7 @@ class AppGeneralPagesController extends Controller
                     $activity->log_name = 'Checkout Item Removed';
                 })
                 ->log(Auth::user()->email.' removed item '.$request->checkout_item_sku.' at checkout.');
-                return redirect()->back()->with("success_message", "Address updated successfully.");
+                return redirect()->back()->with("success_message", "Item removed successfully.");
                 break;
 
             case 'process_checkout':
@@ -254,6 +258,10 @@ class AppGeneralPagesController extends Controller
         
                     if(sizeof($checkout["checkout_items_id_object"]) < 1){
                         return redirect()->route('show.shop');
+                    }
+
+                    if(strtolower(Auth::user()->default_address) == "none"){
+                        return redirect()->back()->with("error_message", "Kindly add an address.");
                     }
         
                     $checkout['checkout_items_id_array'] = $checkout['ci_quantity'] = [];
@@ -320,7 +328,10 @@ class AppGeneralPagesController extends Controller
                     //calculating shipping
                     if(isset(Auth::user()->default_address) and !is_null(Auth::user()->default_address)){
                         $checkout_sf_object = CustomerAddress::
-                            where('ca_customer_id', Auth::user()->id)
+                            where([
+                                ['ca_customer_id',"=", Auth::user()->id],
+                                ['id',"=", Auth::user()->default_address]
+                            ])
                             ->with('shipping_fare')
                             ->first()
                             ->toArray();
@@ -417,7 +428,7 @@ class AppGeneralPagesController extends Controller
                         }
 
                         if ($customer_information['wallet_balance'] > 0) {
-                            $order_items_local[$i] = new SlydepayOrderItem("SWBD", "Deducted from Solushop Wallet", ($customer_information['wallet_balance'] - (2 * $customer_information['wallet_balance'])), 1);
+                            $order_items_local[$i] = new SlydepayOrderItem("S-WBD", "Deducted from Solushop Wallet", ($customer_information['wallet_balance'] - (2 * $customer_information['wallet_balance'])), 1);
                         }
 
                         $order_items = new SlydepayOrderItems($order_items_local);
@@ -450,15 +461,75 @@ class AppGeneralPagesController extends Controller
                         } catch (Slydepay\Exception\ProcessPayment $e) {
                             echo $e->getMessage();
                         }
-
-                        
-
-
                     }else{
                         /*--- process payment internally ---*/
+                        //reduce account balance
+                        $customer = Customer::
+                            where('id', Auth::user()->id)
+                            ->with('chocolate', 'milk')
+                            ->first();
+
+                        $newCustomerBalance     = round((($customer->milk->milk_value * $customer->milkshake) - $customer->chocolate->chocolate_value) - $checkout['sub_total'], 2);
+                        $newCustomerMilkshake   = ($newCustomerBalance + $customer->chocolate->chocolate_value) / $customer->milk->milk_value;
+                        $customer->milkshake    = $newCustomerMilkshake;
+
+                        //remove icono
+                        $customer->icono = NULL;
+                        $customer->save();
+
+                        //update order
+                        Order::
+                            where('id', $order_id)
+                            ->update([
+                                'order_state' => 2
+                            ]);
+                        
+                        //update order items quantity
+                        for ($i=0; $i < sizeof($checkout['checkout_items']); $i++) {
+                            $sku = StockKeepingUnit::
+                                where('id', $checkout['checkout_items_id_array'][$i])
+                                ->first();
+
+                            //reduce quantity
+                            $sku->sku_stock_left -= $checkout['ci_quantity'][$i];
+
+                            //notify vendor
+                            $sms = new SMS;
+                            $sms->sms_message = "Purchase Alert\nProduct : " .$checkout["checkout_items"][$i]["product_name"]. "\nQuantity Bought: " . $checkout['ci_quantity'][$i] . "\nQuantity Remaining : " .$sku->sku_stock_left;
+                            $sms->sms_phone = $checkout["checkout_items"][$i]["phone"];
+                            $sms->sms_state = 1;
+                            $sms->save();
+
+                            //save sku
+                            $sku->save();
+                        }
+                        
+
+                        //notify customer
+                        $sms_message = "Hi ".Auth::user()->first_name.", your order $order_id has been received. We will begin processing soon. Thanks for choosing Solushop!";
+                        $sms_phone = Auth::user()->phone;
+
+                        $sms = new SMS;
+                        $sms->sms_message = $sms_message;
+                        $sms->sms_phone = $sms_phone;
+                        $sms->sms_state = 1;
+                        $sms->save();
+
+                        //notify management
+                        $managers = Manager::where('sms', 0)->get();
+                        foreach ($managers as $manager) {
+                            $sms = new SMS;
+                            $sms->sms_message = "ALERT: NEW ORDER\nCustomer: ".Auth::user()->first_name." ".Auth::user()->last_name."\nPhone: 0".substr(Auth::user()->phone, 3);
+                            $sms->sms_phone = $manager->phone;
+                            $sms->sms_state = 1;
+                            $sms->save();
+                        }
+
+                        return redirect()->route('show.account.orders')->with("success_message", "Order $order_id placed successfully.");
                     }
-                    
                 }
+
+                
                 break;
             default:
                 # code...

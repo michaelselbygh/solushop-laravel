@@ -87,7 +87,7 @@
             </li>
             @if(Auth::check())
                 <li>
-                    <a href="{{ route('show.account') }}" class="panel-close external">
+                    <a href="{{ route('show.account.dashboard') }}" class="panel-close external">
                         <div class="item-media">
                             <i class="ti-settings"></i>
                         </div>

@@ -14,7 +14,7 @@ class Product extends Model
 
     public function skus()
     {
-        return $this->hasMany('App\StockKeepingUnit', 'sku_product_id', 'id' );
+        return $this->hasMany('App\StockKeepingUnit', 'sku_product_id', 'id' )->orderBy('sku_variant_description');
     }
 
     public function category()
