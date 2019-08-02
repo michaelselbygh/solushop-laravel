@@ -37,7 +37,7 @@
                     <br>
                     <h3 style="font-weight: 350">Orders</h3>
                     <br>
-                    @if($orders)
+                    @if(sizeof($orders) > 0)
                         <div class="panel-group" id="accordion" role="tablist">
                             <?php $i = 0 ?>
                             @foreach ($orders as $order)
@@ -46,7 +46,7 @@
                                     <div class="panel-heading">
                                         <h5 class="panel-title">
                                             <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse{{$i}}" style="font-size:12px;">
-                                                <span style="font-weight: 400"> {{ $order->id }}</span> - {{ date('g:ia, l jS F Y', strtotime($order->created_at)) }}
+                                                <span style="font-weight: 400"> {{ $order->id }}</span> - {{ date('g:ia, l jS F Y', strtotime($order->order_date)) }}
                                             </a>
                                         </h5>
                                     </div>
@@ -107,7 +107,7 @@
                                                                             </td>
                                                                         </tr>
                                                                     @endfor
-                                                                    @if($order->order_scoupon != NULL OR trim($order->order_scoupon) != "NULL")
+                                                                    @if($order->order_scoupon != NULL AND trim($order->order_scoupon) != "NULL")
                                                                         <tr class="cart_item">
                                                                             <td style="width:70%; text-align: left;" class="product-name">
                                                                                 1% Discount from Sales Coupon - {{ $order->order_scoupon }} 
@@ -125,7 +125,7 @@
                                                                         <td style='text-align:right;'>
                                                                             <span class="amount">
                                                                                     GH¢
-                                                                                @if($order->order_scoupon != NULL OR $order->order_scoupon != "NULL")
+                                                                                @if($order->order_scoupon != NULL AND $order->order_scoupon != "NULL")
                                                                                     {{ 0.99 * $order->order_subtotal }}
                                                                                 @else
                                                                                     {{ $order->order_subtotal }}
@@ -139,12 +139,13 @@
                                                                             <span class="amount"> GH¢ {{ $order->order_shipping }}</span>
                                                                         </td>
                                                                     </tr>
-                                                                    @if ($order->order_subtotal == 1 AND $customer_information["wallet_balance"] > 0)
+                                                                    @if ($order->order_state == 1 AND $customer_information["wallet_balance"] > 0)
                                                                         <tr class="shipping">
                                                                             <th>To be deducted from S-Wallet </th>
                                                                             <td style='text-align:right;' data-title="Delivery">
                                                                                 <span class="amount">
-                                                                                    @if($order->order_scoupon != NULL OR $order->order_scoupon != "NULL")
+                                                                                    -  GH¢
+                                                                                    @if($order->order_scoupon != NULL AND $order->order_scoupon != "NULL")
                                                                                         @if ($customer_information["wallet_balance"] >= (0.99 * $order->order_subtotal) + $order->order_shipping)
                                                                                             {{(0.99 * $order->order_subtotal) + $order->order_shipping}}
                                                                                         @else 
@@ -174,7 +175,7 @@
                                                                             <span class="total-amount">
                                                                                 GH¢
                                                                             @if($order->order_state == 1)
-                                                                                @if($order->order_scoupon != NULL OR $order->order_scoupon != "NULL")
+                                                                                @if($order->order_scoupon != NULL AND $order->order_scoupon != "NULL")
                                                                                     @if ($customer_information["wallet_balance"] >= (0.99 * $order->order_subtotal) + $order->order_shipping)
                                                                                         0.00
                                                                                     @else
@@ -189,7 +190,7 @@
                                                                                 @endif
                                                                             
                                                                             @else 
-                                                                                @if($order->order_scoupon != NULL OR $order->order_scoupon != "NULL")
+                                                                                @if($order->order_scoupon != NULL AND $order->order_scoupon != "NULL")
                                                                                     {{ (0.99 * $order->order_subtotal) + $order->order_shipping}}
                                                                                 @else 
                                                                                     {{ ($order->order_subtotal) + $order->order_shipping}}

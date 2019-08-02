@@ -136,7 +136,7 @@
                                         <h3 style='text-align:left;'>Order Summary</h3>
                                     </div>
                                     <div class="your-order-table table-responsive">
-                                        <table style="margin: 0 0 20px;">
+                                        <table style="margin: 0 0 20px; width: 100%">
                                             <tbody> 
                                                 @for($i=0; $i < sizeof($checkout['checkout_items']); $i++) 
                                                     <tr class="cart_item">

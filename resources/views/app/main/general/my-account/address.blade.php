@@ -59,7 +59,7 @@
                                         </div>
                                     </div>
                                     <div class="register-submit" style="text-align:center;">
-                                        <button type="" name="address_password" class="form-button" style="margin-top: 15px;">Add Address</button>
+                                        <button type="" name="add_address" class="form-button" style="margin-top: 15px;">Add Address</button>
                                     </div>
                                 </form>
                             </div>

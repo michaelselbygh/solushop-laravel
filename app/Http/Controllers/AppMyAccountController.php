@@ -426,7 +426,7 @@ class AppMyAccountController extends Controller
             $customer_information['unread_messages'] = $unread_messages[0]->unread;
 
             //select orders
-            $orders = Order::orderBy('created_at', 'desc')
+            $orders = Order::orderBy('order_date', 'desc')
                 ->where('order_customer_id', Auth::user()->id)
                 ->with('order_state', 'order_items.order_item_state')
                 ->paginate(6);
@@ -501,9 +501,10 @@ class AppMyAccountController extends Controller
             
 
             /*--- calculating checkout totals ---*/
+            $order_item_total = $checkout["order"]["order_subtotal"];
 
             //considering icono discount
-            if(isset(Auth::user()->icono) AND Auth::user()->icono != "NULL" AND Auth::user()->icono != NULL){
+            if($checkout["order"]["order_scoupon"] != NULL AND trim($checkout["order"]["order_scoupon"]) != "NULL"){
                 $checkout["order"]["order_subtotal"] = 0.99 * $checkout["order"]["order_subtotal"];
             }
 
@@ -545,6 +546,11 @@ class AppMyAccountController extends Controller
 
                 if ($customer_information['wallet_balance'] > 0) {
                     $order_items_local[$i] = new SlydepayOrderItem("S-WBD", "Deducted from Solushop Wallet", ($customer_information['wallet_balance'] - (2 * $customer_information['wallet_balance'])), 1);
+                    $i++;
+                }
+
+                if($checkout["order"]["order_scoupon"] != NULL AND trim($checkout["order"]["order_scoupon"]) != "NULL"){
+                    $order_items_local[$i] = new SlydepayOrderItem("S-SCD", "S-Coupon Discount - ".$checkout["order"]["order_scoupon"], (0.01 * $order_item_total - (2 * 0.01 * $order_item_total)), 1);
                 }
 
                 $order_items = new SlydepayOrderItems($order_items_local);
@@ -956,7 +962,7 @@ class AppMyAccountController extends Controller
 
         $detect = new Mobile_Detect;
         if( $detect->isMobile() && !$detect->isTablet() ){
-            return view('mobile.main.general.s-wallet')
+            return view('mobile.main.general.my-account.s-wallet')
             ->with('customer_information', $customer_information)
             ->with('wallet', $wallet);
         }else{

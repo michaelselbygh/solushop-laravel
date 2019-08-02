@@ -49,8 +49,8 @@
                                             <input type="password" name="new_password" value="" placeholder="Enter new password" required>
                                         </div>
                                         <div class="form-fild">
-                                                <input type="password" name="confirm_new_password" value="" placeholder="Confirm new password" required>
-                                            </div>
+                                            <input type="password" name="confirm_new_password" value="" placeholder="Confirm new password" required>
+                                        </div>
                                     </div>
                                     <div class="register-submit" style="text-align:center;">
                                         <button type="" name="update_password" class="form-button" style="margin-top: 15px;">Update Password</button>

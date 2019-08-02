@@ -331,6 +331,7 @@ class AppGeneralPagesController extends Controller
                     }
 
                     $checkout['order_total'] = $checkout['sub_total'];
+                    $order_item_total = $checkout['sub_total'];
         
                     //considering icono discount
                     if(isset(Auth::user()->icono) AND Auth::user()->icono != "NULL" AND Auth::user()->icono != NULL){
@@ -445,6 +446,11 @@ class AppGeneralPagesController extends Controller
 
                         if ($customer_information['wallet_balance'] > 0) {
                             $order_items_local[$i] = new SlydepayOrderItem("S-WBD", "Deducted from Solushop Wallet", ($customer_information['wallet_balance'] - (2 * $customer_information['wallet_balance'])), 1);
+                            $i++;
+                        }
+
+                        if(isset(Auth::user()->icono) AND Auth::user()->icono != "NULL" AND Auth::user()->icono != NULL){
+                            $order_items_local[$i] = new SlydepayOrderItem("S-SCD", "S-Coupon Discount - ".Auth::user()->icono, (0.01 * $order_item_total - (2 * 0.01 * $order_item_total)), 1);
                         }
 
                         $order_items = new SlydepayOrderItems($order_items_local);

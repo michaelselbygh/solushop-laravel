@@ -1,4 +1,4 @@
-@extends('app.layouts.my-account')
+@extends('app.layouts.my-account') 
 @section('page-title')
     Conversation with {{ $conversation["vendor"]["name"] }}
 @endsection
@@ -111,7 +111,7 @@
                                 </div>
                                 <input type="hidden" name="mci" value="AK39SA{{ $conversation["details"]["id"] }}"/>
                                 <div class="register-submit" style="text-align:center; margin-bottom:0px;">
-                                    <button type="submit" name="SendMessage" class="form-button">Send Message</button>
+                                    <button type="submit" name="send_message" class="form-button">Send Message</button>
                                 </div>
                             </form>
                         </div>
