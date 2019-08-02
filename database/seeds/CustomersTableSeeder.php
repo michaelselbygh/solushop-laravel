@@ -17,7 +17,7 @@ class CustomersTableSeeder extends CsvSeeder
 			3 => 'email',
 			5 => 'phone',
 			7 => 'activation_code',
-			8 => 'password',
+			8 => 'old_password',
 			9 => 'default_address',
 			10 => 'date_of_birth',
 			11 => 'milkshake',

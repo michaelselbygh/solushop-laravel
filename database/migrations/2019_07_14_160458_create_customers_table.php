@@ -22,7 +22,7 @@ class CreateCustomersTable extends Migration
             $table->string('phone', '15')->unique();
             $table->boolean('phone_verified', '15')->default('1');
             $table->string('activation_code', '10');
-            $table->string('password');
+            $table->string('old_password');
             $table->string('default_address', '5')->default('None');
             $table->string('date_of_birth', '10')->nullable();
             $table->double('milkshake');
