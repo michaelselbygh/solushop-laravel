@@ -117,7 +117,7 @@
                                 </ul>
                             </li>
                             <li class="nav-item">
-                                <a href="">
+                                <a href="{{ route("manager.subscriptions") }}">
                                     <i class="la la-tag" style="color:#f68b1e;"></i>
                                     <span class="menu-title">Subscriptions</span>
                                 </a>
@@ -129,15 +129,15 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="" >
+                                <a href="{{ route("manager.sms.report") }}" >
                                     <i class="la la-envelope" style="color:#f68b1e;"></i>
                                     <span class="menu-title">SMS Report</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="">
+                                <a href="{{ route("manager.activity.log") }}">
                                     <i class="la la-server" style="color:#f68b1e;"></i>
-                                    <span class="menu-title">Logs</span>
+                                    <span class="menu-title">Activity Log</span>
                                 </a>
                             </li>
                         </ul>

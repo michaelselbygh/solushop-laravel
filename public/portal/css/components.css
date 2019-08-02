@@ -290,7 +290,7 @@ footer.footer-light {
 }
 
 footer.footer-dark {
-  background: #2C303B;
+  background: #001337;
 }
 
 footer.footer-dark span {
@@ -579,7 +579,7 @@ footer .ft-heart:before {
 
 .main-menu.menu-dark {
   color: #dcdcdc;
-  background: #2C303B;
+  background: #001337;
 }
 
 .main-menu.menu-dark .main-menu-header {
@@ -598,7 +598,7 @@ footer .ft-heart:before {
 }
 
 .main-menu.menu-dark .navigation {
-  background: #2C303B;
+  background: #001337;
 }
 
 .main-menu.menu-dark .navigation .navigation-header {
@@ -661,7 +661,7 @@ footer .ft-heart:before {
 
 .main-menu.menu-dark .navigation > li.open > a {
   color: #c3c3c3;
-  background: #23262f;
+  background: #001337;
   border-right: 4px solid #f68b1e;
 }
 
@@ -726,7 +726,7 @@ footer .ft-heart:before {
 }
 
 .main-menu.menu-dark .navigation > li .active .hover > a {
-  background: #23262f;
+  background: #001337;
 }
 
 .main-menu.menu-dark .navigation > li ul {
@@ -787,11 +787,11 @@ footer .ft-heart:before {
 }
 
 .main-menu.menu-dark .navigation > li > ul {
-  background: #2C303B;
+  background: #001337;
 }
 
 .main-menu.menu-dark ul.menu-popout {
-  background: #2C303B;
+  background: #001337;
 }
 
 .main-menu.menu-dark ul.menu-popout li a {
@@ -2123,38 +2123,38 @@ Author URL: http://www.themeforest.net/user/pixinvent
 
 .navbar-light .search-input .input,
 .navbar-semi-dark .search-input .input {
-  color: #2C303B;
+  color: #001337;
 }
 
 .navbar-light .search-input .input::-webkit-input-placeholder,
 .navbar-semi-dark .search-input .input::-webkit-input-placeholder {
-  color: #2C303B;
+  color: #001337;
 }
 
 .navbar-light .search-input .input:-moz-placeholder,
 .navbar-semi-dark .search-input .input:-moz-placeholder {
-  color: #2C303B;
+  color: #001337;
 }
 
 .navbar-light .search-input .input::-moz-placeholder,
 .navbar-semi-dark .search-input .input::-moz-placeholder {
-  color: #2C303B;
+  color: #001337;
 }
 
 .navbar-light .search-input .input:-ms-input-placeholder,
 .navbar-semi-dark .search-input .input:-ms-input-placeholder {
-  color: #2C303B;
+  color: #001337;
 }
 
 .navbar-light .search-input .input::placeholder,
 .navbar-semi-dark .search-input .input::placeholder {
-  color: #2C303B;
+  color: #001337;
 }
 
 .navbar-light .search-input.open .input,
 .navbar-semi-dark .search-input.open .input {
-  color: #2C303B;
-  border-bottom: 1px solid #2C303B;
+  color: #001337;
+  border-bottom: 1px solid #001337;
 }
 
 .navbar-dark .search-input .input,
@@ -2196,8 +2196,8 @@ Author URL: http://www.themeforest.net/user/pixinvent
 @media (max-width: 991.98px) {
   #navbar-mobile .search-input.open .input {
       width: 136px;
-      color: #2C303B;
-      border-bottom: 1px solid #2C303B;
+      color: #001337;
+      border-bottom: 1px solid #001337;
       overflow: hidden;
       position: relative;
       background: none;

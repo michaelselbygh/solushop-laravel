@@ -86,9 +86,20 @@ Route::get('/cron/delete-unpaid-wtu-payments', 'CronsController@deleteUnpaidWTUP
 Route::prefix('portal')->group(function(){
     //manager routes
     Route::prefix('manager')->group(function(){
+        //login routes
         Route::get('/login', 'Auth\ManagerLoginController@showLoginForm')->name('manager.login');
         Route::post('/login', 'Auth\ManagerLoginController@login')->name('manager.login.submit');
         Route::get('/logout', 'Auth\ManagerLoginController@logout')->name('manager.logout');
+
+        //general pages
+        Route::get('/sales-associates', 'ManagerController@showSalesAssociates')->name('manager.show.sales.associates');
+        Route::get('/sales-associates/add', 'ManagerController@showSubscriptions')->name('manager.show.add.sales.associate');
+        Route::get('/sales-associates/add', 'ManagerController@showSubscriptions')->name('manager.process.add.sales.associate');
+        Route::get('/sales-associates/member/{memberID}', 'ManagerController@showSalesAssociate')->name('manager.show.sales.associate');
+        Route::post('/sales-associates/member/{memberID}', 'ManagerController@processSalesAssociate')->name('manager.process.sales.associate');
+        Route::get('/subscriptions', 'ManagerController@showSubscriptions')->name('manager.subscriptions');
+        Route::get('/activity-log', 'ManagerController@showActivityLog')->name('manager.activity.log');
+        Route::get('/sms-report', 'ManagerController@showSMSReport')->name('manager.sms.report');
         Route::get('/', 'ManagerController@index')->name('manager.dashboard');
     });
 

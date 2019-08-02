@@ -16,6 +16,7 @@
         <!-- BEGIN: Vendor CSS-->
         <link rel="stylesheet" type="text/css" href="../../portal/vendors/css/vendors.min.css">
         <link rel="stylesheet" type="text/css" href="../../portal/vendors/css/pickers/daterange/daterangepicker.css">
+        <link rel="stylesheet" type="text/css" href="../../portal/vendors/css/tables/datatable/datatables.min.css">
         <!-- END: Vendor CSS-->
 
         <!-- BEGIN: Theme CSS-->
@@ -83,7 +84,7 @@
         <!-- BEGIN: Content-->
         <div class="app-content content" style="background-image: url('../../app-assets/images/backgrounds/bg-1.jpg'); background-repeat: no-repeat; background-attachment: fixed; background-position: center; ">
             <div class="content-wrapper">
-                <div class="content-header row mb-1">
+                <div class="content-header row">
                 </div>
                 <div class="content-body">
                     @yield('content-body')
@@ -107,13 +108,8 @@
         <!-- BEGIN Vendor JS-->
 
         <!-- BEGIN: Page Vendor JS-->
-        <script src="../../portal/vendors/js/charts/chart.min.js"></script>
-        <script src="../../portal/vendors/js/charts/echarts/echarts.js"></script>
-        <script src="../../portal/vendors/js/ui/headroom.min.js"></script>
         <script src="../../portal/vendors/js/extensions/jquery.steps.min.js"></script>
-        <script src="../../portal/vendors/js/pickers/dateTime/moment-with-locales.min.js"></script>
-        <script src="../../portal/vendors/js/pickers/daterange/daterangepicker.js"></script>
-        <script src="../../portal/vendors/js/forms/validation/jquery.validate.min.js"></script>
+        <script src="../../portal/vendors/js/tables/datatable/datatables.min.js" type="text/javascript"></script>
         <!-- END: Page Vendor JS-->
 
         <!-- BEGIN: Theme JS-->
@@ -123,8 +119,7 @@
 
         <!-- BEGIN: Page JS-->
         <script src="../../portal/js/scripts/pages/dashboard-crypto.js"></script>
-        
-        <script src="../../portal/js/scripts/forms/wizard-steps.js"></script>
+        <script src="../../portal/js/scripts/tables/datatables/datatable-basic.js" type="text/javascript"></script>
         <!-- END: Page JS-->
 
     </body>
