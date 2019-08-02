@@ -239,24 +239,26 @@
                             <div data-space-between="10" data-slides-per-view="auto" class="swiper-container swiper-init demo-swiper-auto">
                                 <div class="swiper-wrapper">
                                     @for ($i = 0; $i < sizeof($product["related_products"]); $i++)
-                                        <div class="swiper-slide">
-                                            <a href="{{ url('shop/'.$product['related_products'][$i]['vendor']['username'].'/'.$product['related_products'][$i]['product_slug'])}}" class="external">
-                                                <div class="content">
-                                                    <img src="{{ url('app/assets/img/products/thumbnails/'.$product['related_products'][$i]['images'][0]['pi_path'].'.jpg') }}" alt="">
-                                                    <div class="text">
-                                                        <a href="{{ url('shop/'.$product['related_products'][$i]['vendor']['username'].'/'.$product['related_products'][$i]['product_slug'])}}" class="external"><p>{{ ucwords($product['related_products'][$i]['product_name']) }}</p></a>
-                                                        <span class="price">
-                                                            GH¢ {{ $product['related_products'][$i]['product_selling_price'] - $product['related_products'][$i]['product_discount'] }} 
-                                                            @if($product['related_products'][$i]['product_discount'] > 0)
-                                                                <span style="color: #a4a4a4; text-decoration: line-through; margin-right: 5px; font-size: 10px;">
-                                                                    GH¢ {{ $product['related_products'][$i]['product_selling_price'] }}
-                                                                </span>
-                                                            @endif
-                                                        </span>
+                                        @if($product["related_products"][$i]["id"] != $product["id"]) 
+                                            <div class="swiper-slide">
+                                                <a href="{{ url('shop/'.$product['related_products'][$i]['vendor']['username'].'/'.$product['related_products'][$i]['product_slug'])}}" class="external">
+                                                    <div class="content">
+                                                        <img src="{{ url('app/assets/img/products/thumbnails/'.$product['related_products'][$i]['images'][0]['pi_path'].'.jpg') }}" alt="">
+                                                        <div class="text">
+                                                            <a href="{{ url('shop/'.$product['related_products'][$i]['vendor']['username'].'/'.$product['related_products'][$i]['product_slug'])}}" class="external"><p>{{ ucwords($product['related_products'][$i]['product_name']) }}</p></a>
+                                                            <span class="price">
+                                                                GH¢ {{ $product['related_products'][$i]['product_selling_price'] - $product['related_products'][$i]['product_discount'] }} 
+                                                                @if($product['related_products'][$i]['product_discount'] > 0)
+                                                                    <span style="color: #a4a4a4; text-decoration: line-through; margin-right: 5px; font-size: 10px;">
+                                                                        GH¢ {{ $product['related_products'][$i]['product_selling_price'] }}
+                                                                    </span>
+                                                                @endif
+                                                            </span>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </a>
-                                        </div>
+                                                </a>
+                                            </div>
+                                        @endif
                                     @endfor
                                 </div>
                             </div>

@@ -7,4 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class OrderItem extends Model
 {
     public $incrementing = false;
+
+    public function order_item_state(){
+        return $this->hasOne('App\OrderItemsState', 'id', 'oi_state' );
+    }
 }
+

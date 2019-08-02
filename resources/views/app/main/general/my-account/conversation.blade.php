@@ -16,6 +16,7 @@
                         <div class="breadcrumbs">
                             <ul>
                                 <li><a href="{{ route('home') }}">Home</a><span class="breadcome-separator">></span></li>
+                                <li><a href="{{ route('show.account.dashboard') }}">My Account</a><span class="breadcome-separator">></span></li>
                                 <li><a href="{{ route('show.account.messages') }}">Messages</a><span class="breadcome-separator">></span></li>
                                 <li>{{ $conversation["vendor"]["name"] }}</li>
                             </ul>

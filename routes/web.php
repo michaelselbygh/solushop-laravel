@@ -45,18 +45,16 @@ Route::get('/my-account/messages', 'AppMyAccountController@showMessages')->name(
 Route::get('/my-account/messages/{vendorSlug}/{productSlug?}', 'AppMyAccountController@showConversation')->name('show.account.conversation');
 Route::post('/my-account/messages/{vendorSlug}/{productSlug?}', 'AppMyAccountController@processConversation')->name('process.account.conversation');
 Route::get('/my-account/personal-details', 'AppMyAccountController@showPersonalDetails')->name('show.account.personal.details');
-Route::post('/my-account/personal-details', 'AppMyAccountController@processPersonalDetails')->name('show.account.personal.details');
+Route::post('/my-account/personal-details', 'AppMyAccountController@processPersonalDetails')->name('process.account.personal.details');
 Route::get('/my-account/orders', 'AppMyAccountController@showOrders')->name('show.account.orders');
-Route::get('/my-account/orders/{orderID}', 'AppMyAccountController@showOrder')->name('show.account.order');
-Route::post('/my-account/orders/{orderID}', 'AppMyAccountController@processOrder')->name('process.account.order');
+Route::post('/my-account/orders', 'AppMyAccountController@processOrders')->name('process.account.orders');
 Route::get('/my-account/login-and-security', 'AppMyAccountController@showLoginAndSecurity')->name('show.account.login.and.security');
 Route::post('/my-account/login-and-security', 'AppMyAccountController@processLoginAndSecurity')->name('process.account.login.and.security');
 Route::get('/my-account/addresses', 'AppMyAccountController@showAddresses')->name('show.account.addresses');
+Route::get('/my-account/s-wallet', 'AppMyAccountController@showWallet')->name('show.account.wallet');
 Route::get('/my-account/addresses/add', 'AppMyAccountController@showAddAddress')->name('show.account.add.address');
 Route::post('/my-account/addresses/add', 'AppMyAccountController@processAddAddress')->name('process.account.add.address');
-Route::get('/my-account/addresses/edit/{addressID}', 'AppMyAccountController@showEditAddress')->name('show.account.edit.address');
-Route::post('/my-account/addresses/edit/{addressID}', 'AppMyAccountController@processEditAddress')->name('process.account.edit.address');
-Route::get('/my-account/s-wallet', 'AppMyAccountController@showWallet')->name('show.account.wallet');
+Route::post('/my-account/addresses', 'AppMyAccountController@processEditAddress')->name('process.account.edit.address');
 Route::post('/my-account/s-wallet', 'AppMyAccountController@processWallet')->name('process.account.wallet');
 
 //general pages 
@@ -79,6 +77,9 @@ Route::get('/cron/reports', 'CronsController@generateReports');
 Route::get('/cron/process-sms-queue', 'CronsController@processSMSQueue');
 Route::get('/cron/update-counts', 'CronsController@updateCounts');
 Route::get('/cron/vendor-subscriptions-check', 'CronsController@checkVendorSubscriptions');
+Route::get('/cron/delete-empty-conversations', 'CronsController@deleteEmptyConversations');
+Route::get('/cron/delete-unpaid-orders', 'CronsController@deleteUnpaidOrders');
+Route::get('/cron/delete-unpaid-wtu-payments', 'CronsController@deleteUnpaidWTUPayments');
 
 
 //portal routes

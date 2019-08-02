@@ -336,7 +336,7 @@
     </section>
 
 
-    @if(sizeof($product["related_products"]) > 0)
+    @if(sizeof($product["related_products"]) > 0 AND !(sizeof($product["related_products"]) == 1 AND $product["related_products"][0]['id'] == $product["id"]))
         <section class="related-products-area">
             <div class="container">
                 <div class="row">

@@ -1,10 +1,10 @@
 @extends('app.layouts.my-account')
 @section('page-title')
-    Messages
+    Wallet
 @endsection
 @section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
 @section('page-description')
-    Manage your messages on Solushop Ghana
+    Manage your wallet on Solushop Ghana
 @endsection
 @section('page-content')
     <!--Heading Banner Area Start-->
@@ -17,7 +17,7 @@
                             <ul>
                                 <li><a href="{{ route('home') }}">Home</a><span class="breadcome-separator">></span></li>
                                 <li><a href="{{ route('show.account.dashboard') }}">My Account</a><span class="breadcome-separator">></span></li>
-                                <li>Messages</li>
+                                <li>S-Wallet</li>
                             </ul>
                         </div>
                         @include('app.main.general.success-and-error.message') 
@@ -35,44 +35,47 @@
                 <!--Shop Product Area Start-->
                 <div class="col-md-8 col-md-push-4">
                     <br>
-                    <h3 style="font-weight:350">Messages</h3>
+                    <h3 style="font-weight: 350">S-Wallet ( Balance : <b>GH¢ {{ $customer_information["wallet_balance"] }}</b> )</h3>
                     <br>
-
-                    @if(sizeof($conversations) < 1)
-                        <p>
-                            You have no conversations yet.
-                        </p>
-                    @else
-                        @for ($i = 0; $i < sizeof($conversations); $i++)
-                            <a href="{{ url("my-account/messages/".$conversations[$i]['vendor']['username']) }}" >
-                                <i class='fa fa-check' style='font-size:12px; margin-right:7px; color: #f68b1e;'></i>
-                                {{ $conversations[$i]['vendor']['name'] }}
-                            
-                                @if ($conversations[$i]['unread_messages'] > 0)
-                                    <span style='color:white; background-color: red; padding: 2px 6px; border-radius:20px;'>
-                                        {{ $conversations[$i]['unread_messages'] }}
-                                    </span>
-                                @endif
-                                <br>
-                            </a>
-                        @endfor
-                    @endif
+                    <div class="row" style="">
+                        <div class="col-md-10">
+                            <span>The Solushop Wallet or S-Wallet allows you to top-up money and make purchases directly and super fast on Solushop.</span>
+                            <div class="register-form" style="margin-top: 0px;">
+                                <form action="{{ route("process.account.wallet") }}" method="POST">
+                                    @csrf
+                                    <div class="col-md-12">
+                                        <div class="form-fild">
+                                            <select name="wtup_id" placeholder="Select Package" style="padding-left: 5px; border: 1px solid #e5e5e5; border-radius: 5px; height: 35px;" required>
+                                                @for ($j = 0; $j < sizeof($wallet["options"]); $j++)
+                                                    <option value="{{ $wallet["options"][$j]["id"] }}">
+                                                            {{ $wallet["options"][$j]["wtu_package_description"] }}
+                                                    </option>
+                                                @endfor
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="register-submit" style="text-align:center;">
+                                        <button type="" name="top_up_wallet" class="form-button" style="margin-top: 15px;">Top Up Wallet</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <!--Shop Product Area End-->
-
                 <!--Left Sidebar Start-->
                 <div class="col-md-4 col-md-pull-8">
                     <div class="widget widget-shop-categories" style="margin-bottom:50px; border-radius:20px;">
                         <div class="widget-content">
                             <ul class="product-categories">
-                                <li>
+                                <li style="">
                                     <a style="margin-left:15px; font-size: 12px;" href="{{ route('show.account.dashboard') }}">
                                         <i class='fa fa-dashboard' style='font-size:18px; margin-right:7px;'></i> 
                                         Dashboard
                                     </a>
                                 </li>
-                                <li style="background-color: #f68b1e;  border-radius: 10px;">
-                                    <a style="margin-left:15px; color:white; font-size: 12px;" href="{{ route('show.account.messages') }}">
+                                <li>
+                                    <a style="margin-left:15px; font-size: 12px;" href="{{ route('show.account.messages') }}">
                                         <i class='fa fa-comments-o' style='font-size:18px; margin-right:7px;'></i> 
                                         Messages 
                                         @if(isset($customer_information["unread_messages"]) and $customer_information["unread_messages"]>0)
@@ -106,8 +109,8 @@
                                         Addresses
                                     </a>
                                 </li>
-                                <li>
-                                    <a style="margin-left:15px; font-size: 12px;" href="{{ route('show.account.wallet') }}">
+                                <li style="background-color: #f68b1e; color:white; border-radius: 10px;">
+                                    <a style="margin-left:15px; font-size: 12px; color:white;" href="{{ route('show.account.wallet') }}">
                                         <i class='fa fa-money' style='font-size:18px; margin-right:7px;'></i> 
                                         Wallet
                                     </a>
@@ -120,4 +123,5 @@
             </div>
         </div>
     </div>
+
 @endsection

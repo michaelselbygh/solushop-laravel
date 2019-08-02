@@ -11,9 +11,17 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 
 use App\ActivityLog;
+use App\Conversation;
 use App\Count;
+use App\Messages;
+use App\Order;
+use App\OrderItem;
+use App\Product;
 use App\SMS;
 use App\VendorSubscription;
+use App\WTUPayment;
+
+
 
 class Kernel extends ConsoleKernel
 {
@@ -167,6 +175,67 @@ class Kernel extends ConsoleKernel
 
             $count->save();
         
+        })->daily('23:59');
+
+         /*--- Delete empty conversations older than 3 days ---*/
+         $schedule->call(function () {
+            $three_days_ago = date('Y-m-d H:i:s', strtotime('-3 days', strtotime(date('Y-m-d'))));
+
+            $conversations = Conversation::
+                where([
+                    ['created_at', '<', $three_days_ago]
+                ])
+                ->with('messages')
+                ->get()
+                ->toArray();
+
+            
+
+            for ($i=0; $i < sizeof($conversations); $i++) { 
+                if(sizeof($conversations[$i]["messages"]) < 1){
+                    //delete
+                    Conversation::where([
+                        ['id', '=', $conversations[$i]["id"]]
+                    ])->delete();
+                }
+            }
+        
+        })->daily('23:59');
+
+         /*--- Delete unpaid orders older than 7 days ---*/
+         $schedule->call(function () {
+            $seven_days_ago = date('Y-m-d H:i:s', strtotime('-7 days', strtotime(date('Y-m-d'))));
+
+            $orders = Order::
+                where([
+                    ['order_date', '<', $seven_days_ago],
+                    ['order_state', '=', 1]
+                ])
+                ->get()
+                ->toArray();
+
+            
+
+            for ($i=0; $i < sizeof($orders); $i++) { 
+                //delete order items
+                OrderItem::where([
+                    ['oi_order_id', '=', $orders[$i]["id"]]
+                ])->delete();
+
+                //delete order
+                Order::where([
+                    ['id', '=', $orders[$i]["id"]]
+                ])->delete();
+            }
+        })->daily('23:59');
+
+        /*--- Delete unpaid wallet top up payments ---*/
+        $schedule->call(function () {
+
+            WTUPayment::where([
+                ['wtu_payment_status', '=', "UNPAID"]
+            ])->delete();
+            
         })->daily('23:59');
     }
 
