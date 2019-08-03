@@ -115,7 +115,7 @@ Route::prefix('portal')->group(function(){
         Route::post('/vendors/add', 'ManagerController@processAddVendor')->name('manager.process.add.vendor');
         Route::get('/vendor/{vendorSlug}', 'ManagerController@showVendor')->name('manager.show.vendor');
         Route::post('/vendor/{vendorSlug}', 'ManagerController@processVendor')->name('manager.process.vendor');
-        Route::get('pick-ups/history', 'ManagerController@showPickUpHistory')->name('manager.show.pick.ups.history');
+        Route::get('pick-ups/history', 'ManagerController@showPickupHistory')->name('manager.show.pick.ups.history');
         Route::get('pick-ups/active', 'ManagerController@showActivePickups')->name('manager.show.active.pick.ups');
         Route::post('pick-ups/active', 'ManagerController@processActivePickups')->name('manager.process.active.deliveries');
         Route::get('deliveries/history', 'ManagerController@showDeliveryHistory')->name('manager.show.deliveries.history');
@@ -132,6 +132,7 @@ Route::prefix('portal')->group(function(){
         Route::get('/accounts', 'ManagerController@showAccounts')->name('manager.show.accounts');
         Route::post('/accounts', 'ManagerController@processAccounts')->name('manager.process.accounts');
         Route::get('/subscriptions', 'ManagerController@showSubscriptions')->name('manager.subscriptions');
+        Route::post('/subscriptions', 'ManagerController@processSubscriptions')->name('manager.process.subscriptions');
         Route::get('/activity-log', 'ManagerController@showActivityLog')->name('manager.activity.log');
         Route::get('/sms-report', 'ManagerController@showSMSReport')->name('manager.sms.report');
         Route::get('/', 'ManagerController@index')->name('manager.dashboard');

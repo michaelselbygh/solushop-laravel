@@ -5,6 +5,7 @@
 @endsection
 
 @section('login')
+    @include('portal.main.success-and-error.message')
     <form class="form-horizontal form-simple" action="{{ route('manager.login.submit') }}" method="POST" >
         @csrf
         <fieldset class="form-group position-relative has-icon-left mb-0">

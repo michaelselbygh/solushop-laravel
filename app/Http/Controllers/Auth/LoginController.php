@@ -181,6 +181,16 @@ class LoginController extends Controller
                 }
                 
             }
+             //Log activity
+             activity()
+             ->tap(function(Activity $activity) {
+                $activity->causer_type = 'App\Customer';
+                $activity->causer_id = '-';
+                $activity->subject_type = 'System';
+                $activity->subject_id = '0';
+                $activity->log_name = 'Customer Login Attempt';
+             })
+             ->log($request->email.' attempted to log in as a customer');
             
             //if unsuccessful then redirect back to login with the form data
             return redirect()->back()->withInput($request->only('email'))->with('login_error_message', 'Invalid login credentials.');
@@ -434,7 +444,7 @@ class LoginController extends Controller
             $activity->subject_id = '0';
             $activity->log_name = 'Customer Logout';
         })
-        ->log(Auth::user()->email.' logged out');
+        ->log(Auth::user()->email.' logged out as customer');
 
         Auth::guard('web')->logout();
         return redirect(route('home'));
