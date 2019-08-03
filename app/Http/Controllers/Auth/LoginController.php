@@ -162,8 +162,8 @@ class LoginController extends Controller
                 if(in_array($url[sizeof($url)-1], ['/login', '/register'])){
                     return redirect()->route('show.shop');
                 }else{
-                    if ($url[sizeof($url)-1] == "/") {
-                        $return_url = "home";
+                    if ($url[sizeof($url)-1] == "/" OR $url[sizeof($url)-1] == "") {
+                        $return_url = "shop";
                     }else{
                         $return_url = substr($url[sizeof($url)-1], 1);
                     }
@@ -287,14 +287,14 @@ class LoginController extends Controller
             //queue sign up message for managers
             $customerCount = Customer::count();
 
-            $managers = Manager::where('sms', 0)->get();
-            foreach ($managers as $manager) {
-                $sms = new SMS;
-                $sms->sms_message = "Customer Sign-Up - ".ucwords(strtolower($request->first_name))." ".ucwords(strtolower($request->last_name)).". \nTotal sign-ups now is $customerCount";
-                $sms->sms_phone = $manager->phone;
-                $sms->sms_state = 1;
-                $sms->save();
-            }
+            // $managers = Manager::where('sms', 0)->get();
+            // foreach ($managers as $manager) {
+            //     $sms = new SMS;
+            //     $sms->sms_message = "Customer Sign-Up - ".ucwords(strtolower($request->first_name))." ".ucwords(strtolower($request->last_name)).". \nTotal sign-ups now is $customerCount";
+            //     $sms->sms_phone = $manager->phone;
+            //     $sms->sms_state = 1;
+            //     $sms->save();
+            // }
 
             Auth::loginUsingId($customerID);
 
@@ -315,8 +315,8 @@ class LoginController extends Controller
             if(in_array($url[sizeof($url)-1], ['/login', '/register'])){
                 return redirect()->route('show.shop');
             }else{
-                if ($url[sizeof($url)-1] == "/") {
-                    $return_url = "home";
+                if ($url[sizeof($url)-1] == "/" OR $url[sizeof($url)-1] == "") {
+                    $return_url = "shop";
                 }else{
                     $return_url = substr($url[sizeof($url)-1], 1);
                 }

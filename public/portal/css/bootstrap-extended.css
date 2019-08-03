@@ -220,7 +220,6 @@ pre code {
 
 .table thead th {
   vertical-align: bottom;
-  border-bottom: 2px solid #e3ebf3;
   border-top: 1px solid #e3ebf3;
 }
 
@@ -257,11 +256,6 @@ pre code {
 .table th,
 .table td {
   padding: 7px 10px 5px 10px;
-}
-
-.table.table-xl th,
-.table.table-xl td {
-  padding: 1.25rem 2rem;
 }
 
 .table.table-lg th,
@@ -334,7 +328,7 @@ pre code {
 */
 
 form label {
-  color: #2b335e;
+  color: #001337;
 }
 
 form .form-group {

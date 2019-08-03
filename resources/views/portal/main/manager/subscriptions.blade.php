@@ -9,6 +9,7 @@
         <div class="row">
             <div class="col-12">
                 <h4 class="card-title">Vendor Subscriptions</h4>
+                @include('portal.main.success-and-error.message')
                 <div class="card">
                     <div class="card-content collapse show">
                         <div class="card-body card-dashboard">
@@ -45,10 +46,15 @@
                                             <td>{{ $subscriptions[$i]->subscription_updated_at }}</td>
                                             <td>
                                                 <a href="{{ url('portal/manager/vendor/'.$subscriptions[$i]->username) }}">
-                                                    <button type="" style="margin-top: 3px; background-color: black !important; border-color: black !important" class="btn btn-success btn-sm round">
+                                                    <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="View {{ $subscriptions[$i]->name }}"  style="margin-top: 3px; background-color: black !important; border-color: black !important" class="btn btn-success btn-sm round">
                                                         <i class="ft-eye"></i>
                                                     </button>
                                                 </a>
+                                                @if ($subscriptions[$i]->vs_days_left > 0)
+                                                    <button onclick="submitCancelSubscriptionForm('{{$subscriptions[$i]->subscription_id}}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Cancel {{ $subscriptions[$i]->name }}'s Subscription" style="margin-top: 3px; background-color: red !important; border-color: red !important" class="btn btn-success btn-sm round">
+                                                        <i class="ft-x"></i>
+                                                    </button>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endfor
@@ -63,6 +69,10 @@
         </div>
     </section>
 
+    <form id="cancel-subscription-form" method="POST" action="{{ route("manager.process.subscriptions") }}">
+        @csrf
+        <input type="hidden" name="subscription_id" id="subscription_id"/>
+    </form>
 
     <script>
     $(document).ready(function(){
@@ -74,6 +84,12 @@
             ]
         } );
     })
+
+    function submitCancelSubscriptionForm(subscriptionID)
+    {
+        document.getElementById('subscription_id').value = subscriptionID;
+        document.getElementById('cancel-subscription-form').submit(); 
+    } 
     </script>
 @endsection
 

@@ -37,17 +37,20 @@
                     <br>
                     <div class="row" style="">
                         <div class="col-md-10">
-                            <h3 style="font-weight: 350">
-                                <br>
-                                Addresses 
-                                <span style="text-align:right;">
+                            <div class="row">
+                                <div class="col-md-6" style="top: 10px;">
+                                    <h3 style="font-weight: 350">
+                                        Addresses
+                                    </h3>
+                                </div>
+                                <div class="col-md-6" style="text-align:right">
                                     <a href="{{ route('show.account.add.address') }}">
                                         <button class="form-button" style="font-size:12px; margin-bottom: 7px;">
                                             <i class='fa fa-plus' ></i>
                                         </button>
                                     </a>
-                                </span>
-                            </h3>
+                                </div>
+                            </div>
                             @if(sizeof($addresses["addresses"]) < 1)
                             <p>
                                 You have no addresses yet.

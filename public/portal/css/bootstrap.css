@@ -1650,13 +1650,9 @@ color: #001337;
   .table th,
   .table td {
     padding: 0.75rem;
-    vertical-align: top;
-    border-top: 1px solid #626e82; }
+    vertical-align: top; }
   .table thead th {
-    vertical-align: bottom;
-    border-bottom: 2px solid #626e82; }
-  .table tbody + tbody {
-    border-top: 2px solid #626e82; }
+    vertical-align: bottom; }
 
 .table-sm th,
 .table-sm td {
@@ -1837,7 +1833,7 @@ color: #001337;
   border-color: #575a6a; }
 
 .table .thead-light th {
-  color: #4e5154;
+  color: #001337;
   background-color: #98a4b8;
   border-color: #626e82; }
 
@@ -1903,14 +1899,12 @@ color: #001337;
 .form-control {
   display: block;
   width: 100%;
-  height: -webkit-calc(1.25em + 1.5rem + 2px);
-  height: -moz-calc(1.25em + 1.5rem + 2px);
-  height: calc(1.25em + 1.5rem + 2px);
+  height: 35px;
   padding: 0.75rem 1rem;
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.25;
-  color: #4e5154;
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 1;
+  color: #001337;
   background-color: #fff;
   background-clip: padding-box;
   border: 1px solid #babfc7;
@@ -1931,7 +1925,7 @@ color: #001337;
     background-color: transparent;
     border: 0; }
   .form-control:focus {
-    color: #4e5154;
+    color: #001337;
     background-color: #fff;
     border-color: #1e9ff2;
     outline: 0;
@@ -1957,7 +1951,7 @@ color: #001337;
     opacity: 1; }
 
 select.form-control:focus::-ms-value {
-  color: #4e5154;
+  color: #001337;
   background-color: #fff; }
 
 .form-control-file,
@@ -2445,10 +2439,10 @@ textarea.form-control {
   user-select: none;
   background-color: transparent;
   border: 1px solid transparent;
-  padding: 0.75rem 1rem;
-  font-size: 1rem;
+  padding: 10px;
+  font-size: 12px;
   line-height: 1.25;
-  border-radius: 20px;
+  border-radius: 7px;
   -webkit-transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, -webkit-box-shadow 0.15s ease-in-out;
   -o-transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
@@ -3370,7 +3364,7 @@ input[type="button"].btn-block {
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.25;
-  color: #4e5154;
+  color: #001337;
   text-align: center;
   white-space: nowrap;
   background-color: #F4F5FA;
@@ -3579,7 +3573,7 @@ input[type="button"].btn-block {
   font-size: 1rem;
   font-weight: 400;
   line-height: 1.25;
-  color: #4e5154;
+  color: #001337;
   vertical-align: middle;
   background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3e%3cpath fill='%23464855' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e") no-repeat right 1rem center/8px 10px;
   background-color: #fff;
@@ -3594,7 +3588,7 @@ input[type="button"].btn-block {
     -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.075), 0 0 5px rgba(30, 159, 242, 0.5);
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.075), 0 0 5px rgba(30, 159, 242, 0.5); }
     .custom-select:focus::-ms-value {
-      color: #4e5154;
+      color: #001337;
       background-color: #fff; }
   .custom-select[multiple], .custom-select[size]:not([size="1"]) {
     height: auto;
@@ -3665,7 +3659,7 @@ input[type="button"].btn-block {
   padding: 0.75rem 1rem;
   font-weight: 400;
   line-height: 1.25;
-  color: #4e5154;
+  color: #001337;
   background-color: #fff;
   border: 1px solid #babfc7;
   border-radius: 0.25rem; }
@@ -3681,7 +3675,7 @@ input[type="button"].btn-block {
     height: calc(1.25em + 1.5rem);
     padding: 0.75rem 1rem;
     line-height: 1.25;
-    color: #4e5154;
+    color: #001337;
     content: "Browse";
     background-color: #F4F5FA;
     border-left: inherit;
@@ -3876,7 +3870,7 @@ input[type="button"].btn-block {
       border-color: transparent; }
   .nav-tabs .nav-link.active,
   .nav-tabs .nav-item.show .nav-link {
-    color: #4e5154;
+    color: #001337;
     background-color: #F4F5FA;
     border-color: #626e82 #626e82 #F4F5FA; }
   .nav-tabs .dropdown-menu {
@@ -5063,11 +5057,11 @@ input[type="button"].btn-block {
 
 .list-group-item-action {
   width: 100%;
-  color: #4e5154;
+  color: #001337;
   text-align: inherit; }
   .list-group-item-action:hover, .list-group-item-action:focus {
     z-index: 1;
-    color: #4e5154;
+    color: #001337;
     text-decoration: none;
     background-color: #F4F5FA; }
   .list-group-item-action:active {

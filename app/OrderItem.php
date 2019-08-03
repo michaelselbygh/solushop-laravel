@@ -11,5 +11,9 @@ class OrderItem extends Model
     public function order_item_state(){
         return $this->hasOne('App\OrderItemsState', 'id', 'oi_state' );
     }
+
+    public function sku(){
+        return $this->hasOne('App\StockKeepingUnit', 'id', 'oi_sku' );
+    }
 }
 

@@ -51,4 +51,10 @@ class SalesAssociate extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+
+    public function badge()
+    {
+        return $this->hasOne('App\SABadge', 'id', 'badge');
+    }
 }

@@ -9,6 +9,7 @@
         <div class="row">
             <div class="col-12">
                 <h4 class="card-title">Sales Associates</h4>
+                @include('portal.main.success-and-error.message')
                 <div class="card">
                     <div class="card-content collapse show">
                         <div class="card-body card-dashboard">
@@ -36,8 +37,8 @@
                                             <td>{{ $sales_associates[$i]["mode_of_payment"]." | ".$sales_associates[$i]["payment_details"] }}</td>
                                             <td>{{ $sales_associates[$i]["balance"] }}</td>
                                             <td>
-                                                <a href="{{ url('portal/manager/sales-associate/'.$sales_associates[$i]['id']) }}">
-                                                    <button type="" style="margin-top: 3px; background-color: black !important; border-color: black !important" class="btn btn-success btn-sm round">
+                                                <a href="{{ route("manager.show.sales.associate", $sales_associates[$i]['id']) }}">
+                                                    <button  data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="View {{ $sales_associates[$i]["first_name"]." ".$sales_associates[$i]["last_name"] }}" style="margin-top: 3px; background-color: black !important; border-color: black !important" class="btn btn-success btn-sm round">
                                                         <i class="ft-eye"></i>
                                                     </button>
                                                 </a>
