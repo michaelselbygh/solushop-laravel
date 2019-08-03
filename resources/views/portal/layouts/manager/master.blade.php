@@ -64,10 +64,11 @@
                             <li class="nav-item d-none d-md-block"><a class="nav-link nav-menu-main menu-toggle hidden-xs" href="#"><i class="ft-menu"></i></a></li>
                         </ul>
                         <ul class="nav navbar-nav float-right">
-                            <li class="dropdown dropdown-user nav-item"><a class="dropdown-toggle nav-link dropdown-user-link" href="#" data-toggle="dropdown"><span class="mr-1 user-name text-bold-700">{{ Auth::user()->first_name." ".Auth::user()->last_name }}</span><span class="avatar avatar-online"><img src="../../portal/images/avi/default.jpg" alt="avatar"><i></i></span></a>
-                                <div class="dropdown-menu dropdown-menu-right"><a class="dropdown-item" href="/admin/change-password"><i class="ft-lock"></i> Change Password</a>
-                                <div class="dropdown-divider"></div><a class="dropdown-item" href="{{ route('manager.logout') }}"><i class="ft-power"></i> Logout</a> 
-                                </div>
+                            <li class=" dropdown-user nav-item">
+                                <a class=" nav-link dropdown-user-link">
+                                    <span class="mr-1 user-name text-bold-700">{{ Auth::user()->first_name." ".Auth::user()->last_name }}</span>
+                                    <span class="avatar avatar-online"><img src="../../portal/images/avi/default.jpg" alt="avatar"><i></i></span>
+                                </a>
                             </li>
                         </ul>
                     </div>

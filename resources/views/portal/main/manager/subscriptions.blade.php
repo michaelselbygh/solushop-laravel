@@ -44,7 +44,7 @@
                                             <td>{{ $subscriptions[$i]->subscription_created_at }}</td>
                                             <td>{{ $subscriptions[$i]->subscription_updated_at }}</td>
                                             <td>
-                                                <a href="{{ url('portal/manager/vendors/'.$subscriptions[$i]->username) }}">
+                                                <a href="{{ url('portal/manager/vendor/'.$subscriptions[$i]->username) }}">
                                                     <button type="" style="margin-top: 3px; background-color: black !important; border-color: black !important" class="btn btn-success btn-sm round">
                                                         <i class="ft-eye"></i>
                                                     </button>
@@ -68,9 +68,9 @@
     $(document).ready(function(){
         $('#subscriptions').dataTable( {
             "order": [
+                [4, 'asc'],
                 [1, 'asc'],
-                [3, 'asc'],
-                [4, 'asc']
+                [5, 'asc']
             ]
         } );
     })

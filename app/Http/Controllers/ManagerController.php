@@ -7,8 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Auth;
 
-use App\SMS;
 use App\ActivityLog;
+use App\SalesAssociate;
+use App\SMS;
+
 
 
 class ManagerController extends Controller
@@ -41,5 +43,26 @@ class ManagerController extends Controller
                 ->with('subscriptions', DB::select(
                     "SELECT *, vendor_subscriptions.id as subscription_id, vendor_subscriptions.created_at as subscription_created_at, vendor_subscriptions.updated_at as subscription_updated_at FROM vendors, vendor_subscriptions, vs_packages WHERE vendors.id = vendor_subscriptions.vs_vendor_id AND vendor_subscriptions.vs_vsp_id = vs_packages.id"
                 ));
+    }
+
+    public function showSalesAssociates(){
+        return view('portal.main.manager.sales-associates')
+                ->with('sales_associates',  SalesAssociate::all()->toArray());
+    }
+
+    public function showAddSalesAssociate(){
+        
+    }
+
+    public function processAddSalesAssociate(){
+        
+    }
+
+    public function showSalesAssociate(){
+        
+    }
+
+    public function processSalesAssociate(){
+        
     }
 }
