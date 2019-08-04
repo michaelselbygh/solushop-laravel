@@ -36,7 +36,7 @@
                             <div class="col-50">
                                 <div class="content">
                                     <span>Your Balance</span>
-                                    <h5>GH¢ {{ $customer_information["wallet_balance"] }}</h5>
+                                    <h5>GH¢ {{ abs($customer_information["wallet_balance"]) }}</h5>
                                 </div>
                             </div>
                             <div class="col-50">

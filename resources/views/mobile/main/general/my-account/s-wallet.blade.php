@@ -16,7 +16,7 @@
                     </a>
                 </div>
                 <div class="title">
-                    S-Wallet ( Balance : <b>GH¢ {{ $customer_information["wallet_balance"] }}</b> )
+                    S-Wallet ( Balance : <b>GH¢ {{ abs($customer_information["wallet_balance"]) }}</b> )
                 </div>
             </div>
         </div>

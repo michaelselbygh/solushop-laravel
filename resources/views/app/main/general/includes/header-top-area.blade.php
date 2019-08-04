@@ -38,7 +38,7 @@
                             <li class="wallet">
                                 <a href="{{ route('show.account.wallet') }}">
                                     <span style='color:white; padding-right: 10px;'>
-                                        <b>GH¢ {{ $customer_information["wallet_balance"] }}</b>
+                                        <b>GH¢ {{ abs($customer_information["wallet_balance"]) }}</b>
                                     </span>
                                 </a>
                             </li>
@@ -60,7 +60,7 @@
                                         </a>
                                     </li>
                                     <li><a href="{{ route('show.account.dashboard') }}">My Account</a></li>
-                                    <li><a href="{{ route('show.account.wallet') }}">Wallet: <b>GH¢ {{ $customer_information["wallet_balance"] }}</b></a></li>
+                                    <li><a href="{{ route('show.account.wallet') }}">Wallet: <b>GH¢ {{ abs($customer_information["wallet_balance"]) }}</b></a></li>
                                     <li><a href="{{ route('logout') }}">Logout</a></li>
                                 </ul>
                             </li>

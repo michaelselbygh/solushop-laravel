@@ -13,6 +13,7 @@ use App\AccountTransaction;
 use App\ActivityLog;
 use App\Count;
 use App\Coupon;
+use App\Customer;
 use App\DeliveredItem;
 use App\Manager;
 use App\Order;
@@ -35,7 +36,8 @@ class ManagerController extends Controller
     }
 
     public function showCustomers(){
-
+        return view('portal.main.manager.customers')
+                ->with('customers',  Customer::with('milk', 'chocolate')->get()->toArray());
     }
 
     public function showCustomer(){

@@ -35,7 +35,7 @@
                 <!--Shop Product Area Start-->
                 <div class="col-md-8 col-md-push-4">
                     <br>
-                    <h3 style="font-weight: 350">S-Wallet ( Balance : <b>GH¢ {{ $customer_information["wallet_balance"] }}</b> )</h3>
+                    <h3 style="font-weight: 350">S-Wallet ( Balance : <b>GH¢ {{ abs($customer_information["wallet_balance"]) }}</b> )</h3>
                     <br>
                     <div class="row" style="">
                         <div class="col-md-10">
