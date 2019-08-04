@@ -812,7 +812,7 @@ class AppGeneralPagesController extends Controller
                                 return redirect()->back()->with('error_message', 'Coupon already redeemed.');
                             }
                             elseif ($coupon->coupon_state == 4) {
-                                //coupon is used
+                                //coupon is expired
                                 /*--- log activity ---*/
                                 activity()
                                 ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
@@ -836,6 +836,13 @@ class AppGeneralPagesController extends Controller
                                 $customer->milkshake    = $newCustomerMilkshake;
                                 $customer->save();
 
+                                //reduce account balance
+
+                                //record transaction
+                                $count = Count::first();
+                                $count->account = round($count->account - $coupon->coupon_value, 2);
+                                $count->save();
+
                                 //update coupon state
                                 $coupon_code = $coupon->coupon_code;
                                 $coupon_value = $coupon->coupon_value;
@@ -844,7 +851,7 @@ class AppGeneralPagesController extends Controller
 
                                 //notify customer
                                 //queue customer message
-                                $sms_message = "Hi ".ucwords(strtolower(Auth::user()->first_name)).", you have successfully redeemed a coupon worth $coupon_value Cedis. Your account balance is now GHS $newCustomerBalance";
+                                $sms_message = "Hi ".ucwords(strtolower(Auth::user()->first_name)).", you have successfully redeemed a coupon worth GHS $coupon_value. Your account balance is now GHS $newCustomerBalance";
                                 $sms_phone = Auth::user()->phone;
 
                                 $sms = new SMS;

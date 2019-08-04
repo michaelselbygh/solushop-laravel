@@ -12,6 +12,7 @@ use Auth;
 use App\AccountTransaction;
 use App\ActivityLog;
 use App\Count;
+use App\Coupon;
 use App\Manager;
 use App\Order;
 use App\Product;
@@ -147,15 +148,61 @@ class ManagerController extends Controller
     }
 
     public function showCoupons(){
-
+        return view('portal.main.manager.coupons')
+                ->with('coupons',  Coupon::with('state')->get()->toArray());
     }
 
     public function showGenerateCoupon(){
-
+        return view('portal.main.manager.generate-coupon');
     }
 
-    public function processGenerateCoupon(){
+    public function processGenerateCoupon(Request $request){
+        /*--- Generate Coupon ---*/
+        $permitted_chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         
+        //part one
+        $coupon_id   = 'S'.
+        substr(str_shuffle($permitted_chars), 7, 2).
+        date('d').
+        "-".
+        substr(str_shuffle($permitted_chars), 7, 2).
+        date('m').
+        'W'.
+        "-".
+        substr(str_shuffle($permitted_chars), 7, 1).
+        substr(date('Y'), 0, 2).
+        substr(str_shuffle($permitted_chars), 7, 2).
+        "-".
+        substr(str_shuffle($permitted_chars), 7, 1).
+        substr(date('Y'), 2, 2);
+
+        //part two
+        $count = Count::first();
+        $coupon_id .= substr("000".$count->coupon_count, strlen(strval($count->coupon_count)));
+
+
+        $coupon = new Coupon;
+        $coupon->coupon_code = $coupon_id;
+        $coupon->coupon_value = $request->value;
+        $coupon->coupon_owner = "SOLUSHOP";
+        $coupon->coupon_state = 2;
+        $coupon->coupon_expiry_date = $request->expiry_date;
+        $coupon->save();
+
+        $count->save();
+
+        /*--- log activity ---*/
+        activity()
+        ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+        ->tap(function(Activity $activity) {
+            $activity->subject_type = 'System';
+            $activity->subject_id = '0';
+            $activity->log_name = 'Sales Associate Registration';
+        })
+        ->log(Auth::guard('manager')->user()->email." generated a coupon ".$coupon_id." worth GH¢".$request->value);
+        
+        return redirect()->back()->with("success_message", "Coupon generated successfully.");
+
     }
 
     public function showSalesAssociates(){
@@ -233,6 +280,16 @@ class ManagerController extends Controller
         $destination_path = public_path($sub_path);  
         $identification_file->move($destination_path,  $coupon_id.".".$identification_file_ext);
 
+        /*--- save coupon ---*/
+        $coupon = new Coupon;
+        $coupon->coupon_code = $coupon_id;
+        $coupon->coupon_value = 0.01;
+        $coupon->coupon_owner = $request->email;
+        $coupon->coupon_state = 1;
+        $coupon->coupon_expiry_date = "NA";
+        $coupon->save();
+
+
         /*--- store associate data ---*/
         $sales_associate = new SalesAssociate;
         $sales_associate->first_name        = ucwords(strtolower($request->first_name));
@@ -249,6 +306,7 @@ class ManagerController extends Controller
         $sales_associate->payment_details   = ucwords($request->payment_details);
         $sales_associate->balance           = 0;
         $sales_associate->save();
+
 
         /*--- update counts ---*/
         $count->coupon_count++;
@@ -370,7 +428,7 @@ class ManagerController extends Controller
 
                 /*--- Update Main Account Balance ---*/
                 $counts = Count::first();
-                $counts->account -= $request->pay_out_amount;
+                $counts->account = round($counts->account - $request->pay_out_amount, 2);
                 $counts->save();
 
                 /*--- Notify vendor ---*/
@@ -439,7 +497,7 @@ class ManagerController extends Controller
         switch ($request->payment_type) {
             case 'Pay-Out':
                 /*--- update accounts ---*/
-                $counts->account -= $request->payment_amount;
+                $counts->account = round($counts->account - $request->payment_amount, 2);
                 $counts->save();
 
                 /*--- record transaction ---*/
@@ -458,7 +516,7 @@ class ManagerController extends Controller
                 break;
             case 'Pay-In':
                 /*--- update accounts ---*/
-                $counts->account += $request->payment_amount;
+                $counts->account = round($counts->account + $request->payment_amount, 2);
                 $counts->save();
                 
                 /*--- record transaction ---*/

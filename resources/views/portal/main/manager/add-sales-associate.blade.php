@@ -8,13 +8,13 @@
     <div class="row">
         <div class="col-md-12">
             <h4 class="card-title">Add Sales Associate</h4>
-            @include('portal.main.success-and-error.message')
         </div>
     </div>
     <form class="form" method="POST" action="{{ route("manager.process.add.sales.associate") }}" enctype="multipart/form-data">
         @csrf
         <div class="row">
             <div class="col-md-7">
+                @include('portal.main.success-and-error.message')
                 <div class="card" style="">
                     <div class="card-content collapse show">
                         <div class="card-body">
