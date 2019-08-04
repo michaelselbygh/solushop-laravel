@@ -25,7 +25,7 @@ class ManagerLoginController extends Controller
 
     public function login(Request $request)
     {
-        //validate form data
+        /*--- Validate form data  ---*/
         $this->validate($request, [
             'email' => 'required|email',
             'password' => 'required'
@@ -36,7 +36,7 @@ class ManagerLoginController extends Controller
             
             
             //if successful, then redirect to intended location
-            //Log activity
+            /*--- log activity ---*/
             activity()
             ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
             ->tap(function(Activity $activity) {
@@ -49,7 +49,7 @@ class ManagerLoginController extends Controller
             return redirect()->intended(route('manager.dashboard'));
         }
 
-        //Log activity
+        /*--- log activity ---*/
         activity()
         ->tap(function(Activity $activity) {
            $activity->causer_type = 'App\Manager';
@@ -65,7 +65,7 @@ class ManagerLoginController extends Controller
     }
 
     public function logout(){
-        //Log activity
+        /*--- log activity ---*/
         activity()
         ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
         ->tap(function(Activity $activity) {

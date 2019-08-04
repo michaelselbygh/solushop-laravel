@@ -11,14 +11,17 @@
             @include('portal.main.success-and-error.message')
         </div>
     </div>
-    <form class="form" method="POST" action="{{ route("manager.process.sales.associate", $sales_associate["id"]) }}" enctype="multipart/form-data">
-        @csrf
-        <div class="row">
-            <div class="col-md-7">
-                <div class="card" style="">
-                    <div class="card-content collapse show">
-                        <div class="card-body">
+   
+        
+    <div class="row">
+        <div class="col-md-7">
+            <div class="card" style="">
+                <div class="card-content collapse show">
+                    <div class="card-body">
+                        <form class="form" method="POST" action="{{ route("manager.process.sales.associate", $sales_associate["id"]) }}" enctype="multipart/form-data">
                             <div class="form-body">
+                                @csrf
+                                <input type="hidden" name="sa_action" value="update_details"/>
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -89,21 +92,66 @@
                                 </div>
                             </div>
                             <div class="form-actions" style="text-align:center; padding: 20px;">
-                                <button type="submit" name="AddSTeamMember" class="btn btn-success">
+                                <button type="submit" name="update_details" class="btn btn-success">
                                         Update {{ $sales_associate["first_name"] }}'s Details
                                 </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card">
+                <div class="row">
+                    <div class="col-md-4" stle="padding:40px;">
+                        <img style="width:100%; height:auto; padding:10px; margin-left: 20px;" src="{{url("portal/images/s-team-badges/".$sales_associate["badge"]["sab_image"]) }}"/>
+                    </div>
+                    <div class="col-md-8" style="padding-top: 30px; padding-left:30px;">
+                        <div class="row">
+                            <div class="col-md-4" style="font-weight: 600;">
+                                ID : <br>
+                                Status : <br>
+                                Coupon : <br>
+                                Commision  : <br>
+                                Total Sales : <br>
+                            </div>
+                            <div class="col-md-8">
+                                STM-{{ $sales_associate["id"] }} <br>
+                                {{ $sales_associate["badge"]["sab_description"] }} <br>
+                                {{ substr($sales_associate["id_file"], 0, 24) }} <br>
+                                {{ $sales_associate["badge"]["sab_commission"] * 100 }} % <br>
+                                GH¢ {{ round($sales_associate["sales"], 2) }} <br>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-5">
+
+            <div class="card">
+                <div class="card-content collapse show">
+                    <div class="card-body">
+                        <h5>Account Balance : GH¢ {{ $sales_associate["balance"] }}</h5><br>
+                        <div class="row" style="margin-top: 10px;">
+                            <div class="col-sm-3">
+                            </div>
+                            <div class="col-sm-6" style="text-align: center;"> 
+                                <form method="POST" action="{{ route("manager.process.sales.associate", $sales_associate["id"]) }}">
+                                    @csrf
+                                    <div class="form-group" style="display: inline-block">
+                                        <input type="hidden" name="sa_action" value="record_payout"/>
+                                        <input id="pay_out_amount" name="pay_out_amount" class="form-control round" placeholder="0.00" value="{{ $sales_associate["balance"] }}" type="number" min="0.1" max="{{ $sales_associate["balance"] }}" step="0.1" style="width: 100%;" required><br>
+                                        <button type="submit" name="record_payout" class="btn btn-success">
+                                                Record Payout
+                                        </button> 
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <!-- Save button stuff goes here -->
-        <div class="card">
-            
-        </div>
-    </form>
+    </div>
 @endsection
 

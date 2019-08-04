@@ -198,7 +198,7 @@ class AppGeneralPagesController extends Controller
 
                 $customer->save();
 
-                //Log activity
+                /*--- log activity ---*/
                 activity()
                 ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
                 ->tap(function(Activity $activity) {
@@ -221,7 +221,7 @@ class AppGeneralPagesController extends Controller
 
                 $customer->save();
 
-                //Log activity
+                /*--- log activity ---*/
                 activity()
                 ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
                 ->tap(function(Activity $activity) {
@@ -241,7 +241,7 @@ class AppGeneralPagesController extends Controller
                 ])
                 ->delete();
 
-                //Log activity
+                /*--- log activity ---*/
                 activity()
                 ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
                 ->tap(function(Activity $activity) {
@@ -515,7 +515,7 @@ class AppGeneralPagesController extends Controller
                             //reduce quantity
                             $sku->sku_stock_left -= $checkout['ci_quantity'][$i];
 
-                            //notify vendor
+                            /*--- Notify Vendor ---*/
                             $sms = new SMS;
                             $sms->sms_message = "Purchase Alert\nProduct : " .$checkout["checkout_items"][$i]["product_name"]. "\nQuantity Bought: " . $checkout['ci_quantity'][$i] . "\nQuantity Remaining : " .$sku->sku_stock_left;
                             $sms->sms_phone = $checkout["checkout_items"][$i]["phone"];
@@ -703,7 +703,7 @@ class AppGeneralPagesController extends Controller
                 $customer->icono = NULL;
                 $customer->save();
 
-                //Log activity
+                /*--- log activity ---*/
                 activity()
                 ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
                 ->tap(function(Activity $activity) {
@@ -723,7 +723,7 @@ class AppGeneralPagesController extends Controller
                 ])
                 ->delete();
 
-                //Log activity
+                /*--- log activity ---*/
                 activity()
                 ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
                 ->tap(function(Activity $activity) {
@@ -752,7 +752,7 @@ class AppGeneralPagesController extends Controller
                         'ci_quantity' => $cart_quantity
                     ]);
                 }
-                //Log activity
+                /*--- log activity ---*/
                 activity()
                 ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
                 ->tap(function(Activity $activity) {
@@ -783,7 +783,7 @@ class AppGeneralPagesController extends Controller
                             $customer->icono = $coupon->coupon_code;
                             $customer->save();
 
-                            //Log activity
+                            /*--- log activity ---*/
                             activity()
                             ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
                             ->tap(function(Activity $activity) {
@@ -799,7 +799,7 @@ class AppGeneralPagesController extends Controller
                             //check if coupon is not used
                             if ($coupon->coupon_state == 3) {
                                 //coupon is used
-                                //Log activity
+                                /*--- log activity ---*/
                                 activity()
                                 ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
                                 ->tap(function(Activity $activity) {
@@ -810,6 +810,20 @@ class AppGeneralPagesController extends Controller
                                 ->log(Auth::user()->email.' attempted to redeem already used coupon '.$coupon->coupon_code);
 
                                 return redirect()->back()->with('error_message', 'Coupon already redeemed.');
+                            }
+                            elseif ($coupon->coupon_state == 4) {
+                                //coupon is used
+                                /*--- log activity ---*/
+                                activity()
+                                ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
+                                ->tap(function(Activity $activity) {
+                                    $activity->subject_type = 'System';
+                                    $activity->subject_id = '0';
+                                    $activity->log_name = 'Wallet Coupon Redeem Attempt';
+                                })
+                                ->log(Auth::user()->email.' attempted to redeem expired coupon '.$coupon->coupon_code);
+
+                                return redirect()->back()->with('error_message', 'Coupon expired.');
                             }elseif($coupon->coupon_state == 2){
                                 //update customer balance
                                 $customer = Customer::
@@ -839,7 +853,7 @@ class AppGeneralPagesController extends Controller
                                 $sms->sms_state = 1;
                                 $sms->save();
 
-                                //Log activity
+                                /*--- log activity ---*/
                                 activity()
                                 ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
                                 ->tap(function(Activity $activity) {
@@ -990,7 +1004,7 @@ class AppGeneralPagesController extends Controller
                     ['wi_product_id', '=', $request->wishlist_item_id]
                 ])
             ->delete();
-            //Log activity
+            /*--- log activity ---*/
             activity()
             ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
             ->tap(function(Activity $activity) {

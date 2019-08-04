@@ -296,7 +296,7 @@ class AppMyAccountController extends Controller
         $message->message_read = "Init|".Auth::user()->id;
         $message->save();
 
-        //Log activity
+        /*--- log activity ---*/
         activity()
         ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
         ->tap(function(Activity $activity) {
@@ -388,7 +388,7 @@ class AppMyAccountController extends Controller
 
         $customer->save();
 
-        //Log activity
+        /*--- log activity ---*/
         activity()
         ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
         ->tap(function(Activity $activity) {
@@ -510,7 +510,7 @@ class AppMyAccountController extends Controller
 
             $checkout["order"]["total"] = $checkout["order"]["order_subtotal"] + $checkout["order"]["order_shipping"];
 
-            //Log activity
+            /*--- log activity ---*/
             activity()
             ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
             ->tap(function(Activity $activity) {
@@ -615,7 +615,7 @@ class AppMyAccountController extends Controller
                     //reduce quantity
                     $sku->sku_stock_left -= $checkout["checkout_items"][$i]["oi_quantity"];
 
-                    //notify vendor
+                    /*--- Notify Vendor ---*/
                     $vendor =  DB::select(
                         "SELECT phone FROM vendors, products, stock_keeping_units WHERE products.product_vid = vendors.id AND stock_keeping_units.sku_product_id = products.id AND stock_keeping_units.id = '".$checkout['checkout_items'][$i]["oi_sku"]."'"
                     );
@@ -720,7 +720,7 @@ class AppMyAccountController extends Controller
         $user->password = Hash::make($request->new_password);
         $user->save();
 
-        //Log activity
+        /*--- log activity ---*/
         activity()
         ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
         ->tap(function(Activity $activity) {
@@ -822,7 +822,7 @@ class AppMyAccountController extends Controller
                 'ca_address' => $request->address_details
             ]);
 
-        //Log activity
+        /*--- log activity ---*/
         activity()
         ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
         ->tap(function(Activity $activity) {
@@ -913,7 +913,7 @@ class AppMyAccountController extends Controller
         $address->ca_address        = $request->address_details;
         $address->save();
 
-        //Log activity
+        /*--- log activity ---*/
         activity()
         ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
         ->tap(function(Activity $activity) {
@@ -994,7 +994,7 @@ class AppMyAccountController extends Controller
         ->toArray();
         //generate slydepay order
 
-         //Log activity
+         /*--- log activity ---*/
          activity()
          ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
          ->tap(function(Activity $activity) {

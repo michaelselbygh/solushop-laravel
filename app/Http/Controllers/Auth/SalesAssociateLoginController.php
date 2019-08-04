@@ -20,7 +20,7 @@ class SalesAssociateLoginController extends Controller
 
     public function login(Request $request)
     {
-        //validate form data
+        /*--- Validate form data  ---*/
         $this->validate($request, [
             'email' => 'required|email',
             'password' => 'required'

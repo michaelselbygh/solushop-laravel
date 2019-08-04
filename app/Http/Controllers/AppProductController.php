@@ -351,7 +351,7 @@ class AppProductController extends Controller
                             $cartItem->ci_quantity = $request->product_quantity;
                             $cartItem->save();
 
-                            //Log activity
+                            /*--- log activity ---*/
                             activity()
                             ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
                             ->tap(function(Activity $activity) {
@@ -400,7 +400,7 @@ class AppProductController extends Controller
                             $wishlistItem->wi_product_id = $request->product_id;
                             $wishlistItem->save();
 
-                            //Log activity
+                            /*--- log activity ---*/
                             activity()
                             ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
                             ->tap(function(Activity $activity) {

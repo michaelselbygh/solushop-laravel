@@ -80,7 +80,7 @@ Route::get('/cron/vendor-subscriptions-check', 'CronsController@checkVendorSubsc
 Route::get('/cron/delete-empty-conversations', 'CronsController@deleteEmptyConversations');
 Route::get('/cron/delete-unpaid-orders', 'CronsController@deleteUnpaidOrders');
 Route::get('/cron/delete-unpaid-wtu-payments', 'CronsController@deleteUnpaidWTUPayments');
-
+Route::get('/cron/update-expired-coupons', 'CronsController@updateExpiredCoupons');
 
 //portal routes
 Route::prefix('portal')->group(function(){

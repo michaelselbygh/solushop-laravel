@@ -143,7 +143,7 @@ class LoginController extends Controller
     {
         //check if login or register button was clicked
         if(isset($request->login)){
-            //validate form data
+            /*--- Validate form data  ---*/
             $validator = Validator::make($request->all(), [
                 'email' => 'required|email',
                 'password' => 'required'
@@ -167,7 +167,7 @@ class LoginController extends Controller
                     }else{
                         $return_url = substr($url[sizeof($url)-1], 1);
                     }
-                    //Log activity
+                    /*--- log activity ---*/
                     activity()
                     ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
                     ->tap(function(Activity $activity) {
@@ -181,7 +181,7 @@ class LoginController extends Controller
                 }
                 
             }
-             //Log activity
+             /*--- log activity ---*/
              activity()
              ->tap(function(Activity $activity) {
                 $activity->causer_type = 'App\Customer';
@@ -195,7 +195,7 @@ class LoginController extends Controller
             //if unsuccessful then redirect back to login with the form data
             return redirect()->back()->withInput($request->only('email'))->with('login_error_message', 'Invalid login credentials.');
         }elseif(isset($request->register)){
-            //validate form data
+            /*--- Validate form data  ---*/
             $validator = Validator::make($request->all(), [
                 'first_name' => 'required',
                 'last_name' => 'required',
@@ -275,7 +275,7 @@ class LoginController extends Controller
             $count->save();
 
             //queue customer message
-            $sms_message = "Hi ".ucwords(strtolower($request->first_name)).", a warm welcome to the Solushop family. Your Solushop Wallet has been credited with 5 cedis as your signup bonus. If you need any assistance, kindly call or Whatsapp customer care on 0506753093. Happy Shopping!";
+            $sms_message = "Hi ".ucwords(strtolower($request->first_name)).", a warm welcome to the Solushop family. Your Solushop Wallet has been credited with GHS 5.00 as your signup bonus. If you need any assistance, kindly call or Whatsapp customer care on 0506753093. Happy Shopping!";
             $sms_phone = "233".substr($request->phone, 1);
 
             $sms = new SMS;
@@ -298,7 +298,7 @@ class LoginController extends Controller
 
             Auth::loginUsingId($customerID);
 
-            //Log activity
+            /*--- log activity ---*/
             activity()
             ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
             ->tap(function(Activity $activity) {
@@ -369,7 +369,7 @@ class LoginController extends Controller
 
     public function resetPassword(Request $request)
     {
-        //validate form data
+        /*--- Validate form data  ---*/
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'phone' => 'required|digits:10'
@@ -436,7 +436,7 @@ class LoginController extends Controller
 
 
     public function logout(){
-        //Log activity
+        /*--- log activity ---*/
         activity()
         ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
         ->tap(function(Activity $activity) {

@@ -9,6 +9,7 @@ use Spatie\Activitylog\Contracts\Activity;
 use Illuminate\Support\Facades\Validator;
 use Auth;
 
+use App\AccountTransaction;
 use App\ActivityLog;
 use App\Count;
 use App\Manager;
@@ -17,6 +18,7 @@ use App\Product;
 use App\SABadge;
 use App\SalesAssociate;
 use App\SMS;
+use App\Vendor;
 use App\VendorSubscription;
 
 
@@ -166,7 +168,7 @@ class ManagerController extends Controller
     }
 
     public function processAddSalesAssociate(Request $request){
-         //validate form data
+         /*--- Validate form data  ---*/
          $validator = Validator::make($request->all(), [
             'first_name' => 'required',
             'last_name' => 'required',
@@ -260,7 +262,7 @@ class ManagerController extends Controller
         $sms->save();
 
 
-         //Log activity
+         /*--- log activity ---*/
          activity()
          ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
          ->tap(function(Activity $activity) {
@@ -280,6 +282,7 @@ class ManagerController extends Controller
         if (is_null(SalesAssociate::where('id', $memberID)->first())) {
             return redirect()->route("manager.show.sales.associates")->with("error_message", "Sales associate not found.");
         }
+
         $sales_associate = SalesAssociate::where('id', $memberID)->with('badge')->first()->toArray();
 
 
@@ -292,16 +295,204 @@ class ManagerController extends Controller
                 ->with('sales_associate', $sales_associate);
     }
 
-    public function processSalesAssociate(){
+    public function processSalesAssociate(Request $request, $memberID){
+        //select sales associates details
+        $associate = SalesAssociate::where('id', $memberID)->with('badge')->first();
         
+        switch ($request->sa_action) {
+            case 'update_details':
+                /*--- validate ---*/
+                $validator = Validator::make($request->all(), [
+                    'first_name' => 'required',
+                    'last_name' => 'required',
+                    'email' => 'required|email',
+                    'phone' => 'required|digits:10',
+                    'mode_of_payment' => 'required',
+                    'payment_details' => 'required',
+                    'residential_address' => 'required',
+                ]);
+        
+                if ($validator->fails()) {
+                    $messageType = "error_message";
+                    $messageContent = "";
+        
+                    foreach ($validator->messages()->getMessages() as $field_name => $messages)
+                    {
+                        $messageContent .= $messages[0]." "; 
+                    }
+        
+                    return redirect()->back()->withInput(['first_name', 'last_name', 'email', 'phone', 'mode_of_payment', 'payment_details', 'residential_address'])->with($messageType, $messageContent);
+                }
+
+                //update details
+                $associate->first_name = $request->first_name;
+                $associate->last_name = $request->last_name;
+                $associate->email = $request->email;
+                $associate->phone = "233".substr($request->phone, 1);
+                $associate->mode_of_payment = $request->mode_of_payment;
+                $associate->payment_details = $request->payment_details;
+                $associate->address = $request->residential_address;
+
+
+                /*--- log activity ---*/
+                activity()
+                ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Sales Associate Details Update';
+                })
+                ->log(Auth::guard('manager')->user()->email." updated the details of sales associate, ".$associate->first_name." ".$associate->last_name);
+
+                $success_message = $associate->first_name." ".$associate->last_name."'s details updated successfully.";
+                $associate->save();
+                
+                return redirect()->back()->with("success_message", $success_message);
+                break;
+
+            case 'record_payout':
+                
+                /*--- Record transaction ---*/
+                $transaction = new AccountTransaction;
+                $transaction->trans_type                = "Sales Associate Payout";
+                $transaction->trans_amount              = $request->pay_out_amount;
+                $transaction->trans_credit_account_type = 1;
+                $transaction->trans_credit_account      = "INT-SC001";
+                $transaction->trans_debit_account_type  = 8;
+                $transaction->trans_debit_account       = $associate->id;
+                $transaction->trans_description         = "Payout of GH¢ ".$request->pay_out_amount." to ".$associate->first_name." ".$associate->last_name;
+                $transaction->trans_date                = date("Y-m-d G:i:s");
+                $transaction->trans_recorder            = Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name;
+                $transaction->save();
+
+                /*--- Update Associate Balance ---*/
+                $associate->balance -= $request->pay_out_amount;
+
+                /*--- Update Main Account Balance ---*/
+                $counts = Count::first();
+                $counts->account -= $request->pay_out_amount;
+                $counts->save();
+
+                /*--- Notify vendor ---*/
+                $sms = new SMS;
+                $sms->sms_message = "Dear ".$associate->first_name.", a payout of GHS ".$request->pay_out_amount." has been recorded to you. Your new balance is GHS ".$associate->balance;
+                $sms->sms_phone = $associate->phone;
+                $sms->sms_state = 1;
+                $sms->save();
+
+                /*--- log activity ---*/
+                activity()
+                ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Sales Associate Payout';
+                })
+                ->log(Auth::guard('manager')->user()->email." recorded a payout of GH¢ ".$request->pay_out_amount." to sales associate, ".$associate->first_name." ".$associate->last_name);
+
+                $success_message = "Payout of GH¢ ".$request->pay_out_amount." to ".$associate->first_name." ".$associate->last_name." recorded successfully.";
+                $associate->save();
+                
+                return redirect()->back()->with("success_message", $success_message);
+                
+                break;
+            default:
+                return redirect()->back()->with("error_message", "Something went wrong. Please try again.");
+                break;
+        }
     }
 
     public function showAccounts(){
-        
+        $accounts["transactions"] = AccountTransaction::all()->toArray();
+        $accounts["balance"]["total"] = Count::sum('account');
+        $accounts["balance"]["vendors"] = Vendor::sum('balance');
+        $accounts["balance"]["sales-associates"] = SalesAssociate::sum('balance');
+        $accounts["balance"]["available"] = $accounts["balance"]["total"] - $accounts["balance"]["vendors"] - $accounts["balance"]["sales-associates"];
+
+
+        return view('portal.main.manager.accounts')
+                ->with("accounts", $accounts);
+
     }
 
-    public function processAccounts(){
-        
+    public function processAccounts(Request $request){
+        /*--- Validate form data  ---*/
+        $validator = Validator::make($request->all(), [
+            'payment_type' => 'required',
+            'payment_amount' => 'required',
+            'payment_description' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            $messageType = "error_message";
+            $messageContent = "";
+
+            foreach ($validator->messages()->getMessages() as $field_name => $messages)
+            {
+                $messageContent .= $messages[0]." "; 
+            }
+
+            return redirect()->back()->withInput(['payment_type', 'payment_amount', 'payment_description'])->with($messageType, $messageContent);
+        } 
+
+        $counts = Count::first();
+        switch ($request->payment_type) {
+            case 'Pay-Out':
+                /*--- update accounts ---*/
+                $counts->account -= $request->payment_amount;
+                $counts->save();
+
+                /*--- record transaction ---*/
+                $transaction = new AccountTransaction;
+                $transaction->trans_type                = "Accounts Pay Out";
+                $transaction->trans_amount              = $request->payment_amount;
+                $transaction->trans_credit_account_type = 1;
+                $transaction->trans_credit_account      = "INT-SC001";
+                $transaction->trans_debit_account_type  = 2;
+                $transaction->trans_debit_account       = "EXT";
+                $transaction->trans_description         = "Pay Out of GH¢ ".$request->payment_amount;
+                $transaction->trans_date                = date("Y-m-d G:i:s");
+                $transaction->trans_recorder            = Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name;
+                $transaction->save();
+
+                break;
+            case 'Pay-In':
+                /*--- update accounts ---*/
+                $counts->account += $request->payment_amount;
+                $counts->save();
+                
+                /*--- record transaction ---*/
+                $transaction = new AccountTransaction;
+                $transaction->trans_type                = "Accounts Pay In";
+                $transaction->trans_amount              = $request->payment_amount;
+                $transaction->trans_credit_account_type = 2;
+                $transaction->trans_credit_account      = "EXT";
+                $transaction->trans_debit_account_type  = 1;
+                $transaction->trans_debit_account       = "INT-SC001";
+                $transaction->trans_description         = "Pay In of GH¢ ".$request->payment_amount;
+                $transaction->trans_date                = date("Y-m-d G:i:s");
+                $transaction->trans_recorder            = Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name;
+                $transaction->save();
+
+                break;
+            default:
+                return redirect()->back()->with("error_message", "Something went wrong. Please try again.");
+                break;
+        }
+
+        /*--- log activity ---*/
+        activity()
+        ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+        ->tap(function(Activity $activity) {
+            $activity->subject_type = 'System';
+            $activity->subject_id = '0';
+            $activity->log_name = 'Sales Associate Payout';
+        })
+        ->log(Auth::guard('manager')->user()->email." recorded a ".$request->payment_type." of GH¢ ".$request->payment_amount);
+
+        /*--- Return with success message ---*/
+        return redirect()->back()->with("success_message", $request->payment_type." of GH¢ ".$request->payment_amount." recorded successfully.");
+
     }
 
     public function processSubscriptions(Request $request)
@@ -345,14 +536,14 @@ class ManagerController extends Controller
                 'vs_days_left' => 0
             ]);
 
-        //notify vendor
+        /*--- Notify Vendor ---*/
         $sms = new SMS;
         $sms->sms_message = "Dear ".$subscription[0]->name.", your subscription as a vendor with Solushop Ghana has been cancelled.";
         $sms->sms_phone = $subscription[0]->phone;
         $sms->sms_state = 1;
         $sms->save();
 
-        //Log activity
+        /*--- log activity ---*/
         activity()
         ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
         ->tap(function(Activity $activity) {

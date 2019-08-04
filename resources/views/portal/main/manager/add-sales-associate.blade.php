@@ -97,7 +97,7 @@
                                                 Cancel
                                         </button>
                                     </a>
-                                    <button type="submit" name="AddSTeamMember" class="btn btn-success">
+                                    <button type="submit" name="add_sales_associate" class="btn btn-success">
                                             Save
                                     </button>
                                 </div>

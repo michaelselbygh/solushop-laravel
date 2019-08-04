@@ -20,7 +20,7 @@ class VendorLoginController extends Controller
 
     public function login(Request $request)
     {
-        //validate form data
+        /*--- Validate form data  ---*/
         $this->validate($request, [
             'username' => 'required',
             'password' => 'required'

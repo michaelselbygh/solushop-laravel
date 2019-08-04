@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use App\ActivityLog;
 use App\Conversation;
 use App\Count;
+use App\Coupon;
 use App\Messages;
 use App\Order;
 use App\OrderItem;
@@ -100,7 +101,7 @@ class Kernel extends ConsoleKernel
                 //send message where necessary
                 switch ($vendor_subscription->vs_days_left) {
                     case 5:
-                        //notify vendor
+                        /*--- Notify Vendor ---*/
                         $sms_message = "Hiya ".$vendor_subscription->vendor->name.", time flies when you're with the right people. Looks like your subscription is about expiring. Kindly extend your subscription when you have the chance to. You have 5 days left.";
 
                         $sms = new SMS;
@@ -112,7 +113,7 @@ class Kernel extends ConsoleKernel
                         break;
 
                     case 3:
-                        //notify vendor
+                        /*--- Notify Vendor ---*/
                         $sms_message = "Heya ".$vendor_subscription->vendor->name.", did you forget to extend your subscription? No worries, we're here to remind you. You have 3 days left on your subscription.";
 
                         $sms = new SMS;
@@ -124,7 +125,7 @@ class Kernel extends ConsoleKernel
                         break;
                     
                     case 1:
-                        //notify vendor
+                        /*--- Notify Vendor ---*/
                         $sms_message = "Hi ".$vendor_subscription->vendor->name.", please dont leave. You have only 24 hours remaining on your subscription. Please extend your subscription ASAP! We don't want to lose you.";
 
                         $sms = new SMS;
@@ -144,7 +145,7 @@ class Kernel extends ConsoleKernel
                             'product_state' => '5'
                         ]);
 
-                        //notify vendor
+                        /*--- Notify Vendor ---*/
                         $sms_message = "Hi ".$vendor_subscription->vendor->name.", we hate to see you go but your subscription has expired. Please reactivate under the subscription tab in your portal. Please don't keep us missing you for too long.";
 
                         $sms = new SMS;
@@ -235,6 +236,19 @@ class Kernel extends ConsoleKernel
             WTUPayment::where([
                 ['wtu_payment_status', '=', "UNPAID"]
             ])->delete();
+            
+        })->daily('23:59');
+
+        /*--- Update expired coupons ---*/
+        $schedule->call(function () {
+
+            Coupon::where([
+                ['coupon_owner', '=', "SOLUSHOP"],
+                ['coupon_state', '=', '2'],
+                ['coupon_expiry_date', '<', date("Y-m-d")]
+            ])->update([
+                'coupon_state' => '4'
+            ]);
             
         })->daily('23:59');
     }

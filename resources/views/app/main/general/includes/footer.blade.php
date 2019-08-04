@@ -97,7 +97,7 @@
                     <!--Footer Left Content Start-->
                     <div class="col-md-6 col-sm-6">
                         <div class="copyright-text">
-                            <p>Copyright © 2018 - 2019 <a target="_blank">Solushop Ghana Limited</a> All Rights Reserved.</p>
+                            <p>Copyright © {{ date("Y") }} <a target="_blank">Solushop Ghana Limited</a> All Rights Reserved.</p>
                         </div>
                     </div>
                     <!--Footer Left Content End-->
