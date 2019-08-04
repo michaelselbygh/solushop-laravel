@@ -13,8 +13,11 @@ use App\AccountTransaction;
 use App\ActivityLog;
 use App\Count;
 use App\Coupon;
+use App\DeliveredItem;
 use App\Manager;
 use App\Order;
+use App\OrderItem;
+use App\PickedUpItem;
 use App\Product;
 use App\SABadge;
 use App\SalesAssociate;
@@ -124,27 +127,33 @@ class ManagerController extends Controller
     }
 
     public function showPickupHistory(){
-
+        return view('portal.main.manager.pick-up-history')
+                ->with('picked_up_items',  PickedUpItem::with('order_item')->get()->toArray());
     }
 
     public function showActivePickups(){
-
+        return view('portal.main.manager.pick-ups')
+                ->with('pick_up_items',  OrderItem::whereIn('oi_state', [2, 3])->with("sku.product.images")->get()->toArray());
     }
 
-    public function processActivePickups(){
-
+    public function processActivePickups(Request $request){
+        echo $request->picked_up_item_id;
+        exit;
     }
 
     public function showDeliveryHistory(){
-
+        return view('portal.main.manager.delivery-history')
+                ->with('delivered_items',  DeliveredItem::with('order_item')->get()->toArray());
     }
 
     public function showActiveDeliveries(){
-
+        return view('portal.main.manager.deliveries')
+                ->with('delivery_items',  OrderItem::whereIn('oi_state', [2, 3])->with("sku.product.images")->get()->toArray());
     }
 
-    public function processActiveDeliveries(){
-
+    public function processActiveDeliveries(Request $request){
+        echo $request->delivered_item_id;
+        exit;
     }
 
     public function showCoupons(){

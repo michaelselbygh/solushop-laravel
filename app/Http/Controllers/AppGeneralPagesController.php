@@ -837,11 +837,12 @@ class AppGeneralPagesController extends Controller
                                 $customer->save();
 
                                 //reduce account balance
-
-                                //record transaction
                                 $count = Count::first();
                                 $count->account = round($count->account - $coupon->coupon_value, 2);
                                 $count->save();
+
+                                //record transaction
+                                
 
                                 //update coupon state
                                 $coupon_code = $coupon->coupon_code;

@@ -117,7 +117,7 @@ Route::prefix('portal')->group(function(){
         Route::post('/vendor/{vendorSlug}', 'ManagerController@processVendor')->name('manager.process.vendor');
         Route::get('pick-ups/history', 'ManagerController@showPickupHistory')->name('manager.show.pick.ups.history');
         Route::get('pick-ups/active', 'ManagerController@showActivePickups')->name('manager.show.active.pick.ups');
-        Route::post('pick-ups/active', 'ManagerController@processActivePickups')->name('manager.process.active.deliveries');
+        Route::post('pick-ups/active', 'ManagerController@processActivePickups')->name('manager.process.active.pick.ups');
         Route::get('deliveries/history', 'ManagerController@showDeliveryHistory')->name('manager.show.deliveries.history');
         Route::get('deliveries/active', 'ManagerController@showActiveDeliveries')->name('manager.show.active.deliveries');
         Route::post('deliveries/active', 'ManagerController@processActiveDeliveries')->name('manager.process.active.deliveries');
