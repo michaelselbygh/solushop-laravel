@@ -381,9 +381,9 @@ class AppMyAccountController extends Controller
             where("id", Auth::user()->id)
             ->first();
 
-        $customer->first_name = $request->first_name;
-        $customer->last_name = $request->last_name;
-        $customer->email = $request->email;
+        $customer->first_name = ucwords(strtolower($request->first_name));
+        $customer->last_name = ucwords(strtolower($request->last_name));
+        $customer->email = strtolower($request->email);
         $customer->phone = "233".substr($request->phone, 1);
 
         $customer->save();

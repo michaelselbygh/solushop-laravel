@@ -251,7 +251,7 @@ class LoginController extends Controller
             $customer->id = $customerID;
             $customer->first_name = ucwords(strtolower($request->first_name));
             $customer->last_name = ucwords(strtolower($request->last_name));
-            $customer->email = $request->r_email;
+            $customer->email = strtolower($request->r_email);
             $customer->phone = "233".substr($request->phone, 1);
             $customer->password = $passwordHashed;
             $customer->activation_code = $activationCode;

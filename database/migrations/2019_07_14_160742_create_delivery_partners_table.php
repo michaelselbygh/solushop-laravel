@@ -22,6 +22,7 @@ class CreateDeliveryPartnersTable extends Migration
             $table->string('passcode');
             $table->string('password')->nullable();
             $table->integer('access_level')->default('0');
+            $table->double('balance')->default('0');
             $table->rememberToken();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();

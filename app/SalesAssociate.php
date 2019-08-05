@@ -53,7 +53,7 @@ class SalesAssociate extends Authenticatable
     ];
 
 
-    public function badge()
+    public function badge_info()
     {
         return $this->hasOne('App\SABadge', 'id', 'badge');
     }

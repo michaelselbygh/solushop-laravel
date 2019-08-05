@@ -10,4 +10,8 @@ class Coupon extends Model
     {
         return $this->hasOne('App\CouponState', 'id', 'coupon_state' );
     }
+
+    public function sales_associate(){
+        return $this->hasOne('App\SalesAssociate', "email", 'coupon_owner' );
+    }
 }

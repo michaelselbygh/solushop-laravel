@@ -40,24 +40,189 @@ class ManagerController extends Controller
                 ->with('customers',  Customer::with('milk', 'chocolate')->get()->toArray());
     }
 
-    public function showCustomer(){
+    public function showCustomer($customerID){
+        if (is_null(Customer::where('id', $customerID)->with('milk', 'chocolate')->first())) {
+            return redirect()->route("manager.show.customers")->with("error_message", "Customer not found");
+        }
 
+        return view('portal.main.manager.view-customer')
+                ->with('customer',  Customer::where('id', $customerID)->with('milk', 'chocolate', 'addresses', 'orders.order_items.sku.product.images', 'orders.order_state')->first()->toArray());
     }
 
-    public function processCustomer(){
+    public function processCustomer(Request $request, $customerID){
+        /*--- validate ---*/
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'email' => 'required|email',
+            'phone' => 'required|digits:10'
+        ]);
 
+        if ($validator->fails()) {
+            $messageType = "error_message";
+            $messageContent = "";
+
+            foreach ($validator->messages()->getMessages() as $field_name => $messages)
+            {
+                $messageContent .= $messages[0]." "; 
+            }
+
+            return redirect()->back()->with($messageType, $messageContent);
+        }
+
+        $customer = Customer::where('id', $customerID)->first();
+        $customer->first_name = ucwords(strtolower($request->first_name));
+        $customer->last_name = ucwords(strtolower($request->last_name));
+        $customer->email = strtolower($request->email);
+        $customer->phone = "233".substr($request->phone, 1);
+        $customer->save();
+
+
+        /*--- log activity ---*/
+        activity()
+        ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+        ->tap(function(Activity $activity) {
+            $activity->subject_type = 'System';
+            $activity->subject_id = '0';
+            $activity->log_name = 'Customer Details Update';
+        })
+        ->log(Auth::guard('manager')->user()->email." updated the details of customer, ".$request->first_name." ".$request->last_name);
+
+        return redirect()->back()->with("success_message", ucwords(strtolower($request->first_name))."'s details updated successfully.");
     }
 
     public function showOrders(){
+        $orders['new_orders_count'] = count(Order::
+                where('order_state', 2)
+                ->get()
+            );
+
+        $orders['ongoing_orders_count'] = count(Order::
+                whereIn('order_state', [3, 4, 5])
+                ->get()
+            );
+        
+        $orders['completed_orders_count'] = count(Order::
+                where('order_state', 6)
+                ->get()
+            );
+
+        $orders['cancelled_orders_count'] = count(Order::
+            where('order_state', 7)
+            ->get()
+        );
+
+        $orders['total_orders_count'] = count(Order::
+            whereIn('order_state', [2, 3, 4, 5, 6, 7])
+            ->get()
+        );
+
+        $orders['all_orders'] = Order::
+            orderBy("order_date")
+            ->with('order_items.sku.product.images', 'customer', 'order_state')
+            ->get()
+            ->toArray();
+
+        return view('portal.main.manager.orders')
+            ->with('orders', $orders);
+    }
+
+    public function processOrders(Request $request){
+
+        $orders["filter"] = $request->orders_filter;
+        switch ($request->orders_filter) {
+            case 'New':
+                $orders['all_orders'] = Order::
+                    orderBy("order_date")
+                    ->where('order_state', 2)
+                    ->with('order_items.sku.product.images', 'customer', 'order_state')
+                    ->get()
+                    ->toArray();
+                break;
+            case 'Ongoing':
+                $orders['all_orders'] = Order::
+                    orderBy("order_date")
+                    ->whereIn('order_state', [3, 4, 5])
+                    ->with('order_items.sku.product.images', 'customer', 'order_state')
+                    ->get()
+                    ->toArray();
+                break;
+            case 'Completed':
+                $orders['all_orders'] = Order::
+                    orderBy("order_date")
+                    ->where('order_state', 6)
+                    ->with('order_items.sku.product.images', 'customer', 'order_state')
+                    ->get()
+                    ->toArray();
+                break;
+            case 'Cancelled':
+                $orders['all_orders'] = Order::
+                    orderBy("order_date")
+                    ->where('order_state', 7)
+                    ->with('order_items.sku.product.images', 'customer', 'order_state')
+                    ->get()
+                    ->toArray();
+                break;
+            
+            default:
+                $orders["filter"] = null;
+                $orders['all_orders'] = Order::
+                    orderBy("order_date")
+                    ->with('order_items.sku.product.images', 'customer', 'order_state')
+                    ->get()
+                    ->toArray();
+                break;
+        }
+
+        $orders['new_orders_count'] = count(Order::
+                where('order_state', 2)
+                ->get()
+            );
+
+        $orders['ongoing_orders_count'] = count(Order::
+                whereIn('order_state', [3, 4, 5])
+                ->get()
+            );
+        
+        $orders['completed_orders_count'] = count(Order::
+                where('order_state', 6)
+                ->get()
+            );
+
+        $orders['cancelled_orders_count'] = count(Order::
+            where('order_state', 7)
+            ->get()
+        );
+
+        $orders['total_orders_count'] = count(Order::
+            whereIn('order_state', [2, 3, 4, 5, 6, 7])
+            ->get()
+        );
+
+
+        return view('portal.main.manager.orders')
+            ->with('orders', $orders);
+
 
     }
 
-    public function processOrders(){
+    public function showOrder($orderID){
+        if (is_null(Order::
+            where("id", $orderID)
+            ->with('order_items.sku.product.images', 'customer', 'order_state')
+            ->first()
+            ->toArray())) {
+            
+            return redirect()->route("manager.show.orders")->with("error_message", "Order $orderID not found");
+        }
 
-    }
 
-    public function showOrder(){
-
+        return view('portal.main.manager.view-order')
+                    ->with('order', Order::
+                        where("id", $orderID)
+                        ->with('order_items.sku.product.images','order_items.order_item_state', 'customer', 'order_state', 'address', 'coupon.sales_associate.badge_info')
+                        ->first()
+                        ->toArray());
     }
 
     public function processOrder(){

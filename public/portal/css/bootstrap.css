@@ -62,7 +62,7 @@ body {
   font-size: 12px;
   font-weight: 400;
   line-height: 1.45;
-  color: #6b6f82;
+  color: #001337;
   text-align: left;
   background-color: #F4F5FA; }
 
@@ -82,7 +82,7 @@ h1, h2, h3, h4, h5, h6 {
 
 p {
   margin-top: 0;
-  margin-bottom: 1rem; }
+  margin-bottom: 5px; }
 
 abbr[title],
 abbr[data-original-title] {

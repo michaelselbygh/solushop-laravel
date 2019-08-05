@@ -76,4 +76,14 @@ class Customer extends Authenticatable
         return $this->hasMany('App\CartItem', 'ci_customer_id', 'id' );
     }
 
+    public function addresses()
+    {
+        return $this->hasMany('App\CustomerAddress', 'ca_customer_id', 'id' );
+    }
+
+    public function orders()
+    {
+        return $this->hasMany('App\Order', 'order_customer_id', 'id' );
+    }
+
 }

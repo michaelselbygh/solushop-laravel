@@ -20,5 +20,13 @@ class Order extends Model
         return $this->hasOne('App\Customer', 'id', 'order_customer_id' );
     }
 
+    public function address(){
+        return $this->hasOne('App\CustomerAddress', 'id', 'order_address_id' );
+    }
+
+    public function coupon(){
+        return $this->hasOne('App\Coupon', "coupon_code", 'order_scoupon' );
+    }
+
 
 }
