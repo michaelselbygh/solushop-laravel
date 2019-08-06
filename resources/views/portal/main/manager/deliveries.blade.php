@@ -14,14 +14,16 @@
                     </div>
                     <div class="col-6" style="text-align: right; margin-bottom:10px;">
                         @if(sizeof($delivery_items) > 0)
-                            <a>
-                                <button class="btn btn-success">
-                                    Download Delivery Guides
+                        <form method="POST" action="{{ route('manager.process.active.deliveries') }}">
+                                @csrf
+                                <button class="btn btn-success" type="submit">
+                                    Download Delivery Guide
                                 </button>
-                            </a>
+                                <input id="delivery_action" type="hidden" name="delivery_action"  value="download_delivery_guide"/>
+                            </form>
                         @else
                             <button class="btn btn-danger" disabled>
-                                Delivery Guides Unavailable
+                                Delivery Guide Unavailable
                             </button>
                         @endif
                     </div>
@@ -81,6 +83,7 @@
     <form id="item-delivered-form" method="POST" action="{{ route('manager.process.active.deliveries') }}">
         @csrf
         <input type="hidden" name="delivered_item_id" id="delivered_item_id" />
+        <input id="delivery_action" type="hidden" name="delivery_action"  value="mark_item"/>
     </form>
 
     <script>

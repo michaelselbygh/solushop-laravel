@@ -21,7 +21,7 @@
                                         <th>Product SKU</th>
                                         <th>Product Description</th>
                                         <th>Quantity</th>
-                                        <th>Recorded On</th>
+                                        <th>Recorded At</th>
                                         <th>Recorded By</th>
                                         <th>Recorder ID</th>
                                     </tr>
@@ -34,7 +34,7 @@
                                             <td>{{ $picked_up_items[$i]["order_item"]["oi_sku"] }}</td>
                                             <td>{{ $picked_up_items[$i]["order_item"]["oi_name"] }}</td>
                                             <td>{{ $picked_up_items[$i]["order_item"]["oi_quantity"] }}</td>
-                                            <td>{{ date('l jS F Y', strtotime($picked_up_items[$i]["created_at"])) }}</td>
+                                            <td>{{ date('g:ia, l jS F Y', strtotime($picked_up_items[$i]["created_at"])) }}</td>
                                             <td>{{ $picked_up_items[$i]["pui_marked_by_description"] }}</td>
                                             <td>{{ $picked_up_items[$i]["pui_marked_by_id"] }}</td>
                                         </tr>

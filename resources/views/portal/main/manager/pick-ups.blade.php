@@ -14,14 +14,16 @@
                     </div>
                     <div class="col-6" style="text-align: right; margin-bottom:10px;">
                         @if(sizeof($pick_up_items) > 0)
-                            <a>
-                                <button class="btn btn-success">
-                                    Download Pick Up Guides
+                            <form method="POST" action="{{ route('manager.process.active.pick.ups') }}">
+                                @csrf
+                                <button class="btn btn-success" type="submit">
+                                    Download Pick Up Guide
                                 </button>
-                            </a>
+                                <input id="pick_up_action" type="hidden" name="pick_up_action"  value="download_pick_up_guide"/>
+                            </form>
                         @else
                             <button class="btn btn-danger" disabled>
-                                Pick Up Guides Unavailable
+                                Pick Up Guide Unavailable
                             </button>
                         @endif
                     </div>
@@ -80,6 +82,7 @@
     <form id="item-picked-up-form" method="POST" action="{{ route('manager.process.active.pick.ups') }}">
         @csrf
         <input id="picked_up_item" type="hidden" name="picked_up_item_id"  value=""/>
+        <input id="pick_up_action" type="hidden" name="pick_up_action"  value="mark_item"/>
     </form>
 
     <script>

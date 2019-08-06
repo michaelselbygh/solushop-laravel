@@ -873,12 +873,76 @@ class ManagerController extends Controller
 
     public function showActivePickups(){
         return view('portal.main.manager.pick-ups')
-                ->with('pick_up_items',  OrderItem::whereIn('oi_state', [2, 3])->with("sku.product.images")->get()->toArray());
+                ->with('pick_up_items',  OrderItem::whereIn('oi_state', [2])->with("sku.product.images")->get()->toArray());
     }
 
     public function processActivePickups(Request $request){
-        echo $request->picked_up_item_id;
-        exit;
+        switch ($request->pick_up_action) {
+            case 'mark_item':
+                /*--- Change order Item State ---*/
+                OrderItem::
+                    where([
+                        ['id', '=', $request->picked_up_item_id]
+                    ])
+                    ->update([
+                        'oi_state' => 3,
+                    ]);
+                
+                $order_item = OrderItem::where('id', $request->picked_up_item_id)->first()->toArray();
+                $order = Order::where('id', $order_item['oi_order_id'])->with('customer')->first()->toArray();
+
+                /*--- Change Order State (where necessary) ---*/
+                $order_items_count = OrderItem::where('oi_order_id', $order_item['oi_order_id'])->get()->count();
+                $picked_up_order_items_count = OrderItem::where('oi_order_id', $order_item['oi_order_id'])->whereIn('oi_state', [3, 4])->get()->count();
+                
+
+                if ($order_items_count == $picked_up_order_items_count) {
+                    Order::
+                    where([
+                        ['id', '=', $order_item['oi_order_id']]
+                    ])
+                    ->update([
+                        'order_state' => 4,
+                    ]);
+                }
+
+                /*--- Notify Customer ---*/
+                $sms = new SMS;
+                $sms->sms_message = "Hi ".$order["customer"]["first_name"]." your ordered item, ".$order_item["oi_quantity"]." ".$order_item["oi_name"]." has been picked up and is ready for delivery.";
+                $sms->sms_phone = $order["customer"]["phone"];
+                $sms->sms_state = 1;
+                $sms->save();
+
+                /*--- Record Pickup History ---*/
+                $picked_up_item = new PickedUpItem;
+                $picked_up_item->pui_order_item_id          = $order_item["id"];
+                $picked_up_item->pui_marked_by_id           = Auth::guard('manager')->user()->id;
+                $picked_up_item->pui_marked_by_description  = Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name;
+                $picked_up_item->save();
+
+                /*--- Log Activity ---*/
+                activity()
+                ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Order Item Picked Up';
+                })
+                ->log(Auth::guard('manager')->user()->email." marked ordered item [ ".$order_item["id"]." ] ".$order_item["oi_quantity"]." ".$order_item["oi_name"]." as picked up.");
+
+                /*--- Return with success message ---*/
+                return redirect()->back()->with("success_message", $order_item["oi_quantity"]." ".$order_item["oi_name"]." marked as picked up successfully.");
+                break;
+
+            case 'download_pick_up_guide':
+                echo "Download";
+                exit;
+                break;
+            
+            default:
+                return redirect()->back()->with("error_message", "Something went wrong, please try again.");
+                break;
+        }
     }
 
     public function showDeliveryHistory(){
@@ -892,8 +956,92 @@ class ManagerController extends Controller
     }
 
     public function processActiveDeliveries(Request $request){
-        echo $request->delivered_item_id;
-        exit;
+        switch ($request->delivery_action) {
+            case 'mark_item':
+                /*--- Change order Item State ---*/
+                OrderItem::
+                    where([
+                        ['id', '=', $request->delivered_item_id]
+                    ])
+                    ->update([
+                        'oi_state' => 4,
+                    ]);
+                
+                $order_item = OrderItem::where('id', $request->delivered_item_id)->with('sku.product.vendor')->first()->toArray();
+                $order = Order::where('id', $order_item['oi_order_id'])->with('customer')->first()->toArray();
+
+                /*--- Change Order State (where necessary) ---*/
+                $order_items_count = OrderItem::where('oi_order_id', $order_item['oi_order_id'])->get()->count();
+                $delivered_order_items_count = OrderItem::where('oi_order_id', $order_item['oi_order_id'])->whereIn('oi_state', [4])->get()->count();
+                
+
+                if ($order_items_count == $delivered_order_items_count) {
+                    Order::
+                    where([
+                        ['id', '=', $order_item['oi_order_id']]
+                    ])
+                    ->update([
+                        'order_state' => 6,
+                    ]);
+                }
+
+                /*--- Notify Customer ---*/
+                $sms = new SMS;
+                $sms->sms_message = "Hi ".$order["customer"]["first_name"]." your ordered item, ".$order_item["oi_quantity"]." ".$order_item["oi_name"]." has been delivered successfully. Thanks, come back soon.";
+                $sms->sms_phone = $order["customer"]["phone"];
+                $sms->sms_state = 1;
+                $sms->save();
+
+                /*--- Accrue to Vendor || Record Transaction ---*/
+                $vendor = Vendor::where('id', $order_item['sku']["product"]["vendor"]["id"])->first();
+                $vendor->balance += round(($order_item['oi_settlement_price'] - $order_item['oi_discount']) * $order_item['oi_quantity'], 2);
+
+                $transaction = new AccountTransaction;
+                $transaction->trans_type                = "Vendor Accrual";
+                $transaction->trans_amount              = round(($order_item['oi_settlement_price'] - $order_item['oi_discount']) * $order_item['oi_quantity'], 2);
+                $transaction->trans_credit_account_type = 1;
+                $transaction->trans_credit_account      = "INT-SC001";
+                $transaction->trans_debit_account_type  = 3;
+                $transaction->trans_debit_account       = $vendor->id;
+                $transaction->trans_description         = $log = "Accrual of GH¢ ".round(($order_item['oi_settlement_price'] - $order_item['oi_discount']) * $order_item['oi_quantity'], 2)." to ".$vendor->name." for ordered item [ ".$order_item["id"]." ] ".$order_item["oi_quantity"]." ".$order_item["oi_name"];
+                $transaction->trans_date                = date("Y-m-d G:i:s");
+                $transaction->trans_recorder            = Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name;
+                $transaction->save();
+
+
+                //record transaction
+                $vendor->save();
+
+                /*--- Record Delivery History ---*/
+                $delivered_item = new DeliveredItem;
+                $delivered_item->di_order_item_id          = $order_item["id"];
+                $delivered_item->di_marked_by_id           = Auth::guard('manager')->user()->id;
+                $delivered_item->di_marked_by_description  = Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name;
+                $delivered_item->save();
+
+                /*--- Log Activity ---*/
+                activity()
+                ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Order Item Delivered';
+                })
+                ->log(Auth::guard('manager')->user()->email." marked ordered item [ ".$order_item["id"]." ] ".$order_item["oi_quantity"]." ".$order_item["oi_name"]." as delivered.");
+
+                /*--- Return with success message ---*/
+                return redirect()->back()->with("success_message", $order_item["oi_quantity"]." ".$order_item["oi_name"]." marked as delivered successfully.");
+                break;
+
+            case 'download_delivery_guide':
+                echo "Download";
+                exit;
+                break;
+            
+            default:
+                return redirect()->back()->with("error_message", "Something went wrong, please try again.");
+                break;
+        }
     }
 
     public function showCoupons(){
