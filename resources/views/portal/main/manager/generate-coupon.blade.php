@@ -7,7 +7,7 @@
 @section('content-body')
     <div class="row">
         <div class="col-md-12">
-            <h4 class="card-title">Generate Coupon</h4>
+            <h5 class="card-title">Generate Coupon</h5>
         </div>
     </div>
     <form class="form" method="POST" action="{{ route("manager.process.generate.coupon") }}" enctype="multipart/form-data">
@@ -15,7 +15,7 @@
         <div class="row">
             <div class="col-md-4">
                 <div class="card" style="padding:10px;">
-                    <h4 class="card-title" style="color:red">Note</h4>
+                    <h5 class="card-title" style="color:red">Note</h5>
                     <div class="card-content collapse show">
                         <div class="card-body" style="padding-top: 5px;">
                             <ol style="padding-left:0px;">

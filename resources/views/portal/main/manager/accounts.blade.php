@@ -8,7 +8,7 @@
     <section id="configuration">
         <div class="row">
             <div class="col-8">
-                <h4 class="card-title">Transactions</h4>
+                <h5 class="card-title">Transactions</h5>
                 <div class="card">
                     <div class="card-content collapse show">
                         <div class="card-body card-dashboard">
@@ -73,29 +73,29 @@
                 </div>
             </div>
             <div class="col-4">
-                <h4 class="card-title">Balance</h4>
+                <h5 class="card-title">Balance</h5>
                 <div class="card">
                     <div class="card-content collapse show">
                         <div class="card-body card-dashboard">
                             <div class="row">
                                 <div class="col-md-6">
-                                    <h5>Total : </h5>
-                                    <h5>Due Vendors : </h5>
-                                    <h5>Due Sales Associates : </h5>
-                                    <h5>Available : </h5>
+                                    <h6>Total : </h6>
+                                    <h6>Due Vendors : </h6>
+                                    <h6>Due Sales Associates : </h6>
+                                    <h6>Available : </h6>
                                 </div>
                                 <div class="col-md-6" >
-                                    <h5><b>GH¢ {{ round($accounts["balance"]["total"], 2) }}</b></h5>
-                                    <h5 style="color: #fbae17;"><b>GH¢ {{ round($accounts["balance"]["vendors"], 2) }}</b></h5>
-                                    <h5 style="color: #fbae17;"><b>GH¢ {{ round($accounts["balance"]["sales-associates"], 2) }}</b></h5>
-                                    <h5 style="color: green;"><b>GH¢ {{ round($accounts["balance"]["available"], 2) }}</b></h5>
+                                    <h6><b>GH¢ {{ round($accounts["balance"]["total"], 2) }}</b></h6>
+                                    <h6 style="color: #fbae17;"><b>GH¢ {{ round($accounts["balance"]["vendors"], 2) }}</b></h6>
+                                    <h6 style="color: #fbae17;"><b>GH¢ {{ round($accounts["balance"]["sales-associates"], 2) }}</b></h6>
+                                    <h6 style="color: green;"><b>GH¢ {{ round($accounts["balance"]["available"], 2) }}</b></h6>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <h4 class="card-title">Record Payment</h4>
+                <h5 class="card-title">Record Payment</h5>
                 @include('portal.main.success-and-error.message')
                 <div class="card">
                     <div class="card-content collapse show">

@@ -8,7 +8,7 @@
     <section id="configuration">
         <div class="row">
             <div class="col-12">
-                <h4 class="card-title">SMS Report - {{ date('l jS \of F Y')}} as at {{ date("g:i a") }}</h4>
+                <h5 class="card-title">SMS Report - {{ date('l jS \of F Y')}} as at {{ date("g:i a") }}</h5>
                 <div class="card">
                     <div class="card-content collapse show">
                         <div class="card-body card-dashboard">

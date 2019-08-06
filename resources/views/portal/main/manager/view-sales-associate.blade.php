@@ -7,7 +7,7 @@
 @section('content-body')
     <div class="row">
         <div class="col-md-12">
-            <h4 class="card-title">Manage sales associate, {{ $sales_associate["first_name"]." ".$sales_associate["last_name"] }} </h4>
+            <h5 class="card-title">Manage sales associate, {{ $sales_associate["first_name"]." ".$sales_associate["last_name"] }} </h5>
             @include('portal.main.success-and-error.message')
         </div>
     </div>
@@ -100,12 +100,11 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-5">
+
             <div class="card">
                 <div class="row">
                     <div class="col-md-4" stle="padding:40px;">
-                        <img style="width:100%; height:auto; padding:10px; margin-left: 20px;" src="{{url("portal/images/s-team-badges/".$sales_associate["badge"]["sab_image"]) }}"/>
+                        <img style="width:155px; height:auto; padding:10px; margin-left: 20px;" src="{{url("portal/images/s-team-badges/".$sales_associate["badge_info"]["sab_image"]) }}"/>
                     </div>
                     <div class="col-md-8" style="padding-top: 30px; padding-left:30px;">
                         <div class="row">
@@ -118,20 +117,22 @@
                             </div>
                             <div class="col-md-8">
                                 STM-{{ $sales_associate["id"] }} <br>
-                                {{ $sales_associate["badge"]["sab_description"] }} <br>
+                                {{ $sales_associate["badge_info"]["sab_description"] }} <br>
                                 {{ substr($sales_associate["id_file"], 0, 24) }} <br>
-                                {{ $sales_associate["badge"]["sab_commission"] * 100 }} % <br>
+                                {{ $sales_associate["badge_info"]["sab_commission"] * 100 }} % <br>
                                 GH¢ {{ round($sales_associate["sales"], 2) }} <br>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-
+    
+        </div>
+        <div class="col-md-5">
+            <h5>Account Balance : GH¢ {{ $sales_associate["balance"] }}</h5>
             <div class="card">
                 <div class="card-content collapse show">
                     <div class="card-body">
-                        <h5>Account Balance : GH¢ {{ $sales_associate["balance"] }}</h5><br>
                         <div class="row" style="margin-top: 10px;">
                             <div class="col-sm-3">
                             </div>
@@ -151,7 +152,63 @@
                     </div>
                 </div>
             </div>
+
+            <h5 class="card-title">Transactions</h5>
+            <div class="card">
+                <div class="card-content collapse show">
+                    <div class="card-body card-dashboard">
+                        <table class="table table-striped table-bordered zero-configuration" id="transactions">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Type</th>
+                                    <th>Value</th>
+                                    <th></th>
+                                    <th>Description</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody> 
+                                @for($i=0; $i<sizeof($sales_associate["transactions"]); $i++) 
+                                    <tr>
+                                        <td>{{ $sales_associate["transactions"][$i]["id"] }}</td>
+                                        <td>{{ $sales_associate["transactions"][$i]["trans_type"] }}</td>
+                                        <td>{{ $sales_associate["transactions"][$i]["trans_amount"] }}</td>
+                                        <td>
+                                            @if($sales_associate["transactions"][$i]["trans_debit_account_type"] == 1 AND in_array($sales_associate["transactions"][$i]["trans_credit_account_type"], [2, 4, 6, 8, 10]))
+                                                <img src="{{ url("portal/images/transactions/green-in.png") }}" style="height: 30px;"/>
+                                            @elseif($sales_associate["transactions"][$i]["trans_credit_account_type"] == 1 AND in_array($sales_associate["transactions"][$i]["trans_debit_account_type"], [2, 4, 6, 8, 10]))
+                                                <img src="{{ url("portal/images/transactions/red-out.png") }}" style="height: 30px;"/>
+                                            @elseif($sales_associate["transactions"][$i]["trans_debit_account_type"] == 1 AND in_array($sales_associate["transactions"][$i]["trans_credit_account_type"], [3, 5, 7, 9]))
+                                                <img src="{{ url("portal/images/transactions/yellow-in.png") }}" style="height: 30px;"/>
+                                            @elseif($sales_associate["transactions"][$i]["trans_credit_account_type"] == 1 AND in_array($sales_associate["transactions"][$i]["trans_debit_account_type"], [3, 5, 7, 9]))
+                                                <img src="{{ url("portal/images/transactions/yellow-out.png") }}" style="height: 30px;"/>
+                                            @else
+                                                <img src="{{ url("portal/images/transactions/neutral.png") }}"/>
+                                            @endif
+                                        </td>
+                                        <td>{{ $sales_associate["transactions"][$i]["trans_description"] }}</td>
+                                        <td>{{ $sales_associate["transactions"][$i]["trans_date"] }}</td>
+                                    </tr>
+                                @endfor
+                            </tbody>
+                            <tfoot>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+    <script>
+        $(document).ready(function(){
+            $('#transactions').dataTable( {
+                "order": [
+                    [0, 'desc']
+                ]
+            } );
+        })
+    </script>
 @endsection
 

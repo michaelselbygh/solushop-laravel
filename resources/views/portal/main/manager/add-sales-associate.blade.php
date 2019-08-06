@@ -7,7 +7,7 @@
 @section('content-body')
     <div class="row">
         <div class="col-md-12">
-            <h4 class="card-title">Add Sales Associate</h4>
+            <h5 class="card-title">Add Sales Associate</h5>
         </div>
     </div>
     <form class="form" method="POST" action="{{ route("manager.process.add.sales.associate") }}" enctype="multipart/form-data">

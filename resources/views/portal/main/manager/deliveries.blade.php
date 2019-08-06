@@ -10,7 +10,7 @@
             <div class="col-12">
                 <div class="row">
                     <div class="col-6"  style="margin-top:10px;">
-                        <h4 class="card-title">Active Deliveries</h4>
+                        <h5 class="card-title">Active Deliveries</h5>
                     </div>
                     <div class="col-6" style="text-align: right; margin-bottom:10px;">
                         @if(sizeof($delivery_items) > 0)

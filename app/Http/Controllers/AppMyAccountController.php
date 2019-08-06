@@ -22,6 +22,7 @@ use App\Customer;
 use App\CustomerAddress;
 use App\Manager;
 use App\Message;
+use App\MessageFlag;
 use App\Order;
 use App\OrderItem;
 use App\Product;
@@ -296,6 +297,25 @@ class AppMyAccountController extends Controller
         $message->message_read = "Init|".Auth::user()->id;
         $message->save();
 
+        /*--- flag message where necessary ---*/
+        $flag_keywords =  ['call', 'meet', 'talk', 'whatsapp', 'facebook', 'instagram', 'phone', 'ring', 'message', 'reduce', 'reduction', 'discount', 'twitter', 'email'];
+        if (is_numeric($request->message_content)){
+            $flag = 1;
+        }
+
+        for ($i=0; $i < sizeof($flag_keywords); $i++) { 
+            if (strpos($request->message_content, $flag_keywords[$i]) !== false) {
+                $flag = 1;
+                break;
+            }
+        }
+
+        if(isset($flag)){
+            //insert flag
+            $message_flag = new MessageFlag;
+            $message_flag->mf_mid = $message->id;
+            $message_flag->save();
+        }
         /*--- log activity ---*/
         activity()
         ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())

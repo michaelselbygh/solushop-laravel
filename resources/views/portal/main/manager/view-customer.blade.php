@@ -14,7 +14,7 @@
         
     <div class="row">
         <div class="col-md-7">
-            <h4 class="card-title">Edit {{ $customer["first_name"] }}'s details </h4>
+            <h5 class="card-title">Edit {{ $customer["first_name"] }}'s details </h5>
             @include('portal.main.success-and-error.message')
             <div class="card" style="">
                 <div class="card-content collapse show">
@@ -76,7 +76,7 @@
                 </div>
             </div>
 
-            <h4 class="card-title">{{ $customer["first_name"] }}'s Orders</h4>
+            <h5 class="card-title">{{ $customer["first_name"] }}'s Orders</h5>
             <div class="card">
                 <div class="card-content collapse show">
                     <div class="card-body card-dashboard">
@@ -133,7 +133,7 @@
             </div>
         </div>
         <div class="col-md-5">
-            <h4 class="card-title">{{ $customer["first_name"] }}'s Addresses</h4>
+            <h5 class="card-title">{{ $customer["first_name"] }}'s Addresses</h5>
             <div class="card">
                 <div class="card-content collapse show">
                     <div class="card-body card-dashboard">

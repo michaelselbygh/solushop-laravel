@@ -124,6 +124,11 @@ Route::prefix('portal')->group(function(){
         Route::get('coupons', 'ManagerController@showCoupons')->name('manager.show.coupons');
         Route::get('coupons/generate', 'ManagerController@showGenerateCoupon')->name('manager.show.generate.coupon');
         Route::post('coupons/generate', 'ManagerController@processGenerateCoupon')->name('manager.process.generate.coupon');
+        Route::get('/delivery-partners', 'ManagerController@showDeliveryPartners')->name('manager.show.delivery.partners');
+        Route::get('/delivery-partners/add', 'ManagerController@showAddDeliveryPartner')->name('manager.show.add.delivery.partner');
+        Route::post('/delivery-partners/add', 'ManagerController@processAddDeliveryPartner')->name('manager.process.add.delivery.partner');
+        Route::get('/delivery-partner/{partnerID}', 'ManagerController@showDeliveryPartner')->name('manager.show.delivery.partner');
+        Route::post('/delivery-partner/{partnerID}', 'ManagerController@processDeliveryPartner')->name('manager.process.delivery.partner');
         Route::get('/sales-associates', 'ManagerController@showSalesAssociates')->name('manager.show.sales.associates');
         Route::get('/sales-associates/add', 'ManagerController@showAddSalesAssociate')->name('manager.show.add.sales.associate');
         Route::post('/sales-associates/add', 'ManagerController@processAddSalesAssociate')->name('manager.process.add.sales.associate');

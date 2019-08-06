@@ -5,7 +5,7 @@
 @endsection
 
 @section('content-body')
-    <h4 class="card-title">@if(isset($orders["filter"]) AND !is_null($orders["filter"])) {{ $orders["filter"] }} @endif Orders</h4>
+    <h5 class="card-title">@if(isset($orders["filter"]) AND !is_null($orders["filter"])) {{ $orders["filter"] }} @endif Orders</h5>
     <div class="row">
         <div class="col-xl-3 col-lg-6 col-12">
             <div class="card pull-up" style="cursor:pointer;" onclick="submitOrdersFilterForm('New')">
@@ -19,10 +19,6 @@
                             <div>
                                 <i class="icon-plus info font-large-2 float-right"></i>
                             </div>
-                        </div>
-                        <div class="progress progress-sm mt-1 mb-0 box-shadow-2">
-                            <div class="progress-bar bg-gradient-x-info" role="progressbar" style="width: {{ 100*$orders['new_orders_count']/$orders['total_orders_count'] }}%"
-                                aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                     </div>
                 </div>
@@ -41,10 +37,6 @@
                                 <i class="icon-loop warning font-large-2 float-right"></i>
                             </div>
                         </div>
-                        <div class="progress progress-sm mt-1 mb-0 box-shadow-2">
-                            <div class="progress-bar bg-gradient-x-warning" role="progressbar" style="width: {{ 100*$orders['ongoing_orders_count']/$orders['total_orders_count'] }}%"
-                                aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -62,10 +54,6 @@
                                 <i class="icon-check success font-large-2 float-right"></i>
                             </div>
                         </div>
-                        <div class="progress progress-sm mt-1 mb-0 box-shadow-2">
-                            <div class="progress-bar bg-gradient-x-success" role="progressbar" style="width: {{ 100*$orders['completed_orders_count']/$orders['total_orders_count'] }}%"
-                                aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -82,10 +70,6 @@
                             <div>
                                 <i class="icon-close danger font-large-2 float-right"></i>
                             </div>
-                        </div>
-                        <div class="progress progress-sm mt-1 mb-0 box-shadow-2">
-                            <div class="progress-bar bg-gradient-x-danger" role="progressbar" style="width: {{ 100*$orders['cancelled_orders_count']/$orders['total_orders_count'] }}%"
-                                aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
                         </div>
                     </div>
                 </div>
@@ -167,7 +151,7 @@
                                 </table>
                             </div>
                         @else 
-                            <h4 style='margin-top: 15%; margin-bottom: 20%; text-align:center'>No new orders yet.</h4></div>
+                            <h5 style='margin-top: 15%; margin-bottom: 20%; text-align:center'>No new orders yet.</h5></div>
                         @endif
                     </div>
                 </div>

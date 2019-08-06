@@ -8,7 +8,7 @@
     <section id="configuration">
         <div class="row">
             <div class="col-12">
-                <h4 class="card-title">Coupons</h4>
+                <h5 class="card-title">Coupons</h5>
                 @include('portal.main.success-and-error.message')
                 <div class="card">
                     <div class="card-content collapse show">

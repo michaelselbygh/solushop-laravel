@@ -99,7 +99,7 @@
 
     <div class="row">
         <div id="recent-transactions" class="col-12">
-            <h4 class="card-title">New Orders</h4>
+            <h5 class="card-title">New Orders</h5>
             <div class="card" style="min-height: 450px">
                 <div class="card-content">
                     @if ($dashboard['new_orders_count'] > 0) 
@@ -158,7 +158,7 @@
                             </table>
                         </div>
                     @else 
-                        <h4 style='margin-top: 15%; margin-bottom: 20%; text-align:center'>No new orders yet.</h4></div>
+                        <h5 style='margin-top: 15%; margin-bottom: 20%; text-align:center'>No new orders yet.</h5></div>
                     @endif
                 </div>
             </div>

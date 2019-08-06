@@ -24,6 +24,7 @@ use App\Product;
 use App\SABadge;
 use App\SalesAssociate;
 use App\SMS;
+use App\StockKeepingUnit;
 use App\Vendor;
 use App\VendorSubscription;
 
@@ -280,18 +281,271 @@ class ManagerController extends Controller
     public function processOrder(Request $request, $orderID){
         switch ($request->order_action) {
             case 'confirm_order_payment':
+                $order = Order::
+                    where("id", $orderID)
+                    ->with('order_items.sku.product.images', 'order_items.sku.product.vendor', 'order_items.order_item_state', 'customer', 'order_state', 'address', 'coupon.sales_associate.badge_info')
+                    ->first()
+                    ->toArray();
+
                 /*--- Update Account Balance | Record Transaction ---*/
+                $count = Count::first();
+                if(isset($order["order_scoupon"]) AND $order["order_scoupon"] != NULL AND $order["order_scoupon"] != "NULL"){
+                    $count->account += round(( 0.99 * $order["order_subtotal"] ) + $order["order_shipping"], 2);
+                }else{
+                    $count->account += round($order["order_subtotal"] + $order["order_shipping"], 2);
+                }
+                $count->save();
+
+                $transaction = new AccountTransaction;
+                $transaction->trans_type = "Order Payment";
+                if (isset($order["order_scoupon"]) AND $order["order_scoupon"] != NULL AND $order["order_scoupon"] != "NULL") {
+                    $transaction->trans_amount = round(0.99 * $order["order_subtotal"], 2) + $order["order_shipping"];
+                } else {
+                    $transaction->trans_amount = $order["order_subtotal"] + $order["order_shipping"];
+                }
+                $transaction->trans_credit_account_type = 6;
+                $transaction->trans_credit_account      = $order["order_customer_id"];
+                $transaction->trans_debit_account_type  = 1;
+                $transaction->trans_debit_account       = "INT-SC001";
+                if (isset($order["order_scoupon"]) AND $order["order_scoupon"] != NULL AND $order["order_scoupon"] != "NULL") {
+                    $transaction->trans_description         = $log = "Order Payment of GH¢ ".(round((0.99 * $order["order_subtotal"]), 2) + $order["order_shipping"])." from ".$order["customer"]["first_name"]." ".$order["customer"]["last_name"]." for order $orderID";
+                } else {
+                    $transaction->trans_description         = $log = "Order Payment of GH¢ ".($order["order_subtotal"] + $order["order_shipping"])." from ".$order["customer"]["first_name"]." ".$order["customer"]["last_name"]." for order $orderID";
+                }
+                $transaction->trans_date                = date("Y-m-d G:i:s");
+                $transaction->trans_recorder            = Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name;
+                $transaction->save();
+                
                 /*--- Update Order and Order Items | Reduce vendor stock | notify vendors ---*/
+                //update order items sku
+                for ($i=0; $i < sizeof($order["order_items"]); $i++) { 
+                    $order_item_sku = StockKeepingUnit::where('id', $order["order_items"][$i]["sku"]["id"])->first();
+                    $order_item_sku->sku_stock_left -= $order["order_items"][$i]["oi_quantity"];
+
+                    //notify vendor
+                    $sms = new SMS;
+                    $sms->sms_message = "Purchase Alert\nItem: ".$order["order_items"][$i]["oi_name"]."\nQuantity Purchased: ".$order["order_items"][$i]["oi_quantity"]."\n Quantity Remaining: ".$order_item_sku->sku_stock_left;
+                    $sms->sms_phone = $order["order_items"][$i]["sku"]["product"]["vendor"]["phone"];
+                    $sms->sms_state = 1;
+                    $sms->save();
+
+                    $order_item_sku->save();
+
+                    $order_item = OrderItem::where('oi_sku', $order["order_items"][$i]["sku"]["id"])->first();
+                    $order_item->oi_state = 2;
+                    $order_item->save();
+                }
+
+                
+
                 /*--- Accrue to Sales Associate if Coupon was used | Record Transaction | Promote Sales associate where necessary ---*/
+                if (isset($order["order_scoupon"]) AND $order["order_scoupon"] != NULL AND $order["order_scoupon"] != "NULL") {
+                    //sales associate old total sales
+                    $ots = Order::
+                        where("order_scoupon", $order["order_scoupon"])
+                        ->whereIn("order_state", [3, 4, 5, 6])
+                        ->sum('order_subtotal');
+
+                    //sales associate new total sales
+                    $nts = $ots + $order["order_subtotal"];
+
+                    $sales_associate = SalesAssociate::
+                        where('id', $order["coupon"]["sales_associate"]["id"])
+                        ->first();
+
+                    //update sales associate balance
+                    $sales_associate->balance += round($order["coupon"]["sales_associate"]["badge_info"]["sab_commission"] * $order["order_subtotal"], 2);
+
+                    //record transaction
+                    $transaction = new AccountTransaction;
+                    $transaction->trans_type                = "Sales Associate Accrual";
+                    $transaction->trans_amount              = round($order["coupon"]["sales_associate"]["badge_info"]["sab_commission"] * $order["order_subtotal"], 2);
+                    $transaction->trans_credit_account_type = 1;
+                    $transaction->trans_credit_account      = "INT-SC001";
+                    $transaction->trans_debit_account_type  = 7;
+                    $transaction->trans_debit_account       = $order["coupon"]["sales_associate"]["id"];
+                    $transaction->trans_description         = $log = "Accrual of GH¢ ".round($order["coupon"]["sales_associate"]["badge_info"]["sab_commission"] * $order["order_subtotal"], 2)." to ".$sales_associate->first_name." ".$sales_associate->last_name." for order $orderID";
+                    $transaction->trans_date                = date("Y-m-d G:i:s");
+                    $transaction->trans_recorder            = Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name;
+                    $transaction->save();
+
+                    //notify sales associate of update
+                    $sms = new SMS;
+                    $sms->sms_message = "Hi ".$sales_associate->first_name.", order $orderID made with your coupon has been confirmed. Your new balance is GHS ".$sales_associate->balance;
+                    $sms->sms_phone = $sales_associate->phone;
+                    $sms->sms_state = 1;
+                    $sms->save();
+
+                    //promote where necessary
+                    if ($ots < 20000 && $nts >= 20000) {
+                        //promote to elite
+                        $sales_associate->badge = 4;
+
+                        $sms = new SMS;
+                        $sms->sms_message = "Congrats ".$sales_associate->first_name.", you are now an Elite Sales Associate. You can now enjoy 4% commission on all orders.";
+                        $sms->sms_phone = $sales_associate->phone;
+                        $sms->sms_state = 1;
+                        $sms->save();
+                    }elseif($ots < 5000 && $nts >= 5000){
+                        //promote to veteran
+                        $sms = new SMS;
+                        $sms->sms_message = "Congrats ".$sales_associate->first_name.", you are now an Veteran Sales Associate. You can now enjoy 3% commission on all orders.";
+                        $sms->sms_phone = $sales_associate->phone;
+                        $sms->sms_state = 1;
+                        $sms->save();
+                        $sales_associate->badge = 3;
+                    }elseif($ots == 0 && $nts > 0){
+                        //promote to rookie
+                        $sales_associate->badge = 2;
+                        $sms = new SMS;
+                        $sms->sms_message = "Congrats ".$sales_associate->first_name." on your first sale. You are now a Rookie sales associate. Keep selling to become a Veteran and enjoy 3% commission on all orders.";
+                        $sms->sms_phone = $sales_associate->phone;
+                        $sms->sms_state = 1;
+                        $sms->save();
+                    }
+
+                    $sales_associate->save();
+                }
+
+                //update order
+                Order::where('id', $orderID)
+                    ->update([
+                        "order_state" => 3,
+                    ]);
+
                 /*--- Notify Customer ---*/
+                $sms = new SMS;
+                $sms->sms_message = "Hi ".$order["customer"]["first_name"]." your order $orderID has been confirmed and is being processed.";
+                $sms->sms_phone = $order["customer"]["phone"];
+                $sms->sms_state = 1;
+                $sms->save();
+
                 /*--- Log Activity ---*/
+                activity()
+                ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Order Payment Receipt Confirmation';
+                })
+                ->log(Auth::guard('manager')->user()->email." confirmed payment receipt for order ".$orderID);
+                
+                return redirect()->back()->with("success_message", "Order payment receipt confirmed.");
+
                 break;
 
             case 'confirm_order':
-                /*--- Update Order and Order Items | Reduce vendor stock | notify vendors ---*/
-                /*--- Accrue to Sales Associate if Coupon was used | Record Transaction | Promote Sales associate where necessary ---*/
+                $order = Order::
+                        where("id", $orderID)
+                        ->with('order_items.sku.product.images', 'order_items.sku.product.vendor', 'order_items.order_item_state', 'customer', 'order_state', 'address', 'coupon.sales_associate.badge_info')
+                        ->first()
+                        ->toArray();
+
+                /*--- Update Order and Order Items ---*/
+                //update order
+                Order::where('id', $orderID)
+                    ->update([
+                        "order_state" => 3,
+                    ]);
+
+                //update order
+                OrderItem::where('oi_order_id', $orderID)
+                    ->update([
+                        "oi_state" => 2,
+                    ]);
+                 /*--- Accrue to Sales Associate if Coupon was used | Record Transaction | Promote Sales associate where necessary ---*/
+                 if (isset($order["order_scoupon"]) AND $order["order_scoupon"] != NULL AND $order["order_scoupon"] != "NULL") {
+                    //sales associate old total sales
+                    $ots = Order::
+                        where("order_scoupon", $order["order_scoupon"])
+                        ->whereIn("order_state", [3, 4, 5, 6])
+                        ->sum('order_subtotal');
+
+                    //sales associate new total sales
+                    $nts = $ots + $order["order_subtotal"];
+
+                    $sales_associate = SalesAssociate::
+                        where('id', $order["coupon"]["sales_associate"]["id"])
+                        ->first();
+
+                    //update sales associate balance
+                    $sales_associate->balance += round($order["coupon"]["sales_associate"]["badge_info"]["sab_commission"] * $order["order_subtotal"], 2);
+
+                    //record transaction
+                    $transaction = new AccountTransaction;
+                    $transaction->trans_type                = "Sales Associate Accrual";
+                    $transaction->trans_amount              = round($order["coupon"]["sales_associate"]["badge_info"]["sab_commission"] * $order["order_subtotal"], 2);
+                    $transaction->trans_credit_account_type = 1;
+                    $transaction->trans_credit_account      = "INT-SC001";
+                    $transaction->trans_debit_account_type  = 7;
+                    $transaction->trans_debit_account       = $order["coupon"]["sales_associate"]["id"];
+                    $transaction->trans_description         = $log = "Accrual of GH¢ ".round($order["coupon"]["sales_associate"]["badge_info"]["sab_commission"] * $order["order_subtotal"], 2)." to ".$sales_associate->first_name." ".$sales_associate->last_name." for order $orderID";
+                    $transaction->trans_date                = date("Y-m-d G:i:s");
+                    $transaction->trans_recorder            = Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name;
+                    $transaction->save();
+
+                    //notify sales associate of update
+                    $sms = new SMS;
+                    $sms->sms_message = "Hi ".$sales_associate->first_name.", order $orderID made with your coupon has been confirmed. Your new balance is GHS ".$sales_associate->balance;
+                    $sms->sms_phone = $sales_associate->phone;
+                    $sms->sms_state = 1;
+                    $sms->save();
+
+                    //promote where necessary
+                    if ($ots < 20000 && $nts >= 20000) {
+                        //promote to elite
+                        $sales_associate->badge = 4;
+
+                        $sms = new SMS;
+                        $sms->sms_message = "Congrats ".$sales_associate->first_name.", you are now an Elite Sales Associate. You can now enjoy 4% commission on all orders.";
+                        $sms->sms_phone = $sales_associate->phone;
+                        $sms->sms_state = 1;
+                        $sms->save();
+                    }elseif($ots < 5000 && $nts >= 5000){
+                        //promote to veteran
+                        $sms = new SMS;
+                        $sms->sms_message = "Congrats ".$sales_associate->first_name.", you are now an Veteran Sales Associate. You can now enjoy 3% commission on all orders.";
+                        $sms->sms_phone = $sales_associate->phone;
+                        $sms->sms_state = 1;
+                        $sms->save();
+                        $sales_associate->badge = 3;
+                    }elseif($ots == 0 && $nts > 0){
+                        //promote to rookie
+                        $sales_associate->badge = 2;
+                        $sms = new SMS;
+                        $sms->sms_message = "Congrats ".$sales_associate->first_name." on your first sale. You are now a Rookie sales associate. Keep selling to become a Veteran and enjoy 3% commission on all orders.";
+                        $sms->sms_phone = $sales_associate->phone;
+                        $sms->sms_state = 1;
+                        $sms->save();
+                    }
+
+                    $sales_associate->save();
+                }
+
+                //update order
+                Order::where('id', $orderID)
+                    ->update([
+                        "order_state" => 3,
+                    ]);
+
                 /*--- Notify Customer ---*/
+                $sms = new SMS;
+                $sms->sms_message = "Hi ".$order["customer"]["first_name"]." your order $orderID has been confirmed and is being processed.";
+                $sms->sms_phone = $order["customer"]["phone"];
+                $sms->sms_state = 1;
+                $sms->save();
+
                 /*--- Log Activity ---*/
+                activity()
+                ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Order Payment Receipt Confirmation';
+                })
+                ->log(Auth::guard('manager')->user()->email." confirmed payment receipt for order ".$orderID);
+                
+                return redirect()->back()->with("success_message", "Order payment receipt confirmed.");
                 break;
 
             case 'cancel_order_no_refund':
@@ -836,7 +1090,25 @@ class ManagerController extends Controller
             return redirect()->route("manager.show.sales.associates")->with("error_message", "Sales associate not found.");
         }
 
-        $sales_associate = SalesAssociate::where('id', $memberID)->with('badge')->first()->toArray();
+        $sales_associate = SalesAssociate::where('id', $memberID)->with('badge_info')->first()->toArray();
+        $sales_associate["transactions"] = AccountTransaction::where([
+                ['trans_credit_account_type', '=', '7'],
+                ['trans_credit_account', '=', $memberID]
+            ])->orWhere(
+                [
+                    ['trans_credit_account_type', '=', '8'],
+                    ['trans_credit_account', '=', $memberID]
+            ])->orWhere(
+                [
+                    ['trans_debit_account_type', '=', '7'],
+                    ['trans_debit_account', '=', $memberID]
+            ])->orWhere(
+                [
+                    ['trans_debit_account_type', '=', '8'],
+                    ['trans_debit_account', '=', $memberID]
+            ])
+            ->get()
+            ->toArray();
 
 
         $sales_associate["sales"] = Order::
@@ -850,7 +1122,7 @@ class ManagerController extends Controller
 
     public function processSalesAssociate(Request $request, $memberID){
         //select sales associates details
-        $associate = SalesAssociate::where('id', $memberID)->with('badge')->first();
+        $associate = SalesAssociate::where('id', $memberID)->with('badge_info')->first();
         
         switch ($request->sa_action) {
             case 'update_details':
@@ -945,6 +1217,196 @@ class ManagerController extends Controller
 
                 $success_message = "Payout of GH¢ ".$request->pay_out_amount." to ".$associate->first_name." ".$associate->last_name." recorded successfully.";
                 $associate->save();
+                
+                return redirect()->back()->with("success_message", $success_message);
+                
+                break;
+            default:
+                return redirect()->back()->with("error_message", "Something went wrong. Please try again.");
+                break;
+        }
+    }
+
+    public function showDeliveryPartners(){
+        return view('portal.main.manager.delivery-partners')
+                ->with('delivery_partners',  DeliveryPartner::all()->toArray());
+    }
+
+    public function showAddDeliveryPartner(){
+        return view('portal.main.manager.add-delivery-partner');
+    }
+
+    public function processAddDeliveryPartner(Request $request){
+         /*--- Validate form data  ---*/
+         $validator = Validator::make($request->all(), [
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'email' => 'required|email',
+            'dp_company' => 'required',
+            'payment_details' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            $messageType = "error_message";
+            $messageContent = "";
+
+            foreach ($validator->messages()->getMessages() as $field_name => $messages)
+            {
+                $messageContent .= $messages[0]." "; 
+            }
+
+            return redirect()->back()->withInput(['first_name', 'last_name', 'email', 'phone', 'dp_company', 'payment_details'])->with($messageType, $messageContent);
+        }
+
+        //check for email existence in system
+        if (DeliveryPartner::where('email', $request->email)->first()) {
+            return redirect()->back()->withInput(['first_name', 'last_name', 'email', 'phone', 'dp_company', 'payment_details'])->with("error_message", "Email already associated with a Delivery Partner");
+        }
+
+        /*--- store associate data ---*/
+        $delivery_partner = new DeliveryPartner;
+        $delivery_partner->first_name        = ucwords(strtolower($request->first_name));
+        $delivery_partner->last_name         = ucwords(strtolower($request->last_name));
+        $delivery_partner->email             = $request->email;
+        $delivery_partner->dp_company        = $request->dp_company;
+        $delivery_partner->payment_details   = $request->payment_details;
+        $delivery_partner->passcode          = $passcode = rand(1000, 9999);
+        $delivery_partner->password          = bcrypt($passcode);
+        $delivery_partner->payment_details   = ucwords($request->payment_details);
+        $delivery_partner->balance           = 0;
+        $delivery_partner->save();
+
+
+         /*--- log activity ---*/
+         activity()
+         ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+         ->tap(function(Activity $activity) {
+             $activity->subject_type = 'System';
+             $activity->subject_id = '0';
+             $activity->log_name = 'Delivery Partner Registration';
+         })
+         ->log(Auth::guard('manager')->user()->email." added ".ucwords(strtolower($request->first_name))." ".ucwords(strtolower($request->last_name))." as a delivery partner");
+         
+         return redirect()->back()->with("success_message", ucwords(strtolower($request->first_name))." ".ucwords(strtolower($request->last_name))." added successfully as a delivery partner.");
+    }
+
+    public function showDeliveryPartner($partnerID){
+
+        if (is_null(DeliveryPartner::where('id', $partnerID)->first())) {
+            return redirect()->route("manager.show.delivery.partners")->with("error_message", "Delivery partner not found.");
+        }
+
+        $delivery_partner = DeliveryPartner::where('id', $partnerID)->first()->toArray();
+        $delivery_partner["transactions"] = AccountTransaction::where([
+                ['trans_credit_account_type', '=', '9'],
+                ['trans_credit_account', '=', $partnerID]
+            ])->orWhere(
+                [
+                    ['trans_credit_account_type', '=', '10'],
+                    ['trans_credit_account', '=', $partnerID]
+            ])->orWhere(
+                [
+                    ['trans_debit_account_type', '=', '9'],
+                    ['trans_debit_account', '=', $partnerID]
+            ])->orWhere(
+                [
+                    ['trans_debit_account_type', '=', '10'],
+                    ['trans_debit_account', '=', $partnerID]
+            ])
+            ->get()
+            ->toArray();
+
+
+        return view('portal.main.manager.view-delivery-partner')
+                ->with('delivery_partner', $delivery_partner);
+    }
+
+    public function processDeliveryPartner(Request $request, $partnerID){
+        //select partner details
+        $partner = DeliveryPartner::where('id', $partnerID)->first();
+        
+        switch ($request->sa_action) {
+            case 'update_details':
+                /*--- validate ---*/
+                $validator = Validator::make($request->all(), [
+                    'first_name' => 'required',
+                    'last_name' => 'required',
+                    'dp_company' => 'required',
+                    'email' => 'required|email',
+                    'payment_details' => 'required'
+                ]);
+        
+                if ($validator->fails()) {
+                    $messageType = "error_message";
+                    $messageContent = "";
+        
+                    foreach ($validator->messages()->getMessages() as $field_name => $messages)
+                    {
+                        $messageContent .= $messages[0]." "; 
+                    }
+        
+                    return redirect()->back()->withInput(['first_name', 'last_name', 'email', 'dp_company', 'payment_details'])->with($messageType, $messageContent);
+                }
+
+                //update details
+                $partner->first_name = $request->first_name;
+                $partner->last_name = $request->last_name;
+                $partner->dp_company = $request->dp_company;
+                $partner->email = $request->email;
+                $partner->payment_details = $request->payment_details;
+
+
+                /*--- log activity ---*/
+                activity()
+                ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Delivery Partner Details Update';
+                })
+                ->log(Auth::guard('manager')->user()->email." updated the details of delivery, ".$partner->first_name." ".$partner->last_name);
+
+                $success_message = $partner->first_name." ".$partner->last_name."'s details updated successfully.";
+                $partner->save();
+                
+                return redirect()->back()->with("success_message", $success_message);
+                break;
+
+            case 'record_payout':
+                
+                /*--- Record transaction ---*/
+                $transaction = new AccountTransaction;
+                $transaction->trans_type                = "Delivery Partner Payout";
+                $transaction->trans_amount              = $request->pay_out_amount;
+                $transaction->trans_credit_account_type = 1;
+                $transaction->trans_credit_account      = "INT-SC001";
+                $transaction->trans_debit_account_type  = 10;
+                $transaction->trans_debit_account       = $partner->id;
+                $transaction->trans_description         = "Payout of GH¢ ".$request->pay_out_amount." to ".$partner->first_name." ".$partner->last_name;
+                $transaction->trans_date                = date("Y-m-d G:i:s");
+                $transaction->trans_recorder            = Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name;
+                $transaction->save();
+
+                /*--- Update Partner Balance ---*/
+                $partner->balance -= $request->pay_out_amount;
+
+                /*--- Update Main Account Balance ---*/
+                $counts = Count::first();
+                $counts->account = round($counts->account - $request->pay_out_amount, 2);
+                $counts->save();
+
+                /*--- log activity ---*/
+                activity()
+                ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Delivery Partner Payout';
+                })
+                ->log(Auth::guard('manager')->user()->email." recorded a payout of GH¢ ".$request->pay_out_amount." to delivery partner, ".$partner->first_name." ".$partner->last_name);
+
+                $success_message = "Payout of GH¢ ".$request->pay_out_amount." to ".$partner->first_name." ".$partner->last_name." recorded successfully.";
+                $partner->save();
                 
                 return redirect()->back()->with("success_message", $success_message);
                 

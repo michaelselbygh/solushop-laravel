@@ -68,6 +68,7 @@
                                     <th class="border-top-0">SKU</th>
                                     <th class="border-top-0">Preview</th>
                                     <th class="border-top-0">Price</th>
+                                    <th class="border-top-0">Quantity</th>
                                     <th class="border-top-0">State</th>
                                     <th class="border-top-0">Last Updated</th>
                                     <th class="border-top-0">Action</th>
@@ -88,6 +89,9 @@
                                         </td>
                                         <td>
                                             {{ $order["order_items"][$i]["oi_selling_price"] - $order["order_items"][$i]["oi_discount"] }}
+                                        </td>
+                                        <td>
+                                            x {{ $order["order_items"][$i]["oi_quantity"] }}
                                         </td>
                                         <td>
                                             {!! $order["order_items"][$i]["order_item_state"]["ois_html"] !!}
@@ -114,6 +118,9 @@
                             <div class="col-md-10" style="text-align: right">
                                 <b>
                                     <span style="font-size: 13px;">Sub-Total</span><br>
+                                    @if (isset($order["order_scoupon"]) AND $order["order_scoupon"] != NULL AND $order["order_scoupon"] != "NULL")
+                                        <span style="font-size: 13px;">Discount from S-Coupon</span><br>
+                                    @endif
                                     <span style="font-size: 13px;">Shipping</span><br>
                                     <span style="font-size: 13px;">
                                         Total
@@ -128,12 +135,13 @@
                             <div class="col-md-2" style="text-align: right">
                                 <b>
                                     <div id="subTotal"style="font-size: 13px;">
-                                        @if (isset($order["order_scoupon"]) AND $order["order_scoupon"] != NULL AND $order["order_scoupon"] != "NULL")
-                                            {{ round(0.99 * $order["order_subtotal"], 2) }}
-                                        @else
                                             {{ round($order["order_subtotal"], 2) }}
-                                        @endif
                                     </div>
+                                    @if (isset($order["order_scoupon"]) AND $order["order_scoupon"] != NULL AND $order["order_scoupon"] != "NULL")
+                                        <div id="subTotal"style="font-size: 13px;">
+                                                {{ round(0.01 * $order["order_subtotal"], 2) }}
+                                        </div>
+                                    @endif
                                     <div id="shipping"style="font-size: 13px;">
                                         {{ round($order["order_shipping"], 2) }}
                                     </div>

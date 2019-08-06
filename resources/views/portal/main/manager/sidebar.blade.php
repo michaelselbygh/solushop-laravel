@@ -98,6 +98,20 @@
                                     </li>
                                 </ul>
                             </li>
+                            <li class=" nav-item"><a href="{{ route("manager.show.delivery.partners") }}"><i class="la la-gift" style="color:#f68b1e;"></i><span class="menu-title">Delivery Partners</span></a>
+                                <ul class="menu-content">
+                                    <li>
+                                        <a class="menu-item" href="{{ route("manager.show.add.delivery.partner") }}">
+                                            <span>Add Delivery Partner</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="menu-item" href="{{ route("manager.show.delivery.partners") }}">
+                                            <span>Manage Delivery Partners</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
                             <li class=" nav-item"><a href="{{ route("manager.show.coupons") }}"><i class="la la-ticket" style="color:#f68b1e;"></i><span class="menu-title">Coupons</span></a>
                                 <ul class="menu-content">
                                     <li>
