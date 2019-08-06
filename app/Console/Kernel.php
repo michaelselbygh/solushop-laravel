@@ -57,7 +57,7 @@ class Kernel extends ConsoleKernel
             //empty tables
             SMS::truncate();
             ActivityLog::truncate();
-        })->daily('23:59');
+        })->weeklyOn(7, '23:59');
 
         /*--- Process SMS Queue ---*/
         $schedule->call(function () {

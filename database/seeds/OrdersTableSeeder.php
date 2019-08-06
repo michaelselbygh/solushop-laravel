@@ -41,7 +41,8 @@ class OrdersTableSeeder extends CsvSeeder
 			DB::table('orders')
 			->where('id', $order->id)
 			->update([
-                'order_state' => $order->order_state + 1
+				'order_state' => $order->order_state + 1,
+				'dp_shipping' => 0
             ]);
         }
     }

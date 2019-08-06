@@ -15,6 +15,7 @@ use App\Count;
 use App\Coupon;
 use App\Customer;
 use App\DeliveredItem;
+use App\DeliveryPartner;
 use App\Manager;
 use App\Order;
 use App\OrderItem;
@@ -216,17 +217,335 @@ class ManagerController extends Controller
             return redirect()->route("manager.show.orders")->with("error_message", "Order $orderID not found");
         }
 
+        $order =  Order::
+            where("id", $orderID)
+            ->with('order_items.sku.product.images','order_items.order_item_state', 'customer', 'order_state', 'address', 'coupon.sales_associate.badge_info')
+            ->first()
+            ->toArray();
+
+        $order["delivery_partner"] = DeliveryPartner::get()->toArray();
+
+        if(strtotime($order["order_state"]["id"] == 6 AND $order["updated_at"]) < strtotime('-14 days') AND $order["dp_shipping"] == NULL){
+            $order["allow_shipping_entry"] = "Yes";
+        }
+
+        /*--- Nets ---*/
+        if ($order["order_state"]["id"] == 6) {
+            //calculate profit or loss
+            $order["profit_or_loss"] = 0;
+            $order["profit_or_loss_item"] = [];
+
+            //profit from order items
+            for ($i=0; $i < sizeof($order["order_items"]); $i++) { 
+                $order["profit_or_loss_item"]["description"][$i] = "Profit from ".$order["order_items"][$i]["oi_quantity"]." ".$order["order_items"][$i]["oi_name"];
+                $order["profit_or_loss_item"]["amount"][$i] = $order["order_items"][$i]["oi_quantity"] * ( $order["order_items"][$i]["oi_selling_price"] - $order["order_items"][$i]["oi_settlement_price"]);
+                $order["profit_or_loss"] += $order["profit_or_loss_item"]["amount"][$i];
+            }
+
+            //Shipping charged from customer
+            $order["profit_or_loss_item"]["description"][$i] = "Shipping fee from ".$order["customer"]["first_name"]." ".$order["customer"]["last_name"];
+            $order["profit_or_loss_item"]["amount"][$i] = $order["order_shipping"];
+            $order["profit_or_loss"] += $order["profit_or_loss_item"]["amount"][$i];
+            $i++;
+
+            if($order["dp_shipping"] != NULL){
+                //shipping paid to delivery partner
+                $order["profit_or_loss_item"]["description"][$i] = "Shipping fee paid to Delivery Partner ";
+                $order["profit_or_loss_item"]["amount"][$i] = -1 * $order["dp_shipping"];
+                $order["profit_or_loss"] += $order["profit_or_loss_item"]["amount"][$i];
+                $i++;
+            }
+            
+
+            //loss from sales coupon if set
+            if(isset($order["order_scoupon"]) AND $order["order_scoupon"] != NULL AND $order["order_scoupon"] != "NULL"){
+                //1% discount on sale
+                $order["profit_or_loss_item"]["description"][$i] = "1% discount from Sales Coupon ".$order["coupon"]["coupon_code"];
+                $order["profit_or_loss_item"]["amount"][$i] = round(-0.01 * $order["order_subtotal"], 2);
+                $order["profit_or_loss"] += $order["profit_or_loss_item"]["amount"][$i];
+                $i++;
+
+                //Commission to Sales Associate
+                $order["profit_or_loss_item"]["description"][$i] = (100*$order["coupon"]["sales_associate"]["badge_info"]["sab_commission"])."% commission to Sales Associate  ".$order["coupon"]["sales_associate"]["first_name"]." ".$order["coupon"]["sales_associate"]["last_name"]." ( May have changed if SA was promoted )";
+                $order["profit_or_loss_item"]["amount"][$i] = round(-1 * $order["coupon"]["sales_associate"]["badge_info"]["sab_commission"] * $order["order_subtotal"], 2);
+                $order["profit_or_loss"] += $order["profit_or_loss_item"]["amount"][$i];
+                $i++;
+            }
+        }
 
         return view('portal.main.manager.view-order')
-                    ->with('order', Order::
-                        where("id", $orderID)
-                        ->with('order_items.sku.product.images','order_items.order_item_state', 'customer', 'order_state', 'address', 'coupon.sales_associate.badge_info')
-                        ->first()
-                        ->toArray());
+                    ->with('order',$order);
     }
 
-    public function processOrder(){
+    public function processOrder(Request $request, $orderID){
+        switch ($request->order_action) {
+            case 'confirm_order_payment':
+                /*--- Update Account Balance | Record Transaction ---*/
+                /*--- Update Order and Order Items | Reduce vendor stock | notify vendors ---*/
+                /*--- Accrue to Sales Associate if Coupon was used | Record Transaction | Promote Sales associate where necessary ---*/
+                /*--- Notify Customer ---*/
+                /*--- Log Activity ---*/
+                break;
 
+            case 'confirm_order':
+                /*--- Update Order and Order Items | Reduce vendor stock | notify vendors ---*/
+                /*--- Accrue to Sales Associate if Coupon was used | Record Transaction | Promote Sales associate where necessary ---*/
+                /*--- Notify Customer ---*/
+                /*--- Log Activity ---*/
+                break;
+
+            case 'cancel_order_no_refund':
+                /*--- Update Order Items---*/
+                OrderItem::where([
+                    ['oi_order_id', '=', $orderID]
+                ])->update([
+                    'oi_state' => 5
+                ]);
+            
+                /*--- Update Order ---*/
+                Order::where([
+                    ['id', '=', $orderID]
+                ])
+                ->update([
+                    'order_state' => 7
+                ]);
+
+                /*--- Log Activity ---*/
+                activity()
+                ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Order Cancellation (No Refund)';
+                })
+                ->log(Auth::guard('manager')->user()->email." cancelled order $orderID.");
+                
+                return redirect()->back()->with("success_message", "Order cancelled successfully.");
+                break;
+
+            case 'cancel_order_partial_refund':
+                /*--- Update Order Items---*/
+                OrderItem::where([
+                    ['oi_order_id', '=', $orderID]
+                ])->update([
+                    'oi_state' => 5
+                ]);
+            
+                /*--- Update Order ---*/
+                Order::where([
+                    ['id', '=', $orderID]
+                ])
+                ->update([
+                    'order_state' => 7
+                ]);
+
+                $order = Order::where('id', $orderID)->first();
+
+                /*--- Deduct from main account ---*/
+                $count = Count::first();
+                if(isset($order->order_scoupon) AND $order->order_scoupon != NULL AND $order->order_scoupon != "NULL"){
+                    $count->account -= 0.99 * $order->order_subtotal;
+                }else{
+                    $count->account -= $order->order_subtotal;
+                }
+                $count->save();
+
+                /*--- Top up customer ---*/
+                $customer = Customer::where('id', $order->order_customer_id)->with('milk', 'chocolate')->first();
+
+                if(isset($order->order_scoupon) AND $order->order_scoupon != NULL AND $order->order_scoupon != "NULL"){
+                    $newCustomerBalance     = round((($customer->milk->milk_value * $customer->milkshake) - $customer->chocolate->chocolate_value) + (0.99 *  $order->order_subtotal), 2);
+                }else{
+                    $newCustomerBalance     = round((($customer->milk->milk_value * $customer->milkshake) - $customer->chocolate->chocolate_value) + $order->order_subtotal, 2);
+                }
+                $newCustomerMilkshake   = ($newCustomerBalance + $customer->chocolate->chocolate_value) / $customer->milk->milk_value;
+                $customer->milkshake    = $newCustomerMilkshake;
+
+                $transaction = new AccountTransaction;
+                $transaction->trans_type                = "Partial Order Refund";
+                if (isset($order->order_scoupon) AND $order->order_scoupon != NULL AND $order->order_scoupon != "NULL") {
+                    $transaction->trans_amount = round(0.99 * $order->order_subtotal, 2);
+                } else {
+                    $transaction->trans_amount = $order->order_subtotal;
+                }
+                $transaction->trans_credit_account_type = 1;
+                $transaction->trans_credit_account      = "INT-SC001";
+                $transaction->trans_debit_account_type  = 5;
+                $transaction->trans_debit_account       = $customer->id;
+                if (isset($order->order_scoupon) AND $order->order_scoupon != NULL AND $order->order_scoupon != "NULL") {
+                    $transaction->trans_description         = $log = "Partial Refund of GH¢ ".(0.99 * $order->order_subtotal)." to ".$customer->first_name." ".$customer->last_name." for order $orderID";
+                } else {
+                    $transaction->trans_description         = $log = "Partial Refund of GH¢ ".$order->order_subtotal." to ".$customer->first_name." ".$customer->last_name." for order $orderID";
+                }
+                
+                $transaction->trans_date                = date("Y-m-d G:i:s");
+                $transaction->trans_recorder            = Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name;
+                $transaction->save();
+                /*--- Notify customer ---*/
+                $sms_message="Hi ".$customer->first_name.", your order $orderID has been cancelled. A refund of GHS ";
+                if (isset($order->order_scoupon) AND $order->order_scoupon != NULL AND $order->order_scoupon != "NULL") {
+                    $sms_message .= (0.99 * $order->order_subtotal);
+                } else {
+                    $sms_message .= $order->order_subtotal;
+                }
+                $sms_message .= " has been done to your Solushop Wallet. We apologize for any inconvenience caused.";
+                $sms = new SMS;
+                $sms->sms_message = $sms_message;
+                $sms->sms_phone = $customer->phone;
+                $sms->sms_state = 1;
+                $sms->save();
+
+                $order->save();
+                $customer->save();
+                
+
+                /*--- Log Activity ---*/
+                activity()
+                ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Order Cancellation (Partial Refund)';
+                })
+                ->log(Auth::guard('manager')->user()->email." cancelled order $orderID.");
+
+                return redirect()->back()->with("success_message", "Order cancelled successfully.");
+                break;
+
+            case 'cancel_order_full_refund':
+                /*--- Update Order Items---*/
+                OrderItem::where([
+                    ['oi_order_id', '=', $orderID]
+                ])->update([
+                    'oi_state' => 5
+                ]);
+            
+                /*--- Update Order ---*/
+                Order::where([
+                    ['id', '=', $orderID]
+                ])
+                ->update([
+                    'order_state' => 7
+                ]);
+
+                $order = Order::where('id', $orderID)->first();
+
+                /*--- Deduct from main account ---*/
+                $count = Count::first();
+                if(isset($order->order_scoupon) AND $order->order_scoupon != NULL AND $order->order_scoupon != "NULL"){
+                    $count->account -= 0.99 * $order->order_subtotal + $order->order_shipping;
+                }else{
+                    $count->account -= $order->order_subtotal + $order->order_shipping;
+                }
+                $count->save();
+
+                /*--- Top up customer ---*/
+                $customer = Customer::where('id', $order->order_customer_id)->with('milk', 'chocolate')->first();
+
+                if(isset($order->order_scoupon) AND $order->order_scoupon != NULL AND $order->order_scoupon != "NULL"){
+                    $newCustomerBalance     = round((($customer->milk->milk_value * $customer->milkshake) - $customer->chocolate->chocolate_value) + (0.99 *  $order->order_subtotal + $order->order_shipping), 2);
+                }else{
+                    $newCustomerBalance     = round((($customer->milk->milk_value * $customer->milkshake) - $customer->chocolate->chocolate_value) + $order->order_subtotal + $order->order_shipping, 2);
+                }
+                $newCustomerMilkshake   = ($newCustomerBalance + $customer->chocolate->chocolate_value) / $customer->milk->milk_value;
+                $customer->milkshake    = $newCustomerMilkshake;
+
+                $transaction = new AccountTransaction;
+                $transaction->trans_type                = "Full Order Refund";
+                if (isset($order->order_scoupon) AND $order->order_scoupon != NULL AND $order->order_scoupon != "NULL") {
+                    $transaction->trans_amount = round(0.99 * $order->order_subtotal + $order->order_shipping, 2);
+                } else {
+                    $transaction->trans_amount = $order->order_subtotal + $order->order_shipping;
+                }
+                $transaction->trans_credit_account_type = 1;
+                $transaction->trans_credit_account      = "INT-SC001";
+                $transaction->trans_debit_account_type  = 5;
+                $transaction->trans_debit_account       = $customer->id;
+                if (isset($order->order_scoupon) AND $order->order_scoupon != NULL AND $order->order_scoupon != "NULL") {
+                    $transaction->trans_description         = $log = "Full Refund of GH¢ ".(0.99 * $order->order_subtotal + $order->order_shipping)." to ".$customer->first_name." ".$customer->last_name." for order $orderID";
+                } else {
+                    $transaction->trans_description         = $log = "Full Refund of GH¢ ".$order->order_subtotal + $order->order_shipping." to ".$customer->first_name." ".$customer->last_name." for order $orderID";
+                }
+                
+                $transaction->trans_date                = date("Y-m-d G:i:s");
+                $transaction->trans_recorder            = Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name;
+                $transaction->save();
+
+                /*--- Notify customer ---*/
+                $sms_message="Hi ".$customer->first_name.", your order $orderID has been cancelled. A full refund of GHS ";
+                if (isset($order->order_scoupon) AND $order->order_scoupon != NULL AND $order->order_scoupon != "NULL") {
+                    $sms_message .= (0.99 * $order->order_subtotal) + $order->order_shipping;
+                } else {
+                    $sms_message .= $order->order_subtotal + $order->order_shipping;
+                }
+                $sms_message .= " has been done to your Solushop Wallet. We apologize for any inconvenience caused.";
+                $sms = new SMS;
+                $sms->sms_message = $sms_message;
+                $sms->sms_phone = $customer->phone;
+                $sms->sms_state = 1;
+                $sms->save();
+
+                $order->save();
+                $customer->save();
+                
+
+                /*--- Log Activity ---*/
+                activity()
+                ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Order Cancellation (Full Refund)';
+                })
+                ->log(Auth::guard('manager')->user()->email." cancelled order $orderID.");
+
+                return redirect()->back()->with("success_message", "Order cancelled successfully.");
+                break;
+
+            case 'record_shipping':
+                /*--- Record shipping charge on order ---*/
+                $order = Order::where('id', $orderID)->first();
+                $order->dp_shipping = $request->shipping_amount;
+                $order->save();
+
+                /*--- Accrue shipping charge to partner ---*/
+                if ($request->shipping_amount > 0) {
+                    $partner = DeliveryPartner::where('id', $request->delivery_partner)->first();
+                    $partner->balance += $request->shipping_amount;
+
+                    $transaction = new AccountTransaction;
+                    $transaction->trans_type                = "Delivery Partner Accrual";
+                    $transaction->trans_amount              = $request->shipping_amount;
+                    $transaction->trans_credit_account_type = 1;
+                    $transaction->trans_credit_account      = "INT-SC001";
+                    $transaction->trans_debit_account_type  = 9;
+                    $transaction->trans_debit_account       = $partner->id;
+                    $transaction->trans_description         = $log = "Accrual of GH¢ ".$request->shipping_amount." to ".$partner->first_name." ".$partner->last_name." for order $orderID";
+                    $transaction->trans_date                = date("Y-m-d G:i:s");
+                    $transaction->trans_recorder            = Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name;
+                    $transaction->save();
+
+                    $partner->save();
+                }
+
+                /*--- log activity ---*/
+                activity()
+                ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Order Shipping Charge Entered';
+                })
+                ->log(Auth::guard('manager')->user()->email." recorded an ".$log);
+                
+                return redirect()->back()->with("success_message", "Shipping charge recorded successfully.");
+
+                break;
+            
+            default:
+                # code...
+                break;
+        }
     }
 
     public function showMessages(){

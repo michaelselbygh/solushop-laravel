@@ -108,8 +108,8 @@ Route::prefix('portal')->group(function(){
         Route::get('/products/deleted', 'ManagerController@showDeletedProducts')->name('manager.show.deleted.products');
         Route::get('/products/add', 'ManagerController@showAddProduct')->name('manager.show.add.product');
         Route::post('/products/add', 'ManagerController@processAddProduct')->name('manager.process.add.product');
-        Route::get('/product/{vendorSlug}/{productSlug}', 'ManagerController@showProduct')->name('manager.show.product');
-        Route::post('/product/{vendorSlug}/{productSlug}', 'ManagerController@processProduct')->name('manager.process.product');
+        Route::get('/product/{productID}', 'ManagerController@showProduct')->name('manager.show.product');
+        Route::post('/product/{productID}', 'ManagerController@processProduct')->name('manager.process.product');
         Route::get('/vendors', 'ManagerController@showVendors')->name('manager.show.vendors');
         Route::get('/vendors/add', 'ManagerController@showAddVendor')->name('manager.show.add.vendor');
         Route::post('/vendors/add', 'ManagerController@processAddVendor')->name('manager.process.add.vendor');

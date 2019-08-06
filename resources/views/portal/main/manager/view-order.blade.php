@@ -15,22 +15,45 @@
     <div class="row">
         <div class="col-md-8">
             <div class="row">
-                <div class="col-md-8">
+                <div class="col-md-8" style="margin-top : 10px;">
                     <h5 class="card-title">Order Summary - <b>{{ $order["id"] }}</b></h5>
                 </div>
                 <div class="col-md-4" style="text-align: right; margin-bottom:5px;">
-                    <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Confirm Order"  style="margin-top: 3px;" class="btn btn-info btn-sm round">
-                            <i class="ft-check"></i>
-                        </button>
-                    <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Confirm Payment Received"  style="margin-top: 3px; background-color: green !important; border-color: green !important" class="btn btn-success btn-sm round">
-                        <i class="ft-check"></i>
-                    </button>
-                    <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Cancel Order with refund to Solushop Wallet "  style="margin-top: 3px; background-color: red !important; border-color: red !important" class="btn btn-success btn-sm round">
-                        <i class="ft-x"></i>
-                    </button>
-                    <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Cancel Order (No Refund)"  style="margin-top: 3px; background-color: black !important; border-color: black !important" class="btn btn-success btn-sm round">
-                        <i class="ft-x"></i>
-                    </button>
+                    <form method="POST" action="{{ route("manager.process.order", $order["id"]) }}">
+                        @csrf
+                        @if ( in_array($order["order_state"]["id"], [1]) )
+                            <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Confirm Payment Received"  style="margin-top: 3px; background-color: green !important; border-color: green !important" class="btn btn-success btn-sm round" type="submit" name="order_action" value="confirm_order_payment">
+                                <i class="ft-check"></i>
+                            </button>
+                            <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Cancel Order ( No Refund )"  style="margin-top: 3px; background-color: black !important; border-color: black !important" class="btn btn-success btn-sm round" type="submit" name="order_action" value="cancel_order_no_refund">
+                                <i class="ft-x"></i>
+                            </button>
+                        @elseif(in_array($order["order_state"]["id"], [2]))
+                            <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Confirm Order"  style="margin-top: 3px;" class="btn btn-info btn-sm round" type="submit" name="order_action" value="confirm_order">
+                                <i class="ft-check"></i>
+                            </button>
+                            <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Cancel Order ( Order Items Refund Only )"  style="margin-top: 3px;" class="btn btn-warning btn-sm round" type="submit" name="order_action" value="cancel_order_partial_refund">
+                                    <i class="ft-x"></i>
+                                </button>
+                            <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Cancel Order ( Full Refund  )"  style="margin-top: 3px; background-color: red !important; border-color: red !important" class="btn btn-success btn-sm round" type="submit" name="order_action" value="cancel_order_full_refund">
+                                <i class="ft-x"></i>
+                            </button>
+                            <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Cancel Order ( No Refund )"  style="margin-top: 3px; background-color: black !important; border-color: black !important" class="btn btn-success btn-sm round" type="submit" name="order_action" value="cancel_order_no_refund">
+                                <i class="ft-x"></i>
+                            </button>
+                        @elseif(in_array($order["order_state"]["id"], [3, 4, 5]))
+                            <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Cancel Order ( Order Items Refund Only )"  style="margin-top: 3px;" class="btn btn-warning btn-sm round" type="submit" name="order_action" value="cancel_order_partial_refund">
+                                <i class="ft-x"></i>
+                            </button>
+                            <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Cancel Order ( Full Refund )"  style="margin-top: 3px; background-color: red !important; border-color: red !important" class="btn btn-success btn-sm round" type="submit" name="order_action" value="cancel_order_full_refund">
+                                <i class="ft-x"></i>
+                            </button>
+                            <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Cancel Order ( No Refund )"  style="margin-top: 3px; background-color: black !important; border-color: black !important" class="btn btn-success btn-sm round" type="submit" name="order_action" value="cancel_order_no_refund">
+                                <i class="ft-x"></i>
+                            </button>
+                        @endif
+                        
+                    </form>
                 </div>
             </div>
 
@@ -44,6 +67,7 @@
                                 <tr>
                                     <th class="border-top-0">SKU</th>
                                     <th class="border-top-0">Preview</th>
+                                    <th class="border-top-0">Price</th>
                                     <th class="border-top-0">State</th>
                                     <th class="border-top-0">Last Updated</th>
                                     <th class="border-top-0">Action</th>
@@ -61,6 +85,9 @@
                                                     alt="{{ $order["order_items"][$i]["oi_sku"] }}">
                                                 </li>
                                             </ul>
+                                        </td>
+                                        <td>
+                                            {{ $order["order_items"][$i]["oi_selling_price"] - $order["order_items"][$i]["oi_discount"] }}
                                         </td>
                                         <td>
                                             {!! $order["order_items"][$i]["order_item_state"]["ois_html"] !!}
@@ -123,6 +150,56 @@
                     </div>
                 </div>
             </div>
+
+            @if (isset($order["profit_or_loss"]))
+                @if ($order["profit_or_loss"] < 0)
+                    <h5 class="card-title">Loss on Order 
+                        : <b style="color:red"> GH¢ {{$order["profit_or_loss"]}}</b>
+                        @if ($order["dp_shipping"] == NULL)
+                            ( Shipping charge on company not included. )
+                        @endif
+                    </h5>
+                @else
+                    <h5 class="card-title">Profit on Order 
+                        : <b style="color:green"> GH¢ {{$order["profit_or_loss"]}}</b>
+                        @if ($order["dp_shipping"] == NULL)
+                            ( Shipping charge on company not included. )
+                        @endif
+                    </h5>
+                @endif
+
+                {{-- Break down --}}
+                <div class="card">
+                    <div class="card-content collapse show">
+                        <div class="card-body card-dashboard">
+                            <table class="table table-hover table-xl mb-0">
+                                <thead>
+                                    <tr>
+                                        <th class="border-top-0">Description</th>
+                                        <th class="border-top-0">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody> 
+                                    @for($i=0; $i<sizeof($order["profit_or_loss_item"]['description']); $i++) 
+                                        <tr>
+                                            <td>{{ $order["profit_or_loss_item"]["description"][$i] }}</td>
+                                            <td>
+                                                @if ($order["profit_or_loss_item"]["amount"][$i] < 0)
+                                                    <span style="color:red"> GH¢ {{ $order["profit_or_loss_item"]["amount"][$i] }}</span>
+                                                @else
+                                                    <span style="color:green"> GH¢ {{ $order["profit_or_loss_item"]["amount"][$i] }}</span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @endfor
+                                </tbody>
+                                <tfoot>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            @endif
         </div>
         <div class="col-md-4">
             <h5 class="card-title">Order Details</h5>
@@ -157,7 +234,7 @@
                         </div>
                         <div class="row">
                             <div class="col-md-4">
-                                <p style="font-weight:500;">Made On : </p>
+                                <p style="font-weight:500;">Made At : </p>
                             </div>
                             <div class="col-md-8" >
                                 <p>{{ date('g:ia, l jS F Y', strtotime($order["order_date"])) }}</p>
@@ -199,6 +276,14 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-4">
+                                    <p style="font-weight:500;">Commision : </p>
+                                </div>
+                                <div class="col-md-8" >
+                                    <p style="font-weight:500;">{{ 100*$order["coupon"]["sales_associate"]["badge_info"]["sab_commission"] }} % on Order</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
                                     <p style="font-weight:500;">Coupon : </p>
                                 </div>
                                 <div class="col-md-8" >
@@ -213,6 +298,42 @@
                                     <p>{{ "0".substr($order["coupon"]["sales_associate"]["phone"], 3) }}</p>
                                 </div>
                                 </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            @if($order["order_state"]["id"] == 6 AND $order["dp_shipping"] == NULL AND isset($order["allow_shipping_entry"]))
+                <h5 class="card-title">Delivery Partner and Charge</h5>
+                <div class="card">
+                    <div class="card-content collapse show">
+                        <div class="card-body card-dashboard">
+                            <form method="POST" action="{{ route("manager.process.order", $order["id"]) }}">
+                                @csrf
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="delivery_partner">Partner</label>
+                                            <select class="form-control" name='delivery_partner' id="delivery_partner" style='border-radius:7px;' required>
+                                                @for ($i = 0; $i < sizeof($order["delivery_partner"]); $i++)
+                                                    <option value='{{ $order["delivery_partner"][$i]["id"] }}'>{{ $order["delivery_partner"][$i]["first_name"] }} {{ $order["delivery_partner"][$i]["last_name"] }}</option>
+                                                @endfor
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6" >
+                                        <div class="form-group">
+                                            <label for="shipping_amount">Charge</label>
+                                            <input id="shipping_amount" name="shipping_amount" value="0" class="form-control round" type="number" step="0.01" min="0" required> 
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-actions" style="text-align:center; padding: 0px;">
+                                    <button type="submit" name="order_action" value="record_shipping" class="btn btn-success">
+                                            Record Charge
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
