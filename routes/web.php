@@ -111,7 +111,9 @@ Route::prefix('portal')->group(function(){
         Route::post('/conversation/{conversationID}', 'ManagerController@processConversation')->name('manager.process.conversation');
         Route::get('/conversations', 'ManagerController@showMessages')->name('manager.show.messages');
         Route::get('/products', 'ManagerController@showProducts')->name('manager.show.products');
+        Route::post('/products', 'ManagerController@processProducts')->name('manager.process.products');
         Route::get('/products/deleted', 'ManagerController@showDeletedProducts')->name('manager.show.deleted.products');
+        Route::post('/products/deleted', 'ManagerController@processDeletedProducts')->name('manager.process.deleted.products');
         Route::get('/products/add', 'ManagerController@showAddProduct')->name('manager.show.add.product');
         Route::post('/products/add', 'ManagerController@processAddProduct')->name('manager.process.add.product');
         Route::get('/product/{productID}', 'ManagerController@showProduct')->name('manager.show.product');

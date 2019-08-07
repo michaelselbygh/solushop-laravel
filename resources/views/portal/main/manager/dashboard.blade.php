@@ -147,7 +147,7 @@
                                             </td>
                                             <td class="text-truncate">
                                                 <a target="new" href="{{ url("portal/manager/order/".$dashboard["new_orders"][$i]["id"]) }}">
-                                                    <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="View Order"  style="margin-top: 3px; background-color: black !important; border-color: black !important" class="btn btn-success btn-sm round">
+                                                    <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="View Order"  style="margin-top: 3px;" class="btn btn-info btn-sm round">
                                                         <i class="ft-eye"></i>
                                                     </button>
                                                 </a>

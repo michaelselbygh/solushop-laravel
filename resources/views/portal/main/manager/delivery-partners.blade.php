@@ -38,7 +38,7 @@
                                             <td>{{ $delivery_partners[$i]["balance"] }}</td>
                                             <td>
                                                 <a href="{{ route("manager.show.delivery.partner", $delivery_partners[$i]['id']) }}">
-                                                    <button  data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="View {{ $delivery_partners[$i]["first_name"]." ".$delivery_partners[$i]["last_name"] }}" style="margin-top: 3px; background-color: black !important; border-color: black !important" class="btn btn-success btn-sm round">
+                                                    <button  data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="View {{ $delivery_partners[$i]["first_name"]." ".$delivery_partners[$i]["last_name"] }}" style="margin-top: 3px;" class="btn btn-info btn-sm round">
                                                         <i class="ft-eye"></i>
                                                     </button>
                                                 </a>

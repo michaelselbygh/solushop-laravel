@@ -31,4 +31,9 @@ class Product extends Model
     {
         return $this->belongsTo('App\Vendor', 'product_vid', 'id');
     }
+
+    public function state()
+    {
+        return $this->hasOne('App\ProductState', 'id', 'product_state');
+    }
 }

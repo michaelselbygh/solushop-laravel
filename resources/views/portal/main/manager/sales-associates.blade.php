@@ -38,7 +38,7 @@
                                             <td>{{ $sales_associates[$i]["balance"] }}</td>
                                             <td>
                                                 <a href="{{ route("manager.show.sales.associate", $sales_associates[$i]['id']) }}">
-                                                    <button  data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="View {{ $sales_associates[$i]["first_name"]." ".$sales_associates[$i]["last_name"] }}" style="margin-top: 3px; background-color: black !important; border-color: black !important" class="btn btn-success btn-sm round">
+                                                    <button  data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="View {{ $sales_associates[$i]["first_name"]." ".$sales_associates[$i]["last_name"] }}" style="margin-top: 3px;" class="btn btn-info btn-sm round">
                                                         <i class="ft-eye"></i>
                                                     </button>
                                                 </a>

@@ -39,7 +39,7 @@
                                                 <td>{{ $messages['all'][$i]['message']["updated_at"] }}</td>
                                                 <td>
                                                     <a href="{{ route("manager.show.conversation", $messages['all'][$i]['message']['message_conversation_id']) }}">
-                                                        <button  data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="View Conversation" style="margin-top: 3px; background-color: black !important; border-color: black !important" class="btn btn-success btn-sm round">
+                                                        <button  data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="View Conversation" style="margin-top: 3px;" class="btn btn-success btn-sm round">
                                                             <i class="ft-eye"></i>
                                                         </button>
                                                     </a>
@@ -67,7 +67,7 @@
                                                 <td>{{ $messages['all'][$i]["updated_at"] }}</td>
                                                 <td>
                                                     <a href="{{ route("manager.show.conversation", $messages['all'][$i]['message_conversation_id']) }}">
-                                                        <button  data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="View Conversation" style="margin-top: 3px; background-color: black !important; border-color: black !important" class="btn btn-success btn-sm round">
+                                                        <button  data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="View Conversation" style="margin-top: 3px;" class="btn btn-info btn-sm round">
                                                             <i class="ft-eye"></i>
                                                         </button>
                                                     </a>

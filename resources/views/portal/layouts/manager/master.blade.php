@@ -36,6 +36,14 @@
 
 
         <script type="text/javascript" src="{{ url('portal/jquery/jquery-3.4.1.js') }}"></script>
+        <style>
+            .child{
+                height: 100%;
+                margin-right: -50px; /* maximum width of scrollbar */
+                padding-right: 30px; /* maximum width of scrollbar */
+                overflow-y: scroll;
+            }
+        </style>
 
     </head>
     <!-- END: Head-->

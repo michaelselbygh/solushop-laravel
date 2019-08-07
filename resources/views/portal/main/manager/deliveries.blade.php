@@ -49,7 +49,15 @@
                                     @for($i=0; $i<sizeof($delivery_items); $i++) 
                                         <tr>
                                             <td>{{ $delivery_items[$i]["oi_order_id"] }}</td>
-                                            <td><img src="{{ url("app/assets/img/products/thumbnails/".$delivery_items[$i]["sku"]["product"]["images"][0]["pi_path"].".jpg") }}" style="width: 40px; height:auto; border-radius:5px;"/></td>
+                                            <td>
+                                                <ul class="list-unstyled users-list m-0">
+                                                    <li data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="{{ $delivery_items[$i]["oi_name"] }}" class="avatar avatar-sm pull-up">
+                                                        <img class="media-object rounded-circle no-border-top-radius no-border-bottom-radius"
+                                                        src="{{ url("app/assets/img/products/thumbnails/".$delivery_items[$i]["sku"]["product"]["images"][0]["pi_path"].".jpg") }}"
+                                                        alt="{{ $delivery_items[$i]["oi_name"] }}">
+                                                    </li>
+                                                </ul>
+                                            </td>
                                             <td>{{ $delivery_items[$i]["oi_sku"] }}</td>
                                             <td>{{ $delivery_items[$i]["oi_name"] }}</td>
                                             <td>{{ $delivery_items[$i]["oi_quantity"] }}</td>
@@ -57,7 +65,7 @@
                                             <td>{{ $delivery_items[$i]["updated_at"] }}</td>
                                             <td>
                                                 <a href="{{ url('portal/manager/product/'.$delivery_items[$i]["sku"]["product"]["id"]) }}">
-                                                    <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="View {{ $delivery_items[$i]["oi_name"] }}"  style="margin-top: 3px; background-color: black !important; border-color: black !important" class="btn btn-success btn-sm round">
+                                                    <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="View {{ $delivery_items[$i]["oi_name"] }}"  style="margin-top: 3px;" class="btn btn-info btn-sm round">
                                                         <i class="ft-eye"></i>
                                                     </button>
                                                 </a>

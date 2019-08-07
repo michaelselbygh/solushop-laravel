@@ -34,7 +34,7 @@
                                             <td>{{ abs(round(($customers[$i]['milk']['milk_value'] * $customers[$i]['milkshake']) - $customers[$i]['chocolate']['chocolate_value'] * 1, 2)) }}</td>
                                             <td>
                                                 <a href="{{ route("manager.show.customer", $customers[$i]['id']) }}">
-                                                    <button  data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="View {{ $customers[$i]["first_name"]." ".$customers[$i]["last_name"] }}" style="margin-top: 3px; background-color: black !important; border-color: black !important" class="btn btn-success btn-sm round">
+                                                    <button  data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="View {{ $customers[$i]["first_name"]." ".$customers[$i]["last_name"] }}" style="margin-top: 3px;" class="btn btn-info btn-sm round">
                                                         <i class="ft-eye"></i>
                                                     </button>
                                                 </a>

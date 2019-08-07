@@ -922,19 +922,157 @@ class ManagerController extends Controller
             ->with("messages", $messages);
     }
 
-    public function showConversation(){
+    public function showConversation($conversationID){
+        /* Get conversation details */
+        $conversation["record"] = Conversation::where('id', $conversationID)->first()->toArray();
+        $conversation["participant_ids"] = explode("|", $conversation["record"]["conv_key"]);
+        $conversation["customer"] = Customer::where('id', $conversation["participant_ids"][0])->first()->toArray();
+        $conversation["vendor"] = Vendor::where('id', $conversation["participant_ids"][1])->first()->toArray();
+        /* Get conversation messages */
+        $conversation["messages"] = Message::where('message_conversation_id', $conversationID)->get()->toArray();
+        
 
+        return view("portal.main.manager.view-conversation")
+            ->with("conversation", $conversation);
     }
 
-    public function processConversation(){
+    public function processConversation(Request $request, $conversationID){
+         
+        $message = new Message;
+        $message->message_sender = "MGMT";
+        $message->message_content = $request->message;
+        $message->message_conversation_id = $conversationID;
+        $message->message_timestamp = date("Y-m-d H:i:s");
+        $message->message_read = "Init|";
+        $message->save();
 
+        /*--- log activity ---*/
+        activity()
+        ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
+        ->tap(function(Activity $activity) {
+            $activity->subject_type = 'System';
+            $activity->subject_id = '0';
+            $activity->log_name = 'Management Message Sent';
+        })
+        ->log(Auth::user()->email.' sent a message ['.$request->message.'] in conversation ID $conversationID');
+
+        return redirect()->back()->with("success_message", "Message sent successfully.");
     }
 
     public function showProducts(){
+        return view("portal.main.manager.products")
+            ->with("products", Product::where([
+                ["product_state", "<>", 4]
+            ])
+            ->with('vendor', 'images', 'state')
+            ->get()
+            ->toArray());
+    }
 
+    public function processProducts(Request $request){
+        switch ($request->product_action) {
+            case 'reject':
+                /*--- change product state ---*/
+                Product::
+                    where([
+                        ['id', "=", $request->product_id]
+                    ])->update([
+                        'product_state' => 3
+                    ]);
+                /*--- log activity ---*/
+                activity()
+                ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Product Rejected';
+                })
+                ->log(Auth::guard('manager')->user()->email." rejected product ".$request->product_id);
+                return redirect()->back()->with("success_message", "Product ".$request->product_id." rejected successfully.");
+                break;
+
+            case 'disapprove':
+                /*--- change product state ---*/
+                Product::
+                    where([
+                        ['id', "=", $request->product_id]
+                    ])->update([
+                        'product_state' => 2
+                    ]);
+
+                /*--- log activity ---*/
+                activity()
+                ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Product Disapproved';
+                })
+                ->log(Auth::guard('manager')->user()->email." disapproved product ".$request->product_id);
+                return redirect()->back()->with("success_message", "Product ".$request->product_id." disapproved successfully.");
+                break;
+
+            case 'restore':
+                /*--- change product state ---*/
+                Product::
+                    where([
+                        ['id', "=", $request->product_id]
+                    ])->update([
+                        'product_state' => 2
+                    ]);
+
+                /*--- log activity ---*/
+                activity()
+                ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Product Restored';
+                })
+                ->log(Auth::guard('manager')->user()->email." restored product ".$request->product_id);
+                return redirect()->back()->with("success_message", "Product ".$request->product_id." restored successfully.");
+                break;
+
+            
+
+            case 'delete':
+                /*--- change product state ---*/
+                Product::
+                    where([
+                        ['id', "=", $request->product_id]
+                    ])->update([
+                        'product_state' => 4
+                    ]);
+                /*--- log activity ---*/
+                activity()
+                ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Product Deleted';
+                })
+                ->log(Auth::guard('manager')->user()->email." deleted product ".$request->product_id);
+                return redirect()->back()->with("success_message", "Product ".$request->product_id." deleted successfully.");
+                break;
+            
+            default:
+                return redirect()->back()->with("error_message", "Something went wrong. Please try again.");
+                break;
+        }
+        
     }
 
     public function showDeletedProducts(){
+        return view("portal.main.manager.deleted-products")
+            ->with("products", Product::where([
+                ["product_state", "=", 4]
+            ])
+            ->with('vendor', 'images', 'state')
+            ->get()
+            ->toArray());
+    }
+
+    public function processDeletedProducts(Request $request){
 
     }
 
