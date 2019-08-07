@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Spatie\Activitylog\Contracts\Activity;
 use Illuminate\Support\Facades\Validator;
 use Auth;
+use PDF;
 
 use App\AccountTransaction;
 use App\ActivityLog;
@@ -873,7 +874,7 @@ class ManagerController extends Controller
 
     public function showActivePickups(){
         return view('portal.main.manager.pick-ups')
-                ->with('pick_up_items',  OrderItem::whereIn('oi_state', [2])->with("sku.product.images")->get()->toArray());
+                ->with('pick_up_items',  OrderItem::whereIn('oi_state', [2])->with("sku.product.images", "sku.product.vendor")->get()->toArray());
     }
 
     public function processActivePickups(Request $request){
@@ -935,8 +936,27 @@ class ManagerController extends Controller
                 break;
 
             case 'download_pick_up_guide':
-                echo "Download";
-                exit;
+                //get order items information
+                $data["pick_ups"] = OrderItem::orderBy('oi_name', 'asc')->where('oi_state', 2)->with('sku.product.vendor')->get()->toArray();
+
+                //get vendor information
+                $data["vendors"] =  DB::select(
+                    "SELECT distinct vendors.id, vendors.phone, vendors.alt_phone, vendors.name, vendors.address from vendors, order_items, stock_keeping_units, products where oi_state = '2' and order_items.oi_sku = stock_keeping_units.id and stock_keeping_units.sku_product_id = products.id and products.product_vid = vendors.id order by vendors.name"
+                );
+
+                /*--- Log Activity ---*/
+                activity()
+                ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Pick-Up Guide Download';
+                })
+                ->log(Auth::guard('manager')->user()->email." downloaded Pick-Up Guide ".date('m-d-Y').".pdf");
+
+                $pdf = PDF::loadView('portal.guides.pick-up', array('data' => $data));
+                return $pdf->download('Pick-Up Guide '.date('m-d-Y').'.pdf');
+
                 break;
             
             default:
@@ -1034,8 +1054,26 @@ class ManagerController extends Controller
                 break;
 
             case 'download_delivery_guide':
-                echo "Download";
-                exit;
+                //get order items information
+                $data["deliveries"] = OrderItem::orderBy('oi_name', 'asc')->whereIn('oi_state', [2, 3])->with('order.customer')->get()->toArray();
+
+                //get customers information
+                $data["customers"] =  DB::select(
+                    "SELECT distinct customers.id, customers.phone, customer_addresses.ca_town, customer_addresses.ca_address, customers.first_name, customers.last_name from customers, customer_addresses, order_items, orders where (oi_state = '2' OR oi_state = '3') and order_items.oi_order_id = orders.id and orders.order_customer_id = customers.id and orders.order_address_id = customer_addresses.id order by customers.first_name"
+                );
+
+                /*--- Log Activity ---*/
+                activity()
+                ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Delivery Guide Download';
+                })
+                ->log(Auth::guard('manager')->user()->email." downloaded Delivery Guide ".date('m-d-Y').".pdf");
+
+                $pdf = PDF::loadView('portal.guides.delivery', array('data' => $data));
+                return $pdf->download('Delivery Guide '.date('m-d-Y').'.pdf');
                 break;
             
             default:
@@ -1778,5 +1816,36 @@ class ManagerController extends Controller
 
         return view('portal.main.manager.dashboard')
             ->with('dashboard', $dashboard);
+    }
+
+    //guides
+    public function showDeliveryGuide(){
+         //get order items information
+         $data["deliveries"] = OrderItem::orderBy('oi_name', 'asc')->whereIn('oi_state', [2, 3])->with('order.customer')->get()->toArray();
+
+         //get customers information
+         $data["customers"] =  DB::select(
+             "SELECT distinct customers.id, customers.phone, customer_addresses.ca_town, customer_addresses.ca_address, customers.first_name, customers.last_name from customers, customer_addresses, order_items, orders where (oi_state = '2' OR oi_state = '3') and order_items.oi_order_id = orders.id and orders.order_customer_id = customers.id and orders.order_address_id = customer_addresses.id order by customers.first_name"
+         );
+         
+        //  return view('portal.guides.delivery')
+        //     ->with('data', $data);
+
+         $pdf = PDF::loadView('portal.guides.delivery', array('data' => $data));
+         return $pdf->download('Delivery Guide '.date('m-d-Y').'.pdf');
+         
+    }
+
+    public function showPickUpGuide(){
+        //get order items information
+        $data["pick_ups"] = OrderItem::orderBy('oi_name', 'asc')->where('oi_state', 2)->with('sku.product.vendor')->get()->toArray();
+
+        //get vendor information
+        $data["vendors"] =  DB::select(
+            "SELECT distinct vendors.id, vendors.phone, vendors.alt_phone, vendors.name, vendors.address from vendors, order_items, stock_keeping_units, products where oi_state = '2' and order_items.oi_sku = stock_keeping_units.id and stock_keeping_units.sku_product_id = products.id and products.product_vid = vendors.id order by vendors.name"
+        );
+
+        $pdf = PDF::loadView('portal.guides.pick-up', array('data' => $data));
+        return $pdf->download('Pick-Up Guide'.date('m-d-Y').'.pdf');
     }
 }

@@ -40,6 +40,7 @@
                                         <th>SKU</th>
                                         <th>Description</th>
                                         <th>Quantity</th>
+                                        <th>Vendor</th>
                                         <th>Created At</th>
                                         <th>Updated At</th>
                                         <th>Action</th>
@@ -53,6 +54,7 @@
                                             <td>{{ $pick_up_items[$i]["oi_sku"] }}</td>
                                             <td>{{ $pick_up_items[$i]["oi_name"] }}</td>
                                             <td>{{ $pick_up_items[$i]["oi_quantity"] }}</td>
+                                            <td>{{ $pick_up_items[$i]["sku"]["product"]["vendor"]["name"] }}</td>
                                             <td>{{ $pick_up_items[$i]["created_at"] }}</td>
                                             <td>{{ $pick_up_items[$i]["updated_at"] }}</td>
                                             <td>

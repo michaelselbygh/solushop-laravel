@@ -16,5 +16,9 @@ class OrderItem extends Model
         return $this->hasOne('App\StockKeepingUnit', 'id', 'oi_sku' );
     }
 
+    public function order(){
+        return $this->hasOne('App\Order', 'id', 'oi_order_id' );
+    }
+
 }
 

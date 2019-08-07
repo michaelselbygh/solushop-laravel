@@ -91,6 +91,10 @@ Route::prefix('portal')->group(function(){
         Route::post('/login', 'Auth\ManagerLoginController@login')->name('manager.login.submit');
         Route::get('/logout', 'Auth\ManagerLoginController@logout')->name('manager.logout');
 
+        //guides
+        Route::get('/guide/delivery', 'ManagerController@showDeliveryGuide')->name('manager.show.delivery.guide');
+        Route::get('/guide/pick-up', 'ManagerController@showPickUpGuide')->name('manager.show.pick.up.guide');
+
         //general pages
         Route::get('/customers', 'ManagerController@showCustomers')->name('manager.show.customers');
         Route::get('/customer/{customerID}', 'ManagerController@showCustomer')->name('manager.show.customer');
