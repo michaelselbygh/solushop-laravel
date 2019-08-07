@@ -12,12 +12,16 @@ use PDF;
 
 use App\AccountTransaction;
 use App\ActivityLog;
+use App\Conversation;
 use App\Count;
 use App\Coupon;
 use App\Customer;
+use App\DeletedMessage;
 use App\DeliveredItem;
 use App\DeliveryPartner;
 use App\Manager;
+use App\Message;
+use App\MessageFlag;
 use App\Order;
 use App\OrderItem;
 use App\PickedUpItem;
@@ -805,14 +809,117 @@ class ManagerController extends Controller
 
     public function showMessages(){
 
+        $conversations = Conversation::all()->toArray();
+        for ($i=0; $i < sizeof($conversations); $i++) { 
+            $conversation_key = explode("|", $conversations[$i]["conv_key"]);
+
+            $conversations[$i]["customer"] = Customer::where([
+                ['id', "=", trim($conversation_key[0])]
+            ])->get()->toArray();
+            
+            $conversations[$i]["vendor"] = Vendor::where('id', trim($conversation_key[1]))->first()->toArray();
+        }
+        
+        return view('portal.main.manager.conversations')
+            ->with("conversations", $conversations);
     }
 
     public function showFlaggedMessages(){
+        $messages["type"] = "Flagged";
+        $messages["all"] = MessageFlag::with('message')->get()->toArray();
+        for ($i=0; $i < sizeof($messages["all"]); $i++) { 
+            if (substr($messages["all"][$i]["message"]["message_sender"], 0, 1) == "C") {
+                //customer
+                $sender = Customer::where('id', $messages["all"][$i]["message"]["message_sender"])->first()->toArray();
+                $messages["all"][$i]["message"]["sender"] = $sender["first_name"]." ".$sender["last_name"];
+            }elseif(substr($messages["all"][$i]["message"]["message_sender"], 0, 1) == "M"){
+                $messages["all"][$i]["message"]["sender"] = "Solushop Management";
+            }else{
+                //vendor
+                $messages["all"][$i]["message"]["sender"] = Vendor::where('id', $messages["all"][$i]["message"]["message_sender"])->get('name');
+            }
+        }
 
+        return view("portal.main.manager.messages")
+            ->with("messages", $messages);
+    }
+
+    public function processFlaggedMessages(Request $request){
+        switch ($request->message_action) {
+            case 'approve':
+                /*--- Log Activity ---*/
+                activity()
+                ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Flagged Message Approved';
+                })
+                ->log(Auth::guard('manager')->user()->email." approved flagged message ".$request->message_id);
+                
+                
+                /*--- Delete Flag ---*/
+                MessageFlag::where('mf_mid', $request->message_id)->delete();
+
+                return redirect()->back()->with("success_message", "Message Approved.");
+                break;
+
+            case 'delete':
+                /*--- Store Message details in deleted messages ---*/
+                $message = Message::where('id', $request->message_id)->first();
+                $deleted_message = new DeletedMessage;
+                $deleted_message->message_sender = $message->message_sender;
+                $deleted_message->message_content = $message->message_content;
+                $deleted_message->message_conversation_id = $message->message_conversation_id;
+                $deleted_message->message_timestamp = $message->message_timestamp;
+                $deleted_message->message_read = $message->message_read;
+                $deleted_message->save();
+                
+                /*--- Update Message Contents and Sender ---*/
+                $message->message_content = "This message has been deleted by Management because it does not conform to the TnCs for communication on Solushop.";
+                $message->save();
+
+                /*--- Log Activity ---*/
+                activity()
+                ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Flagged Message Deleted';
+                })
+                ->log(Auth::guard('manager')->user()->email." deleted flagged message ".$request->message_id);
+                
+                
+                /*--- Delete Flag ---*/
+                MessageFlag::where('mf_mid', $request->message_id)->delete();
+
+                return redirect()->back()->with("success_message", "Message Deleted.");
+                break;
+            
+            default:
+                return redirect()->back()->with("error_message", "Something went wrong. Please try again.");
+                break;
+        }
     }
 
     public function showDeletedMessages(){
+        $messages["type"] = "Deleted";
+        $messages["all"] = DeletedMessage::get()->toArray();
+        for ($i=0; $i < sizeof($messages["all"]); $i++) { 
+            if (substr($messages["all"][$i]["message_sender"], 0, 1) == "C") {
+                //customer
+                $sender = Customer::where('id', $messages["all"][$i]["message_sender"])->first()->toArray();
+                $messages["all"][$i]["sender"] = $sender["first_name"]." ".$sender["last_name"];
+            }elseif(substr($messages["all"][$i]["message_sender"], 0, 1) == "M"){
+                $messages["all"][$i]["sender"] = "Solushop Management";
+            }else{
+                //vendor
+                $messages["all"][$i]["sender"] = Vendor::where('id', $messages["all"][$i]["message_sender"])->get('name');
+            }
+        }
 
+        return view("portal.main.manager.messages")
+            ->with("messages", $messages);
     }
 
     public function showConversation(){
@@ -848,23 +955,272 @@ class ManagerController extends Controller
     }
 
     public function showVendors(){
-
+        return view("portal.main.manager.vendors")
+            ->with('vendors', Vendor::with('subscription.package')->get()->toArray());
     }
 
     public function showAddVendor(){
-
+        return view("portal.main.manager.add-vendor");
     }
 
-    public function processAddVendor(){
+    public function processAddVendor(Request $request){
+        /*--- Validate form data  ---*/
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'email' => 'required|email',
+            'main_phone' => 'required|digits:10',
+            'alt_phone' => 'required|digits:10',
+            'mode_of_payment' => 'required',
+            'payment_details' => 'required',
+            'pick_up_address' => 'required', 
+            'header_image' => 'required|image|dimensions:width=1305,height=360'
+        ]);
 
+        if ($validator->fails()) {
+            $messageType = "error_message";
+            $messageContent = "";
+
+            foreach ($validator->messages()->getMessages() as $field_name => $messages)
+            {
+                $messageContent .= $messages[0]." "; 
+            }
+
+            return redirect()->back()->withInput(['name', 'email', 'main_phone', 'alt_phone', 'mode_of_payment', 'payment_details', 'pick_up_address', 'header_image'])->with($messageType, $messageContent);
+        }
+
+        
+        //check for username existence in system
+        if (Vendor::where('username', str_slug($request->name, 2))->first()) {
+            return redirect()->back()->withInput(['name', 'email', 'main_phone', 'alt_phone', 'mode_of_payment', 'payment_details', 'pick_up_address', 'header_image'])->with("error_message", "Name already associated with a Vendor");
+        }
+
+        //check for numbers being the same
+        if ($request->main_phone == $request->alt_phone) {
+            return redirect()->back()->withInput(['name', 'email', 'main_phone', 'alt_phone', 'mode_of_payment', 'payment_details', 'pick_up_address', 'header_image'])->with("error_message", "Main number cannot be the same as the alternate number");
+        }
+
+
+
+        /*--- Vendor ID ---*/
+        $count = Count::first();
+        $vendor_id = date("Ymd").substr("00000".$count->vendor_count, strlen(strval($count->vendor_count)));
+
+        /*--- save header file ---*/
+        $header_file = $request->file('header_image');
+        if ($header_file->getClientOriginalExtension() != "jpg") {
+            return redirect()->back()->withInput(['name', 'email', 'main_phone', 'alt_phone', 'mode_of_payment', 'payment_details', 'pick_up_address', 'header_image'])->with("error_message", "Header image must be of type: .jpg");
+        }
+        $sub_path = 'app/assets/img/vendor-banner/'; 
+        $destination_path = public_path($sub_path);  
+        $header_file->move($destination_path,  $vendor_id.".jpg");
+
+        
+
+        /*--- store vendor data ---*/
+        $vendor = new Vendor;
+        $vendor->id                = $vendor_id;
+        $vendor->name              = ucwords(strtolower($request->name));
+        $vendor->username          = str_slug($vendor->name , '-');
+        $vendor->phone             = "233".substr($request->main_phone, 1);
+        $vendor->alt_phone         = "233".substr($request->alt_phone, 1);
+        $vendor->email             = strtolower($request->email);
+        $vendor->passcode          = $passcode = rand(100000, 999999);
+        $vendor->password          = bcrypt($passcode);
+        $vendor->address           = ucwords($request->pick_up_address);
+        $vendor->mode_of_payment   = $request->mode_of_payment;
+        $vendor->payment_details   = ucwords($request->payment_details);
+        $vendor->balance           = 0;
+        $vendor->save();
+
+
+        /*--- update counts ---*/
+        $count->vendor_count++;
+        $count->save();
+        
+        /*--- notify vendor ---*/
+        $sms = new SMS;
+        $sms->sms_message = "Hi ".ucwords(strtolower($request->name)).", you have been accepted as a Vendor on Solushop. Subscribe to begin your journey with us.\n\nUsername: ".str_slug($request->name, '-')."\nPassword : $passcode\nLogin here : https://www.solushop.com.gh/portal/vendor";
+        $sms->sms_phone = "233".substr($request->main_phone, 1);
+        $sms->sms_state = 1;
+        $sms->save();
+
+
+         /*--- log activity ---*/
+         activity()
+         ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+         ->tap(function(Activity $activity) {
+             $activity->subject_type = 'System';
+             $activity->subject_id = '0';
+             $activity->log_name = 'Vendor Registration';
+         })
+         ->log(Auth::guard('manager')->user()->email." added ".ucwords(strtolower($request->name))." as a vendor");
+         
+         return redirect()->back()->with("success_message", ucwords(strtolower($request->name))." added successfully as a vendor.");
     }
 
-    public function showVendor(){
+    public function showVendor($vendorSlug){
+         if (is_null(Vendor::where('username', $vendorSlug)->first())) {
+            return redirect()->route("manager.show.vendors")->with("error_message", "Vendor not found.");
+        }
 
+        $vendor = Vendor::with('subscription.package')->where('username', $vendorSlug)->first()->toArray();
+
+        $vendor["transactions"] = AccountTransaction::where([
+                ['trans_credit_account_type', '=', '3'],
+                ['trans_credit_account', '=', $vendor["id"]]
+            ])->orWhere(
+                [
+                    ['trans_credit_account_type', '=', '4'],
+                    ['trans_credit_account', '=', $vendor["id"]]
+            ])->orWhere(
+                [
+                    ['trans_debit_account_type', '=', '3'],
+                    ['trans_debit_account', '=', $vendor["id"]]
+            ])->orWhere(
+                [
+                    ['trans_debit_account_type', '=', '4'],
+                    ['trans_debit_account', '=', $vendor["id"]]
+            ])
+            ->get()
+            ->toArray();
+        return view("portal.main.manager.vendor")
+            ->with('vendor', $vendor);
     }
 
-    public function processVendor(){
+    public function processVendor(Request $request, $vendorSlug){
+        //select sales associates details
+        $vendor = Vendor::where('username', $vendorSlug)->first();
+        
+        switch ($request->vendor_action) {
+            case 'update_details':
+                /*--- Validate form data  ---*/
+                $validator = Validator::make($request->all(), [
+                    'name' => 'required',
+                    'email' => 'required|email',
+                    'main_phone' => 'required|digits:10',
+                    'alt_phone' => 'required|digits:10',
+                    'mode_of_payment' => 'required',
+                    'payment_details' => 'required',
+                    'pick_up_address' => 'required', 
+                    'header_image' => 'image|dimensions:width=1305,height=360'
+                ]);
 
+                if ($validator->fails()) {
+                    $messageType = "error_message";
+                    $messageContent = "";
+
+                    foreach ($validator->messages()->getMessages() as $field_name => $messages)
+                    {
+                        $messageContent .= $messages[0]." "; 
+                    }
+
+                    return redirect()->back()->withInput(['name', 'email', 'main_phone', 'alt_phone', 'mode_of_payment', 'payment_details', 'pick_up_address', 'header_image'])->with($messageType, $messageContent);
+                }
+
+                
+                //check for username existence in system
+                if (Vendor::where([
+                        ['username', "=", str_slug($request->name, 2)],
+                        ['id', '<>', $vendor->id]
+                    ])->first()) {
+                    return redirect()->back()->withInput(['name', 'email', 'main_phone', 'alt_phone', 'mode_of_payment', 'payment_details', 'pick_up_address', 'header_image'])->with("error_message", "Name already associated with a Vendor");
+                }
+
+                //check for numbers being the same
+                if ($request->main_phone == $request->alt_phone) {
+                    return redirect()->back()->withInput(['name', 'email', 'main_phone', 'alt_phone', 'mode_of_payment', 'payment_details', 'pick_up_address', 'header_image'])->with("error_message", "Main number cannot be the same as the alternate number");
+                }
+
+                //check and update header if it is set
+                if ($request->hasFile('header_image')) {
+                    /*--- save header file ---*/
+                    $header_file = $request->file('header_image');
+                    if ($header_file->getClientOriginalExtension() != "jpg") {
+                        return redirect()->back()->withInput(['name', 'email', 'main_phone', 'alt_phone', 'mode_of_payment', 'payment_details', 'pick_up_address', 'header_image'])->with("error_message", "Header image must be of type: .jpg");
+                    }
+                    $sub_path = 'app/assets/img/vendor-banner/'; 
+                    $destination_path = public_path($sub_path);  
+                    $header_file->move($destination_path,  $vendor->id.".jpg");
+                }
+
+
+                //update details
+                $vendor->name              = ucwords(strtolower($request->name));
+                $vendor->username          = $updatedVendorSlug = str_slug($vendor->name , '-');
+                $vendor->phone             = "233".substr($request->main_phone, 1);
+                $vendor->alt_phone         = "233".substr($request->alt_phone, 1);
+                $vendor->email             = strtolower($request->email);
+                $vendor->address           = ucwords($request->pick_up_address);
+                $vendor->mode_of_payment   = $request->mode_of_payment;
+                $vendor->payment_details   = ucwords($request->payment_details);
+
+
+                /*--- log activity ---*/
+                activity()
+                ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Vendor Details Update';
+                })
+                ->log(Auth::guard('manager')->user()->email." updated the details of vendor, ".$vendor->name);
+
+                $success_message = $vendor->name."'s details updated successfully.";
+                $vendor->save();
+                
+                return redirect()->route("manager.show.vendor", $updatedVendorSlug)->with("success_message", $success_message);
+                break;
+
+            case 'record_payout':
+                
+                /*--- Record transaction ---*/
+                $transaction = new AccountTransaction;
+                $transaction->trans_type                = "Vendor Payout";
+                $transaction->trans_amount              = $request->pay_out_amount;
+                $transaction->trans_credit_account_type = 1;
+                $transaction->trans_credit_account      = "INT-SC001";
+                $transaction->trans_debit_account_type  = 4;
+                $transaction->trans_debit_account       = $vendor->id;
+                $transaction->trans_description         = "Payout of GH¢ ".$request->pay_out_amount." to ".$vendor->name;
+                $transaction->trans_date                = date("Y-m-d G:i:s");
+                $transaction->trans_recorder            = Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name;
+                $transaction->save();
+
+                /*--- Update Associate Balance ---*/
+                $vendor->balance -= $request->pay_out_amount;
+
+                /*--- Update Main Account Balance ---*/
+                $counts = Count::first();
+                $counts->account = round($counts->account - $request->pay_out_amount, 2);
+                $counts->save();
+
+                /*--- Notify vendor ---*/
+                $sms = new SMS;
+                $sms->sms_message = "Dear ".$vendor->name.", a payout of GHS ".$request->pay_out_amount." has been recorded to you. Your new balance is GHS ".$vendor->balance;
+                $sms->sms_phone = $vendor->phone;
+                $sms->sms_state = 1;
+                $sms->save();
+
+                /*--- log activity ---*/
+                activity()
+                ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Vendor Payout';
+                })
+                ->log(Auth::guard('manager')->user()->email." recorded a payout of GH¢ ".$request->pay_out_amount." to vendor, ".$vendor->name);
+
+                $success_message = "Payout of GH¢ ".$request->pay_out_amount." to ".$vendor->name." recorded successfully.";
+                $vendor->save();
+                
+                return redirect()->back()->with("success_message", $success_message);
+                
+                break;
+            default:
+                return redirect()->back()->with("error_message", "Something went wrong. Please try again.");
+                break;
+        }
     }
 
     public function showPickupHistory(){

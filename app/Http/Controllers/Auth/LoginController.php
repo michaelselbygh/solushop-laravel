@@ -416,12 +416,32 @@ class LoginController extends Controller
             $sms->sms_state = 1;
             $sms->save();
 
+            /*--- log activity ---*/
+            activity()
+            ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
+            ->tap(function(Activity $activity) {
+                $activity->subject_type = 'System';
+                $activity->subject_id = '0';
+                $activity->log_name = 'Customer Password Reset';
+            })
+            ->log(Auth::user()->email.' reset their account password with phone number '.$request->phone);
+
             //set success message
             $messageType = 'success_message';
             $messageContent = 'Password reset successfully. Please give up to a minute to receive the sms.';
 
 
         }else{
+            /*--- log activity ---*/
+            activity()
+            ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
+            ->tap(function(Activity $activity) {
+                $activity->subject_type = 'System';
+                $activity->subject_id = '0';
+                $activity->log_name = 'Customer Password Reset Attempt';
+            })
+            ->log(Auth::user()->email.'attempted to reset account password with phone number '.$request->phone);
+
             //set error message
             $messageType = 'error_message';
             $messageContent = 'Sorry, no matching records found.';

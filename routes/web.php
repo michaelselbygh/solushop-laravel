@@ -96,18 +96,20 @@ Route::prefix('portal')->group(function(){
         Route::get('/guide/pick-up', 'ManagerController@showPickUpGuide')->name('manager.show.pick.up.guide');
 
         //general pages
-        Route::get('/customers', 'ManagerController@showCustomers')->name('manager.show.customers');
+        
         Route::get('/customer/{customerID}', 'ManagerController@showCustomer')->name('manager.show.customer');
         Route::post('/customer/{customerID}', 'ManagerController@processCustomer')->name('manager.process.customer');
-        Route::get('/orders', 'ManagerController@showOrders')->name('manager.show.orders');
-        Route::post('/orders', 'ManagerController@processOrders')->name('manager.process.orders');
+        Route::get('/customers', 'ManagerController@showCustomers')->name('manager.show.customers');
         Route::get('/order/{orderID}', 'ManagerController@showOrder')->name('manager.show.order');
         Route::post('/order/{orderID}', 'ManagerController@processOrder')->name('manager.process.order');
-        Route::get('/messages', 'ManagerController@showMessages')->name('manager.show.messages');
+        Route::get('/orders', 'ManagerController@showOrders')->name('manager.show.orders');
+        Route::post('/orders', 'ManagerController@processOrders')->name('manager.process.orders');
         Route::get('/messages/flagged', 'ManagerController@showFlaggedMessages')->name('manager.show.flagged.messages');
+        Route::post('/messages/flagged', 'ManagerController@processFlaggedMessages')->name('manager.process.flagged.messages');
         Route::get('/messages/deleted', 'ManagerController@showDeletedMessages')->name('manager.show.deleted.messages');
-        Route::get('/messages/{conversationID}', 'ManagerController@showConversation')->name('manager.show.conversation');
-        Route::post('/messages/{conversationID}', 'ManagerController@processConversation')->name('manager.process.conversation');
+        Route::get('/conversation/{conversationID}', 'ManagerController@showConversation')->name('manager.show.conversation');
+        Route::post('/conversation/{conversationID}', 'ManagerController@processConversation')->name('manager.process.conversation');
+        Route::get('/conversations', 'ManagerController@showMessages')->name('manager.show.messages');
         Route::get('/products', 'ManagerController@showProducts')->name('manager.show.products');
         Route::get('/products/deleted', 'ManagerController@showDeletedProducts')->name('manager.show.deleted.products');
         Route::get('/products/add', 'ManagerController@showAddProduct')->name('manager.show.add.product');

@@ -52,4 +52,9 @@ class Vendor extends Authenticatable
     {
         return $this->hasMany('App\Product', 'product_vid', 'id' );
     }
+
+    public function subscription()
+    {
+        return $this->hasOne('App\VendorSubscription', 'vs_vendor_id', 'id' );
+    }
 }

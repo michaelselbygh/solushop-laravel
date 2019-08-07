@@ -11,4 +11,9 @@ class VendorSubscription extends Model
     {
         return $this->hasOne('App\Vendor', 'id', 'vs_vendor_id');
     }
+
+    public function package()
+    {
+        return $this->hasOne('App\VSPackage', 'id', 'vs_vsp_id');
+    }
 }

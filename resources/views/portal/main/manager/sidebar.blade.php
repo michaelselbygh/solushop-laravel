@@ -101,13 +101,13 @@
                             <li class=" nav-item"><a href="{{ route("manager.show.delivery.partners") }}"><i class="la la-gift" style="color:#f68b1e;"></i><span class="menu-title">Delivery Partners</span></a>
                                 <ul class="menu-content">
                                     <li>
-                                        <a class="menu-item" href="{{ route("manager.show.add.delivery.partner") }}">
-                                            <span>Add Delivery Partner</span>
+                                        <a class="menu-item" href="{{ route("manager.show.delivery.partners") }}">
+                                            <span>Manage Delivery Partners</span>
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="menu-item" href="{{ route("manager.show.delivery.partners") }}">
-                                            <span>Manage Delivery Partners</span>
+                                        <a class="menu-item" href="{{ route("manager.show.add.delivery.partner") }}">
+                                            <span>Add Delivery Partner</span>
                                         </a>
                                     </li>
                                 </ul>
@@ -129,13 +129,13 @@
                             <li class=" nav-item"><a href="{{ route("manager.show.sales.associates") }}"><i class="la la-signal" style="color:#f68b1e;"></i><span class="menu-title">Sales Associates</span></a>
                                 <ul class="menu-content">
                                     <li>
-                                        <a class="menu-item" href="{{ route("manager.show.add.sales.associate") }}">
-                                            <span>Add Sales Associate</span>
+                                        <a class="menu-item" href="{{ route("manager.show.sales.associates") }}">
+                                            <span>Manage Sales Associates</span>
                                         </a>
                                     </li>
                                     <li>
-                                        <a class="menu-item" href="{{ route("manager.show.sales.associates") }}">
-                                            <span>Manage Sales Associates</span>
+                                        <a class="menu-item" href="{{ route("manager.show.add.sales.associate") }}">
+                                            <span>Add Sales Associate</span>
                                         </a>
                                     </li>
                                 </ul>

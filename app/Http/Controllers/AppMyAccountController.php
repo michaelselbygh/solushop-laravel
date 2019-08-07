@@ -304,7 +304,7 @@ class AppMyAccountController extends Controller
         }
 
         for ($i=0; $i < sizeof($flag_keywords); $i++) { 
-            if (strpos($request->message_content, $flag_keywords[$i]) !== false) {
+            if (strpos(strtolower($request->message_content), $flag_keywords[$i]) !== false) {
                 $flag = 1;
                 break;
             }
@@ -315,6 +315,16 @@ class AppMyAccountController extends Controller
             $message_flag = new MessageFlag;
             $message_flag->mf_mid = $message->id;
             $message_flag->save();
+
+        /*--- log activity ---*/
+        activity()
+        ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
+        ->tap(function(Activity $activity) {
+            $activity->subject_type = 'System';
+            $activity->subject_id = '0';
+            $activity->log_name = 'Message Flagged!';
+        })
+        ->log("Flag raised on message sent by ".Auth::user()->email.' ['.$request->message_content.']');
         }
         /*--- log activity ---*/
         activity()
