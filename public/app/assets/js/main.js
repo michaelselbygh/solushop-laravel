@@ -84,9 +84,9 @@ if ($(this).scrollTop() >150){
 $(".embed-responsive iframe").addClass("embed-responsive-item");
 $(".carousel-inner .item:first-child").addClass("active");
 //    category heading
-$('.category-heading').on('click', function(){
-    $('.category-menu-list').slideToggle(300);
-});	    
+// $('.category-heading').on('click', function(){
+//     $('.category-menu-list').slideToggle(300);
+// });	    
     
 /*----------------------------------
     4. Nivo slider Active

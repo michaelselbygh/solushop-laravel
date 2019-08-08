@@ -58,7 +58,7 @@
                                                         <button onclick="submitProductAction('disapprove|{{$products[$i]['id']}}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Disapprove {{ $products[$i]["product_name"] }}" style="margin-top: 3px;" class="btn btn-warning btn-sm round">
                                                             <i class="ft-alert-triangle"></i>
                                                         </button>
-                                                        <button onclick="submitProductAction('delete|{{$products[$i]['id']}}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Delete {{ $products[$i]["product_name"] }}" style="margin-top: 3px; background-color: red !important; border-color: red !important" class="btn btn-success btn-sm round">
+                                                        <button onclick="submitProductAction('delete|{{$products[$i]['id']}}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Delete {{ $products[$i]["product_name"] }}" style="margin-top: 3px;" class="btn btn-danger btn-sm round">
                                                             <i class="ft-trash"></i>
                                                         </button>
                                                         @break
@@ -67,14 +67,14 @@
                                                         <button onclick="submitProductAction('reject|{{$products[$i]['id']}}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Reject {{ $products[$i]["product_name"] }}" style="margin-top: 3px;" class="btn btn-warning btn-sm round">
                                                             <i class="ft-x"></i>
                                                         </button>
-                                                        <button onclick="submitProductAction('delete|{{$products[$i]['id']}}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Delete {{ $products[$i]["product_name"] }}" style="margin-top: 3px; background-color: red !important; border-color: red !important" class="btn btn-success btn-sm round">
+                                                        <button onclick="submitProductAction('delete|{{$products[$i]['id']}}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Delete {{ $products[$i]["product_name"] }}" style="margin-top: 3px;" class="btn btn-danger btn-sm round">
                                                             <i class="ft-trash"></i>
                                                         </button>
                                                         
                                                         @break
                                                     @case(3)
                                                         {{-- Rejected | Approve, Delete--}}
-                                                        <button onclick="submitProductAction('delete|{{$products[$i]['id']}}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Delete {{ $products[$i]["product_name"] }}" style="margin-top: 3px; background-color: red !important; border-color: red !important" class="btn btn-success btn-sm round">
+                                                        <button onclick="submitProductAction('delete|{{$products[$i]['id']}}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Delete {{ $products[$i]["product_name"] }}" style="margin-top: 3px;" class="btn btn-danger btn-sm round">
                                                             <i class="ft-trash"></i>
                                                         </button>
                                                         @break
@@ -83,7 +83,7 @@
                                                         <button onclick="submitProductAction('reject|{{$products[$i]['id']}}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Reject {{ $products[$i]["product_name"] }}" style="margin-top: 3px;" class="btn btn-warning btn-sm round">
                                                             <i class="ft-x"></i>
                                                         </button>
-                                                        <button onclick="submitProductAction('delete|{{$products[$i]['id']}}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Delete {{ $products[$i]["product_name"] }}" style="margin-top: 3px; background-color: red !important; border-color: red !important" class="btn btn-success btn-sm round">
+                                                        <button onclick="submitProductAction('delete|{{$products[$i]['id']}}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Delete {{ $products[$i]["product_name"] }}" style="margin-top: 3px;" class="btn btn-danger btn-sm round">
                                                             <i class="ft-trash"></i>
                                                         </button>
                                                         @break

@@ -71,7 +71,7 @@
                                                         <i class="ft-eye"></i>
                                                     </button>
                                                 </a>
-                                                <button onclick="submitItemPickedUpForm('{{ $pick_up_items[$i]['id'] }}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Mark {{ $pick_up_items[$i]["oi_name"] }} as picked up" style="margin-top: 3px; background-color: green !important; border-color: green !important" class="btn btn-success btn-sm round">
+                                                <button onclick="submitItemPickedUpForm('{{ $pick_up_items[$i]['id'] }}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Mark {{ $pick_up_items[$i]["oi_name"] }} as picked up" style="margin-top: 3px;" class="btn btn-success btn-sm round">
                                                     <i class="ft-check"></i>
                                                 </button>
                                             </td>

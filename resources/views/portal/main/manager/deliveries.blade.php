@@ -65,12 +65,12 @@
                                             <td>{{ $delivery_items[$i]["updated_at"] }}</td>
                                             <td>
                                                 <a href="{{ url('portal/manager/product/'.$delivery_items[$i]["sku"]["product"]["id"]) }}">
-                                                    <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="View {{ $delivery_items[$i]["oi_name"] }}"  style="margin-top: 3px;" class="btn btn-info btn-sm round">
+                                                    <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="View {{ $delivery_items[$i]["oi_name"] }}"   class="btn btn-info btn-sm round">
                                                         <i class="ft-eye"></i>
                                                     </button>
                                                 </a>
                                                 @if($delivery_items[$i]["oi_state"] == 3)
-                                                    <button onclick="submitItemDeliveredForm('{{ $delivery_items[$i]['id'] }}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Mark {{ $delivery_items[$i]["oi_name"] }} as delivered" style="margin-top: 3px; background-color: green !important; border-color: green !important" class="btn btn-success btn-sm round">
+                                                    <button onclick="submitItemDeliveredForm('{{ $delivery_items[$i]['id'] }}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Mark {{ $delivery_items[$i]["oi_name"] }} as delivered" class="btn btn-success btn-sm round">
                                                         <i class="ft-check"></i>
                                                     </button>
                                                 @endif

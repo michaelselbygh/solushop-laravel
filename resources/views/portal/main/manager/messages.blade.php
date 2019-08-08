@@ -39,15 +39,15 @@
                                                 <td>{{ $messages['all'][$i]['message']["updated_at"] }}</td>
                                                 <td>
                                                     <a href="{{ route("manager.show.conversation", $messages['all'][$i]['message']['message_conversation_id']) }}">
-                                                        <button  data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="View Conversation" style="margin-top: 3px;" class="btn btn-success btn-sm round">
+                                                        <button  data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="View Conversation" style="margin-top: 3px;" class="btn btn-info btn-sm round">
                                                             <i class="ft-eye"></i>
                                                         </button>
                                                     </a>
                                                     
-                                                    <button onclick="submitMessageAction('delete|{{$messages['all'][$i]['message']['id']}}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Delete Message" style="margin-top: 3px; background-color: red !important; border-color: red !important" class="btn btn-success btn-sm round">
+                                                    <button onclick="submitMessageAction('delete|{{$messages['all'][$i]['message']['id']}}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Delete Message" style="margin-top: 3px;" class="btn btn-danger btn-sm round">
                                                         <i class="ft-x"></i>
                                                     </button>
-                                                    <button onclick="submitMessageAction('approve|{{$messages['all'][$i]['message']['id']}}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Approve message as safe" style="margin-top: 3px; background-color: green !important; border-color: green !important" class="btn btn-success btn-sm round">
+                                                    <button onclick="submitMessageAction('approve|{{$messages['all'][$i]['message']['id']}}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Approve message as safe" style="margin-top: 3px;" class="btn btn-success btn-sm round">
                                                         <i class="ft-check"></i>
                                                     </button>
                                                 </td>

@@ -18,9 +18,9 @@
                 <div class="col-md-3 col-sm-3">
                     <div class="side-menu">
                         <div class="category-heading">
-                            <h2><i class="ion-android-menu"></i><span>Categories</span></h2>
+                            <h2><span>Categories</span></h2>
                         </div>
-                        <div id="cate-toggle" class="category-menu-list">
+                        <div id="no-toggle" class="category-menu-list no-toggle">
                             <ul>
                                 @for ($i = 0; $i < sizeof($side_bar_pc_options); $i++)
 

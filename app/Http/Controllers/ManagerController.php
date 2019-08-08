@@ -7,11 +7,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Spatie\Activitylog\Contracts\Activity;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\File;
+use Illuminate\Validation\Rule;
 use Auth;
 use PDF;
+use Image;
 
 use App\AccountTransaction;
 use App\ActivityLog;
+use App\CartItem;
 use App\Conversation;
 use App\Count;
 use App\Coupon;
@@ -26,12 +30,15 @@ use App\Order;
 use App\OrderItem;
 use App\PickedUpItem;
 use App\Product;
+use App\ProductImage;
+use App\ProductCategory;
 use App\SABadge;
 use App\SalesAssociate;
 use App\SMS;
 use App\StockKeepingUnit;
 use App\Vendor;
 use App\VendorSubscription;
+use App\WishlistItem;
 
 
 
@@ -971,6 +978,26 @@ class ManagerController extends Controller
 
     public function processProducts(Request $request){
         switch ($request->product_action) {
+            case 'approve':
+                /*--- change product state ---*/
+                Product::
+                    where([
+                        ['id', "=", $request->product_id]
+                    ])->update([
+                        'product_state' => 1
+                    ]);
+                /*--- log activity ---*/
+                activity()
+                ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Product Approved';
+                })
+                ->log(Auth::guard('manager')->user()->email." approved product ".$request->product_id);
+                return redirect()->back()->with("success_message", "Product ".$request->product_id." approved successfully.");
+                break;
+
             case 'reject':
                 /*--- change product state ---*/
                 Product::
@@ -1072,24 +1099,436 @@ class ManagerController extends Controller
             ->toArray());
     }
 
-    public function processDeletedProducts(Request $request){
-
-    }
 
     public function showAddProduct(){
+       /*--- Category Options ---*/
+       $product["category_options"] = ProductCategory::orderBy('pc_description')->where('pc_level', 3)->get()->toArray();
 
+       /*--- Vendor Options ---*/
+       $product["vendor_options"] = Vendor::orderBy('name')->get()->toArray();
+
+       return view("portal.main.manager.add-product")
+           ->with("product", $product);
     }
 
-    public function processAddProduct(){
+    public function processAddProduct(Request $request){
+        /*--- Validate Details ---*/
+        /*--- Validate form data  ---*/
+        $validator = Validator::make($request->all(), [
+            'vendor' => 'required',
+            'name' => 'required',
+            'features' => 'required',
+            'category' => 'required',
+            'settlement_price' => 'required',
+            'selling_price' => 'required',
+            'discount' => 'required',
+            'dd' => 'required',
+            'dc' => 'required',
+            'type' => 'required'
+        ]);
 
+        if ($validator->fails()) {
+            $messageType = "error_message";
+            $messageContent = "";
+
+            foreach ($validator->messages()->getMessages() as $field_name => $messages)
+            {
+                $messageContent .= $messages[0]." "; 
+            }
+
+            return redirect()->back()->with($messageType, $messageContent);
+        }
+
+        /*--- Validate Images ---*/
+        for ($i=0; $i < sizeof($request->product_images); $i++) { 
+            if($request->product_images[$i]->getClientOriginalExtension() != "jpg"){
+                return back()->with("error_message", "Images must be of type jpg");
+            }
+
+            list($width, $height) = getimagesize($request->product_images[$i]);
+            if ($width != $height or $height < 600) {
+                return back()->with("error_message", "Images must be minimum height 600px with aspect ratio of 1");
+            }
+
+            if(filesize($request->product_images[$i]) > 5000000){
+                return back()->with("error_message", "One or more images exceed the allowed size for upload.");
+            }
+        }
+
+        /*--- Validate and generate Product Slug ---*/
+        if((Product::where([
+            ['product_vid', '=', $request->vendor],
+            ['product_name', '=', $request->name]
+        ])->get()->count()) > 0){
+            $product_slug_count = Product::where([
+                ['product_vid', '=', $request->vendor],
+                ['product_name', '=', $request->name]
+            ])->get()->count();
+            $product_slug_count++;
+            $product_slug = str_slug($request->name)."-".$product_slug_count;
+        }else{
+            $product_slug = str_slug($request->name);
+        }
+
+        /*--- Generate product id and set detail variables ---*/
+        $count = Count::first();
+        $count->product_count++;
+
+        $product = New Product;
+        $product_id = "P-".date("Ymd")."-".$count->product_count;
+        $product->id = $product_id;
+        $product->product_vid = $request->vendor;
+        $product->product_name = ucwords(strtolower($request->name));
+        $product->product_slug = $product_slug;
+        $product->product_features = $request->features;
+        $product->product_cid = $request->category;
+        $product->product_settlement_price = $request->settlement_price;
+        $product->product_selling_price = $request->selling_price;
+        $product->product_discount = $request->discount;
+        $product->product_dd = $request->dd;
+        $product->product_dc = $request->dc;
+        $product->product_description = $request->description;
+        $product->product_tags = $request->tags;
+        $product->product_type = $request->type;
+        $product->product_state = 2;
+        $product->product_views = 0;
+
+
+        /*--- Save product stock --- */
+        $count->sku_count++;
+
+        $sku = new StockKeepingUnit;
+        $sku->id                        = "S-".($count->sku_count);
+        $sku->sku_product_id            = $product_id;
+        $sku->sku_variant_description   = $request->input('variantDescription0');
+        $sku->sku_selling_price         = $product->product_selling_price;
+        $sku->sku_settlement_price      = $product->product_settlement_price;
+        $sku->sku_discount              = $product->product_discount;
+        $sku->sku_stock_left            = $request->input('stock0');
+        $sku->save();
+
+        for ($i=1; $i < $request->newSKUCount; $i++) { 
+            if ((ucfirst(trim($request->input('variantDescription'.$i))) != "None") AND ($request->input('stock'.$i) >= 0)) {
+                //insert sku
+                $count->sku_count++;
+
+                $sku = new StockKeepingUnit;
+                $sku->id                        = "S-".($count->sku_count);
+                $sku->sku_product_id            = $product_id;
+                $sku->sku_variant_description   = $request->input('variantDescription'.$i);
+                $sku->sku_selling_price         = $product->product_selling_price;
+                $sku->sku_settlement_price      = $product->product_settlement_price;
+                $sku->sku_discount              = $product->product_discount;
+                $sku->sku_stock_left            = $request->input('stock'.$i);
+                $sku->save();
+
+            }
+        }
+
+        /*--- Save product images --- */
+        for ($i=0; $i < sizeof($request->product_images); $i++) { 
+                    
+            $product_image = new ProductImage;
+            $product_image->pi_product_id = $product_id;
+            $product_image->pi_path = $product_id.rand(1000, 9999);
+
+            $img = Image::make($request->product_images[$i]);
+
+            //save original image
+            $img->save('app/assets/img/products/original/'.$product_image->pi_path.'.jpg');
+
+            //save main image
+            $img->resize(600, 600);
+            $img->insert('portal/images/watermark/stamp.png', 'center');
+            $img->save('app/assets/img/products/main/'.$product_image->pi_path.'.jpg');
+
+            //save thumbnail
+            $img->resize(300, 300);
+            $img->save('app/assets/img/products/thumbnails/'.$product_image->pi_path.'.jpg');
+
+            //store image details
+            $product_image->save();
+        }
+
+
+        /*--- Save product --- */
+        $product->save();
+        $count->save();
+
+        /*--- log activity ---*/
+        activity()
+        ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+        ->tap(function(Activity $activity) {
+            $activity->subject_type = 'System';
+            $activity->subject_id = '0';
+            $activity->log_name = 'Product Added';
+        })
+        ->log(Auth::guard('manager')->user()->email." added product ".$product_id);
+        return redirect()->back()->with("success_message", "Product ".$product_id." added successfully.");
+
+        
     }
 
-    public function showProduct(){
+    public function showProduct($productID){
+        if (is_null(Product::where('id', $productID)->first())) {
+            return redirect()->back()->with("error_message", "Product not found");
+        }
 
+        $product =  Product::
+        where('id', $productID)
+        ->with('images', 'skus', 'vendor', 'state')
+        ->first()
+        ->toArray();
+
+        /*--- Build SKU array ---*/
+        $sku_array = [];
+        for ($i=0; $i < sizeof($product["skus"]); $i++) { 
+            $sku_array[$i] = $product["skus"][$i]["id"];
+        }
+
+
+        /*--- Stats ---*/
+        $product["stats"]["wishlist"] = WishlistItem::
+            where('wi_product_id', $product["id"])
+            ->count();
+
+        $product["stats"]["cart"] = CartItem::
+        whereIn('ci_sku', $sku_array)
+        ->count();
+
+        $product["stats"]["purchases"] = OrderItem::
+        whereIn('oi_sku', $sku_array)
+        ->whereIn('oi_state', [2, 3, 4])
+        ->count();
+
+        /*--- Category Options ---*/
+        $product["category_options"] = ProductCategory::orderBy('pc_description')->where('pc_level', 3)->get()->toArray();
+
+        /*--- Vendor Options ---*/
+        $product["vendor_options"] = Vendor::orderBy('name')->get()->toArray();
+
+        return view("portal.main.manager.product")
+            ->with("product", $product);
     }
 
-    public function processProduct(){
+    public function processProduct(Request $request, $productID){
+        switch ($request->product_action) {
+            case 'update_details':
+                /*--- Validate form data  ---*/
+                $validator = Validator::make($request->all(), [
+                    'vendor' => 'required',
+                    'name' => 'required',
+                    'features' => 'required',
+                    'category' => 'required',
+                    'settlement_price' => 'required',
+                    'selling_price' => 'required',
+                    'discount' => 'required',
+                    'dd' => 'required',
+                    'dc' => 'required',
+                    'type' => 'required'
+                ]);
 
+                if ($validator->fails()) {
+                    $messageType = "error_message";
+                    $messageContent = "";
+
+                    foreach ($validator->messages()->getMessages() as $field_name => $messages)
+                    {
+                        $messageContent .= $messages[0]." "; 
+                    }
+
+                    return redirect()->back()->with($messageType, $messageContent);
+                }
+
+                $product = Product::where('id', $productID)->first();
+
+                /*--- Validate Product Slug ---*/
+                if(trim(strtolower($request->name)) != trim(strtolower($product->product_name))){
+                    if((Product::where([
+                        ['product_vid', '=', $request->vendor],
+                        ['product_name', '=', $request->name],
+                        ['id', '<>', $productID]
+                    ])->get()->count()) > 0){
+                        $product_slug_count = Product::where([
+                            ['product_vid', '=', $request->vendor],
+                            ['product_name', '=', $request->name],
+                            ['id', '<>', $productID]
+                        ])->get()->count();
+                        $product_slug_count++;
+                        $product_slug = str_slug($request->name)."-".$product_slug_count;
+                    }else{
+                        $product_slug = str_slug($request->name);
+                    }
+                }else{
+                    $product_slug = $product->product_slug;
+                }
+
+
+                /*--- Update Details ---*/
+                
+                $product->product_vid = $request->vendor;
+                $product->product_name = ucwords(strtolower($request->name));
+                $product->product_slug = $product_slug;
+                $product->product_features = $request->features;
+                $product->product_cid = $request->category;
+                $product->product_settlement_price = $request->settlement_price;
+                $product->product_selling_price = $request->selling_price;
+                $product->product_discount = $request->discount;
+                $product->product_dd = $request->dd;
+                $product->product_dc = $request->dc;
+                $product->product_description = $request->description;
+                $product->product_tags = $request->tags;
+                $product->product_type = $request->type;
+                $product->save();
+
+
+                /*--- log activity ---*/
+                activity()
+                ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Product Details Updated';
+                })
+                ->log(Auth::guard('manager')->user()->email." updated details of product ".$productID);
+                return redirect()->back()->with("success_message", "Product ".$productID." details updated successfully.");
+                break;
+
+            case 'update_stock':
+                /*--- update old stock ---*/
+                for ($i=0; $i < $request->skuCount; $i++) { 
+                    $sku = StockKeepingUnit::where('id', $request->input('sku'.$i))->first();
+                    $sku->sku_stock_left = $request->input('stock'.$i);
+                    $sku->save();
+                }
+
+                /*--- add new stock (if any) ---*/
+                if ($request->newSKUCount > $request->skuCount) {
+                     //select product
+                     $product = Product::where('id', $productID)->first();
+                    for ($i=$request->skuCount; $i < $request->newSKUCount; $i++) { 
+                        if ((ucfirst(trim($request->input('variantDescription'.$i))) != "None") AND ($request->input('stock'.$i) >= 0)) {
+                            //insert sku
+                            $count = Count::first();
+                            $count->sku_count++;
+
+                            $sku = new StockKeepingUnit;
+                            $sku->id                        = "S-".($count->sku_count);
+                            $sku->sku_product_id            = $product->id;
+                            $sku->sku_variant_description   = $request->input('variantDescription'.$i);
+                            $sku->sku_selling_price         = $product->product_selling_price;
+                            $sku->sku_settlement_price      = $product->product_settlement_price;
+                            $sku->sku_discount              = $product->product_discount;
+                            $sku->sku_stock_left            = $request->input('stock'.$i);
+                            $sku->save();
+
+                            //update count
+                            $count->save();
+                        }
+                    }
+
+                }
+
+                /*--- log activity ---*/
+                activity()
+                ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Product Stock Updated';
+                })
+                ->log(Auth::guard('manager')->user()->email." updated stock of product ".$productID);
+                return redirect()->back()->with("success_message", "Product ".$productID." stock updated successfully.");
+                break;
+
+            case 'delete_image':
+                //select image
+                $image = ProductImage::where('id', $request->image_id)->first();
+
+                //delete files
+                $main_image_path = "app/assets/img/products/main/";
+                $thumbnail_image_path = "app/assets/img/products/thumbnails/";
+                $original_image_path = "app/assets/img/products/original/";
+
+                File::delete($main_image_path.$image->pi_path.'.jpg');
+                File::delete($thumbnail_image_path.$image->pi_path.'.jpg');
+                File::delete($original_image_path.$image->pi_path.'.jpg');
+
+                //delete image
+                $image->delete();
+
+
+                /*--- log activity ---*/
+                activity()
+                ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Product Image Deleted';
+                })
+                ->log(Auth::guard('manager')->user()->email." deleted image ".$request->image_id." of product ".$productID);
+                return redirect()->back()->with("success_message", "Image ".$request->image_id." deleted successfully.");
+                break;
+            
+            case 'add_images':
+
+                //validate images
+                for ($i=0; $i < sizeof($request->product_images); $i++) { 
+                    if($request->product_images[$i]->getClientOriginalExtension() != "jpg"){
+                        return back()->with("error_message", "Images must be of type jpg");
+                    }
+
+                    list($width, $height) = getimagesize($request->product_images[$i]);
+                    if ($width != $height or $height < 600) {
+                        return back()->with("error_message", "Images must be minimum height 600px with aspect ratio of 1");
+                    }
+
+                    if(filesize($request->product_images[$i]) > 5000000){
+                        return back()->with("error_message", "One or more images exceed the allowed size for upload.");
+                    }
+                }
+
+                //process images
+                for ($i=0; $i < sizeof($request->product_images); $i++) { 
+                    
+                    $product_image = new ProductImage;
+                    $product_image->pi_product_id = $productID;
+                    $product_image->pi_path = $productID.rand(1000, 9999);
+
+                    $img = Image::make($request->product_images[$i]);
+
+                    //save original image
+                    $img->save('app/assets/img/products/original/'.$product_image->pi_path.'.jpg');
+
+                    //save main image
+                    $img->resize(600, 600);
+                    $img->insert('portal/images/watermark/stamp.png', 'center');
+                    $img->save('app/assets/img/products/main/'.$product_image->pi_path.'.jpg');
+
+                    //save thumbnail
+                    $img->resize(300, 300);
+                    $img->save('app/assets/img/products/thumbnails/'.$product_image->pi_path.'.jpg');
+
+                    //store image details
+                    $product_image->save();
+                }
+
+                /*--- log activity ---*/
+                activity()
+                ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Product Image(s) Uploaded';
+                })
+                ->log(Auth::guard('manager')->user()->email." uploaded images for product ".$productID);
+                return redirect()->back()->with("success_message", "Upload Successful.");
+                break;
+
+            default:
+                return redirect()->back()->with("error_message", "Something went wrong. Please try again.");
+                break;
+        }
     }
 
     public function showVendors(){
