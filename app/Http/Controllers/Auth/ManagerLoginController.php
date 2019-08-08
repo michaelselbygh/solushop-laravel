@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Spatie\Activitylog\Contracts\Activity;
+use Spatie\Activitylog\Contracts\Activity; 
 use Auth;
 
 use App\Manager;

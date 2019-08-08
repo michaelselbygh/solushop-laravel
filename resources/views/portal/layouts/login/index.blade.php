@@ -56,9 +56,11 @@
                                             <img src="{{ url('portal/images/logo/logo.png') }}" style="width: 180px; height: auto; padding-top: 40px; padding-bottom: 20px;" alt="New Lucky Logo">
                                         </div>
                                         <h6 class="card-subtitle line-on-side text-muted text-center font-small-3 pt-2"><span>Login as <b> @yield('entity') </b></span></h6><br>
+                                        
                                     </div>
                                     <div class="card-content">
                                         <div class="card-body" style="padding-top: 0px; padding-bottom: 15px;">
+                                            @include('portal.main.success-and-error.message')
                                             @yield('login')
                                         </div>
                                     </div>

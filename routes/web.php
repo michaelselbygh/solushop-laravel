@@ -156,6 +156,8 @@ Route::prefix('portal')->group(function(){
         Route::get('/login', 'Auth\VendorLoginController@showLoginForm')->name('vendor.login');
         Route::post('/login', 'Auth\VendorLoginController@login')->name('vendor.login.submit');
         Route::get('/logout', 'Auth\VendorLoginController@logout')->name('vendor.logout');
+        Route::get('/products', 'VendorController@showProducts')->name('vendor.show.products');
+        Route::post('/products', 'VendorController@processProducts')->name('vendor.process.products');
         Route::get('/', 'VendorController@index')->name('vendor.dashboard');
     });
 
@@ -172,6 +174,10 @@ Route::prefix('portal')->group(function(){
         Route::get('/login', 'Auth\DeliveryPartnerLoginController@showLoginForm')->name('delivery-partner.login');
         Route::post('/login', 'Auth\DeliveryPartnerLoginController@login')->name('delivery-partner.login.submit');
         Route::get('/logout', 'Auth\DeliveryPartnerLoginController@logout')->name('delivery-partner.logout');
+        Route::get('pick-ups', 'DeliveryPartnerController@showPickups')->name('delivery-partner.show.pick.ups');
+        Route::post('pick-ups', 'DeliveryPartnerController@processPickups')->name('delivery-partner.process.pick.ups');
+        Route::get('deliveries', 'DeliveryPartnerController@showDeliveries')->name('delivery-partner.show.deliveries');
+        Route::post('deliveries', 'DeliveryPartnerController@processDeliveries')->name('delivery-partner.process.deliveries');
         Route::get('/', 'DeliveryPartnerController@index')->name('delivery-partner.dashboard');
     });
 });

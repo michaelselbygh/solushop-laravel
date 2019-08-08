@@ -22,7 +22,8 @@
                                         <th>Product Description</th>
                                         <th>Quantity</th>
                                         <th>Recorded On</th>
-                                        <th>Recorded At</th>
+                                        <th>RTS</th>
+                                        <th>Recorded By</th>
                                         <th>Recorder ID</th>
                                     </tr>
                                 </thead>
@@ -35,6 +36,7 @@
                                             <td>{{ $delivered_items[$i]["order_item"]["oi_name"] }}</td>
                                             <td>{{ $delivered_items[$i]["order_item"]["oi_quantity"] }}</td>
                                             <td>{{ date('g:ia, l jS F Y', strtotime($delivered_items[$i]["created_at"])) }}</td>
+                                            <td>{{ $delivered_items[$i]["created_at"] }}</td>
                                             <td>{{ $delivered_items[$i]["di_marked_by_description"] }}</td>
                                             <td>{{ $delivered_items[$i]["di_marked_by_id"] }}</td>
                                         </tr>
@@ -55,7 +57,7 @@
     $(document).ready(function(){
         $('#delivered-items').dataTable( {
             "order": [
-                [0, 'desc']
+                [6, 'desc']
             ]
         } );
     })

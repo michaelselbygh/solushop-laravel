@@ -5,7 +5,7 @@
 @endsection
 
 @section('login')
-<form class="form-horizontal form-simple" action="{{ route('delivery-partner.login.submit') }}" method="POST" >
+    <form class="form-horizontal form-simple" action="{{ route('delivery-partner.login.submit') }}" method="POST" >
         @csrf
         <fieldset class="form-group position-relative has-icon-left mb-0">
             <input type="text" name="email" class="form-control form-control-lg input-lg" id="email" placeholder="Enter Your Email"
@@ -29,6 +29,6 @@
         </fieldset>
         <div class="form-group row">
         </div>
-        <button type="submit" name="login" class="btn btn-info btn-lg btn-block" style="background-color: #f68c20 !important; border-color: #f68c20 !important; border-radius: 20px;"><i class="ft-unlock"></i> Login</button>
+        <button type="submit" name="login" class="btn btn-info btn-lg btn-block" style="background-color: #f68c20 !important; border-color: #f68c20 !important; border-radius: 10px;"><i class="ft-unlock"></i> Login</button>
     </form>
 @endsection
