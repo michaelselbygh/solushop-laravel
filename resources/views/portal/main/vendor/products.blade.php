@@ -49,6 +49,15 @@
                                                 <button onclick="submitProductAction('delete|{{$products[$i]['id']}}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Delete {{ $products[$i]["product_name"] }}" style="margin-top: 3px;" class="btn btn-danger btn-sm round">
                                                     <i class="ft-trash"></i>
                                                 </button>
+                                                @if ($products[$i]["product_state"] == 1 OR $products[$i]["product_state"] == 2)
+                                                    <button onclick="submitProductAction('deactivate|{{$products[$i]['id']}}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="De-activate {{ $products[$i]["product_name"] }}" style="margin-top: 3px;" class="btn btn-warning btn-sm round">
+                                                        <i class="ft-alert-triangle"></i>
+                                                    </button>
+                                                @elseif($products[$i]["product_state"] == 5)
+                                                    <button onclick="submitProductAction('activate|{{$products[$i]['id']}}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Activate {{ $products[$i]["product_name"] }}" style="margin-top: 3px;" class="btn btn-warning btn-sm round">
+                                                        <i class="ft-rotate-ccw"></i>
+                                                    </button>
+                                                @endif
                                             </td>
                                         </tr>
                                     @endfor
@@ -63,7 +72,7 @@
         </div>
     </section>
 
-    <form id="product-action-form" method="POST" action="{{ route("manager.process.products") }}">
+    <form id="product-action-form" method="POST" action="{{ route("vendor.process.products") }}">
         @csrf
         <input type="hidden" name="product_id" id="product_id"/>
         <input type="hidden" name="product_action" id="product_action"/>

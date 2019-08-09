@@ -176,15 +176,15 @@
                                         <td>{{ $sales_associate["transactions"][$i]["trans_amount"] }}</td>
                                         <td>
                                             @if($sales_associate["transactions"][$i]["trans_debit_account_type"] == 1 AND in_array($sales_associate["transactions"][$i]["trans_credit_account_type"], [2, 4, 6, 8, 10]))
-                                                <img src="{{ url("portal/images/transactions/green-in.png") }}" style="height: 30px;"/>
+                                                <img src="{{ url("portal/images/transactions/green-in.png") }}" style="width: 30px;"/>
                                             @elseif($sales_associate["transactions"][$i]["trans_credit_account_type"] == 1 AND in_array($sales_associate["transactions"][$i]["trans_debit_account_type"], [2, 4, 6, 8, 10]))
-                                                <img src="{{ url("portal/images/transactions/red-out.png") }}" style="height: 30px;"/>
+                                                <img src="{{ url("portal/images/transactions/red-out.png") }}" style="width: 30px;"/>
                                             @elseif($sales_associate["transactions"][$i]["trans_debit_account_type"] == 1 AND in_array($sales_associate["transactions"][$i]["trans_credit_account_type"], [3, 5, 7, 9]))
-                                                <img src="{{ url("portal/images/transactions/yellow-in.png") }}" style="height: 30px;"/>
+                                                <img src="{{ url("portal/images/transactions/yellow-in.png") }}" style="width: 30px;"/>
                                             @elseif($sales_associate["transactions"][$i]["trans_credit_account_type"] == 1 AND in_array($sales_associate["transactions"][$i]["trans_debit_account_type"], [3, 5, 7, 9]))
-                                                <img src="{{ url("portal/images/transactions/yellow-out.png") }}" style="height: 30px;"/>
+                                                <img src="{{ url("portal/images/transactions/yellow-out.png") }}" style="width: 30px;"/>
                                             @else
-                                                <img src="{{ url("portal/images/transactions/neutral.png") }}"/>
+                                                <img src="{{ url("portal/images/transactions/neutral.png") }}" style="width: 30px;"/>
                                             @endif
                                         </td>
                                         <td>{{ $sales_associate["transactions"][$i]["trans_description"] }}</td>

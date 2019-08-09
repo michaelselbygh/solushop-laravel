@@ -105,6 +105,48 @@ class VendorController extends Controller
                 ->log(Auth::guard('manager')->user()->name." deleted product ".$request->product_id);
                 return redirect()->route("vendor.show.products")->with("success_message", "Product ".$request->product_id." deleted successfully.");
                 break;
+
+            case 'deactivate':
+                /*--- change product state ---*/
+                Product::
+                    where([
+                        ['id', "=", $request->product_id]
+                    ])->update([
+                        'product_state' => 5
+                    ]);
+                /*--- log activity ---*/
+                activity()
+                ->causedBy(Vendor::where('id', Auth::guard('vendor')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Product Deactivated';
+                })
+                ->log(Auth::guard('manager')->user()->name." deactivated product ".$request->product_id);
+                return redirect()->route("vendor.show.products")->with("success_message", "Product ".$request->product_id." deactivated successfully.");
+                break;
+
+            case 'activate':
+                /*--- change product state ---*/
+                Product::
+                    where([
+                        ['id', "=", $request->product_id]
+                    ])->update([
+                        'product_state' => 2
+                    ]);
+                /*--- log activity ---*/
+                activity()
+                ->causedBy(Vendor::where('id', Auth::guard('vendor')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Product Activated';
+                })
+                ->log(Auth::guard('manager')->user()->name." activated product ".$request->product_id);
+                return redirect()->route("vendor.show.products")->with("success_message", "Product ".$request->product_id." activated successfully.");
+                break;
+            
+            
             
             default:
                 return redirect()->route("vendor.show.products")->with("error_message", "Something went wrong. Please try again.");

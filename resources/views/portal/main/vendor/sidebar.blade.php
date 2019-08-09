@@ -53,6 +53,14 @@
                     <span class="menu-title">Terms of Use</span>
                 </a>
             </li>
+            @if (Auth::guard('vendor')->user())
+                <li class="nav-item">
+                    <a href="{{ route("vendor.logout") }}">
+                        <i class="la la-lock" style="color:#f68b1e;"></i>
+                        <span class="menu-title">Logout</span>
+                    </a>
+                </li>
+            @endif
         </ul>
     </div>
 </div>

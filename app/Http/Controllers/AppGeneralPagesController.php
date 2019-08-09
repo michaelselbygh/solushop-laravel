@@ -1417,10 +1417,10 @@ class AppGeneralPagesController extends Controller
 
     public function processReceiveCallback(){
         /*--- Get call back variables ---*/
-        $status_code         = filter_input(INPUT_GET, "status", FILTER_SANITIZE_STRING);
-        $transaction_id      = filter_input(INPUT_GET, "transac_id", FILTER_SANITIZE_STRING);
-        $order_reference      = filter_input(INPUT_GET, "cust_ref", FILTER_SANITIZE_STRING);
-        $payment_token       = filter_input(INPUT_GET, "pay_token", FILTER_SANITIZE_STRING);
+        $status_code        = filter_input(INPUT_GET, "status", FILTER_SANITIZE_STRING);
+        $transaction_id     = filter_input(INPUT_GET, "transac_id", FILTER_SANITIZE_STRING);
+        $order_reference    = filter_input(INPUT_GET, "cust_ref", FILTER_SANITIZE_STRING);
+        $payment_token      = filter_input(INPUT_GET, "pay_token", FILTER_SANITIZE_STRING);
 
         
         /*--- Check for payment type ---*/
@@ -1442,9 +1442,6 @@ class AppGeneralPagesController extends Controller
 
         }
 
-
-
-        echo $payment_type;
 
         switch ($payment_type) {
             case 'order':
@@ -1685,6 +1682,10 @@ class AppGeneralPagesController extends Controller
                 })
                 ->log(Auth::user()->email.' placed order. [ '.$order->id.' ]');
 
+                /*--- Confirm payment on slydepay ---*/
+                $slydepay = new Slydepay("ceo@solutekworld.com", "1466854163614");
+                $slydepay->confirmTransaction($payment_token, $transaction_id);
+
                 /*--- Redirect with success message ---*/
                 return redirect()->route("show.account.orders")->with("success_message", "Order payment successful.");
 
@@ -1785,8 +1786,8 @@ class AppGeneralPagesController extends Controller
                 ->log(Auth::user()->first_name." ".Auth::user()->last_name." topped up their S-Wallet with GH¢ ".($wtu_package->wtu_package_cost));
 
                 /*--- Confirm payment on slydepay ---*/
-                // $slydepay = new Slydepay("ceo@solutekworld.com", "1466854163614");
-                // $slydepay->confirmTransaction($payment_token, $transaction_id);
+                $slydepay = new Slydepay("ceo@solutekworld.com", "1466854163614");
+                $slydepay->confirmTransaction($payment_token, $transaction_id);
                 
                 /*--- Redirect with success message ---*/
                 return redirect()->route("show.account.wallet")->with('success_message', 'Wallet top up of GH¢ '.($wtu_package->wtu_package_cost).' successful.');
@@ -1901,8 +1902,8 @@ class AppGeneralPagesController extends Controller
                         $vendor_subscription->save();
 
                         /*--- Confirm payment on slydepay ---*/
-                        // $slydepay = new Slydepay("ceo@solutekworld.com", "1466854163614");
-                        // $slydepay->confirmTransaction($payment_token, $transaction_id);
+                        $slydepay = new Slydepay("ceo@solutekworld.com", "1466854163614");
+                        $slydepay->confirmTransaction($payment_token, $transaction_id);
 
                         return redirect()->route("vendor.show.subscription")->with('success_message', 'Subscription successful and is valid for '.($vs_payment->vs_payment_vspq * 30).' days');
                     }

@@ -555,9 +555,9 @@ class ManagerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Order Payment Receipt Confirmation';
                 })
-                ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." confirmed payment receipt for order ".$orderID);
+                ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." confirmed order ".$orderID);
                 
-                return redirect()->back()->with("success_message", "Order payment receipt confirmed.");
+                return redirect()->back()->with("success_message", "Order confirmed.");
                 break;
 
             case 'cancel_order_no_refund':
