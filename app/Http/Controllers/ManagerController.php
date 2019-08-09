@@ -100,7 +100,7 @@ class ManagerController extends Controller
             $activity->subject_id = '0';
             $activity->log_name = 'Customer Details Update';
         })
-        ->log(Auth::guard('manager')->user()->email." updated the details of customer, ".$request->first_name." ".$request->last_name);
+        ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." updated the details of customer, ".$request->first_name." ".$request->last_name);
 
         return redirect()->back()->with("success_message", ucwords(strtolower($request->first_name))."'s details updated successfully.");
     }
@@ -440,7 +440,7 @@ class ManagerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Order Payment Receipt Confirmation';
                 })
-                ->log(Auth::guard('manager')->user()->email." confirmed payment receipt for order ".$orderID);
+                ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." confirmed payment receipt for order ".$orderID);
                 
                 return redirect()->back()->with("success_message", "Order payment receipt confirmed.");
 
@@ -555,7 +555,7 @@ class ManagerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Order Payment Receipt Confirmation';
                 })
-                ->log(Auth::guard('manager')->user()->email." confirmed payment receipt for order ".$orderID);
+                ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." confirmed payment receipt for order ".$orderID);
                 
                 return redirect()->back()->with("success_message", "Order payment receipt confirmed.");
                 break;
@@ -584,7 +584,7 @@ class ManagerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Order Cancellation (No Refund)';
                 })
-                ->log(Auth::guard('manager')->user()->email." cancelled order $orderID.");
+                ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." cancelled order $orderID.");
                 
                 return redirect()->back()->with("success_message", "Order cancelled successfully.");
                 break;
@@ -673,7 +673,7 @@ class ManagerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Order Cancellation (Partial Refund)';
                 })
-                ->log(Auth::guard('manager')->user()->email." cancelled order $orderID.");
+                ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." cancelled order $orderID.");
 
                 return redirect()->back()->with("success_message", "Order cancelled successfully.");
                 break;
@@ -763,7 +763,7 @@ class ManagerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Order Cancellation (Full Refund)';
                 })
-                ->log(Auth::guard('manager')->user()->email." cancelled order $orderID.");
+                ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." cancelled order $orderID.");
 
                 return redirect()->back()->with("success_message", "Order cancelled successfully.");
                 break;
@@ -802,7 +802,7 @@ class ManagerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Order Shipping Charge Entered';
                 })
-                ->log(Auth::guard('manager')->user()->email." recorded an ".$log);
+                ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." recorded an ".$log);
                 
                 return redirect()->back()->with("success_message", "Shipping charge recorded successfully.");
 
@@ -862,7 +862,7 @@ class ManagerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Flagged Message Approved';
                 })
-                ->log(Auth::guard('manager')->user()->email." approved flagged message ".$request->message_id);
+                ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." approved flagged message ".$request->message_id);
                 
                 
                 /*--- Delete Flag ---*/
@@ -894,7 +894,7 @@ class ManagerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Flagged Message Deleted';
                 })
-                ->log(Auth::guard('manager')->user()->email." deleted flagged message ".$request->message_id);
+                ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." deleted flagged message ".$request->message_id);
                 
                 
                 /*--- Delete Flag ---*/
@@ -955,13 +955,13 @@ class ManagerController extends Controller
 
         /*--- log activity ---*/
         activity()
-        ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
+        ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
         ->tap(function(Activity $activity) {
             $activity->subject_type = 'System';
             $activity->subject_id = '0';
             $activity->log_name = 'Management Message Sent';
         })
-        ->log(Auth::user()->email.' sent a message ['.$request->message.'] in conversation ID $conversationID');
+        ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name.' sent a message ['.$request->message.'] in conversation ID $conversationID');
 
         return redirect()->back()->with("success_message", "Message sent successfully.");
     }
@@ -994,7 +994,7 @@ class ManagerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Product Approved';
                 })
-                ->log(Auth::guard('manager')->user()->email." approved product ".$request->product_id);
+                ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." approved product ".$request->product_id);
                 return redirect()->back()->with("success_message", "Product ".$request->product_id." approved successfully.");
                 break;
 
@@ -1014,7 +1014,7 @@ class ManagerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Product Rejected';
                 })
-                ->log(Auth::guard('manager')->user()->email." rejected product ".$request->product_id);
+                ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." rejected product ".$request->product_id);
                 return redirect()->back()->with("success_message", "Product ".$request->product_id." rejected successfully.");
                 break;
 
@@ -1035,11 +1035,21 @@ class ManagerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Product Disapproved';
                 })
-                ->log(Auth::guard('manager')->user()->email." disapproved product ".$request->product_id);
+                ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." disapproved product ".$request->product_id);
                 return redirect()->back()->with("success_message", "Product ".$request->product_id." disapproved successfully.");
                 break;
 
             case 'restore':
+                $product = Product::where('id', $request->product_id)->first();
+                
+
+                /*--- Check for subscription and allowance for new product ---*/
+                if (is_null(VendorSubscription::where('vs_vendor_id', $product->product_vid)->with('package')->first()) OR VendorSubscription::where('vs_vendor_id', $product->product_vid)->with('package')->first()->vs_days_left < 1) {
+                    return redirect()->back()->with("error_message", "Vendor has no active subscriptions. Please ask vendor to subscribe to be able to restore a product.");
+                }elseif(Product::where('product_vid', $product->product_vid)->whereIn('product_state', [1, 2, 3, 5])->get()->count() >= VendorSubscription::where('vs_vendor_id', $product->product_vid)->with('package')->first()->package->vs_package_product_cap){
+                    return redirect()->back()->with("error_message", "Upload limit for vendor reached on current vendor subscription. Please upgrade to enable restore");
+                }
+
                 /*--- change product state ---*/
                 Product::
                     where([
@@ -1056,7 +1066,7 @@ class ManagerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Product Restored';
                 })
-                ->log(Auth::guard('manager')->user()->email." restored product ".$request->product_id);
+                ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." restored product ".$request->product_id);
                 return redirect()->back()->with("success_message", "Product ".$request->product_id." restored successfully.");
                 break;
 
@@ -1078,7 +1088,7 @@ class ManagerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Product Deleted';
                 })
-                ->log(Auth::guard('manager')->user()->email." deleted product ".$request->product_id);
+                ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." deleted product ".$request->product_id);
                 return redirect()->back()->with("success_message", "Product ".$request->product_id." deleted successfully.");
                 break;
             
@@ -1137,6 +1147,13 @@ class ManagerController extends Controller
             }
 
             return redirect()->back()->with($messageType, $messageContent);
+        }
+
+        /*--- Check for subscription and allowance for new product ---*/
+        if (is_null(VendorSubscription::where('vs_vendor_id', $request->vendor)->with('package')->first()) OR VendorSubscription::where('vs_vendor_id', $request->vendor)->with('package')->first()->vs_days_left < 1) {
+            return redirect()->back()->with("error_message", "Vendor currently has no active subscriptions. Please ask vendor to subscribe to be able to upload a product.");
+        }elseif(Product::where('product_vid', $request->vendor)->whereIn('product_state', [1, 2, 3, 5])->get()->count() >= VendorSubscription::where('vs_vendor_id', $request->vendor)->with('package')->first()->package->vs_package_product_cap){
+            return redirect()->back()->with("error_message", "Upload limit for vendor reached on current vendor subscription. Please upgrade to continue uploading");
         }
 
         /*--- Validate Images ---*/
@@ -1263,7 +1280,7 @@ class ManagerController extends Controller
             $activity->subject_id = '0';
             $activity->log_name = 'Product Added';
         })
-        ->log(Auth::guard('manager')->user()->email." added product ".$product_id);
+        ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." added product ".$product_id);
         return redirect()->back()->with("success_message", "Product ".$product_id." added successfully.");
 
         
@@ -1390,7 +1407,7 @@ class ManagerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Product Details Updated';
                 })
-                ->log(Auth::guard('manager')->user()->email." updated details of product ".$productID);
+                ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." updated details of product ".$productID);
                 return redirect()->back()->with("success_message", "Product ".$productID." details updated successfully.");
                 break;
 
@@ -1437,7 +1454,7 @@ class ManagerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Product Stock Updated';
                 })
-                ->log(Auth::guard('manager')->user()->email." updated stock of product ".$productID);
+                ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." updated stock of product ".$productID);
                 return redirect()->back()->with("success_message", "Product ".$productID." stock updated successfully.");
                 break;
 
@@ -1466,7 +1483,7 @@ class ManagerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Product Image Deleted';
                 })
-                ->log(Auth::guard('manager')->user()->email." deleted image ".$request->image_id." of product ".$productID);
+                ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." deleted image ".$request->image_id." of product ".$productID);
                 return redirect()->back()->with("success_message", "Image ".$request->image_id." deleted successfully.");
                 break;
             
@@ -1521,7 +1538,7 @@ class ManagerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Product Image(s) Uploaded';
                 })
-                ->log(Auth::guard('manager')->user()->email." uploaded images for product ".$productID);
+                ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." uploaded images for product ".$productID);
                 return redirect()->back()->with("success_message", "Upload Successful.");
                 break;
 
@@ -1630,7 +1647,7 @@ class ManagerController extends Controller
              $activity->subject_id = '0';
              $activity->log_name = 'Vendor Registration';
          })
-         ->log(Auth::guard('manager')->user()->email." added ".ucwords(strtolower($request->name))." as a vendor");
+         ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." added ".ucwords(strtolower($request->name))." as a vendor");
          
          return redirect()->back()->with("success_message", ucwords(strtolower($request->name))." added successfully as a vendor.");
     }
@@ -1740,7 +1757,7 @@ class ManagerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Vendor Details Update';
                 })
-                ->log(Auth::guard('manager')->user()->email." updated the details of vendor, ".$vendor->name);
+                ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." updated the details of vendor, ".$vendor->name);
 
                 $success_message = $vendor->name."'s details updated successfully.";
                 $vendor->save();
@@ -1748,47 +1765,93 @@ class ManagerController extends Controller
                 return redirect()->route("manager.show.vendor", $updatedVendorSlug)->with("success_message", $success_message);
                 break;
 
-            case 'record_payout':
+            case 'record_transaction':
                 
-                /*--- Record transaction ---*/
-                $transaction = new AccountTransaction;
-                $transaction->trans_type                = "Vendor Payout";
-                $transaction->trans_amount              = $request->pay_out_amount;
-                $transaction->trans_credit_account_type = 1;
-                $transaction->trans_credit_account      = "INT-SC001";
-                $transaction->trans_debit_account_type  = 4;
-                $transaction->trans_debit_account       = $vendor->id;
-                $transaction->trans_description         = "Payout of GH¢ ".$request->pay_out_amount." to ".$vendor->name;
-                $transaction->trans_date                = date("Y-m-d G:i:s");
-                $transaction->trans_recorder            = Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name;
-                $transaction->save();
+                switch ($request->transaction_type) {
+                    case 'Pay-Out':
+                        /*--- Record transaction ---*/
+                        $transaction = new AccountTransaction;
+                        $transaction->trans_type                = "Vendor Payout";
+                        $transaction->trans_amount              = $request->pay_out_amount;
+                        $transaction->trans_credit_account_type = 1;
+                        $transaction->trans_credit_account      = "INT-SC001";
+                        $transaction->trans_debit_account_type  = 4;
+                        $transaction->trans_debit_account       = $vendor->id;
+                        $transaction->trans_description         = "Payout of GH¢ ".$request->pay_out_amount." to ".$vendor->name;
+                        $transaction->trans_date                = date("Y-m-d G:i:s");
+                        $transaction->trans_recorder            = Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name;
+                        $transaction->save();
 
-                /*--- Update Associate Balance ---*/
-                $vendor->balance -= $request->pay_out_amount;
+                        /*--- Update Vendor Balance ---*/
+                        $vendor->balance -= $request->pay_out_amount;
 
-                /*--- Update Main Account Balance ---*/
-                $counts = Count::first();
-                $counts->account = round($counts->account - $request->pay_out_amount, 2);
-                $counts->save();
+                        /*--- Update Main Account Balance ---*/
+                        $counts = Count::first();
+                        $counts->account = round($counts->account - $request->pay_out_amount, 2);
+                        $counts->save();
 
-                /*--- Notify vendor ---*/
-                $sms = new SMS;
-                $sms->sms_message = "Dear ".$vendor->name.", a payout of GHS ".$request->pay_out_amount." has been recorded to you. Your new balance is GHS ".$vendor->balance;
-                $sms->sms_phone = $vendor->phone;
-                $sms->sms_state = 1;
-                $sms->save();
+                        /*--- Notify vendor ---*/
+                        $sms = new SMS;
+                        $sms->sms_message = "Dear ".$vendor->name.", a payout of GHS ".$request->pay_out_amount." has been recorded to you. Your new balance is GHS ".$vendor->balance;
+                        $sms->sms_phone = $vendor->phone;
+                        $sms->sms_state = 1;
+                        $sms->save();
 
-                /*--- log activity ---*/
-                activity()
-                ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
-                ->tap(function(Activity $activity) {
-                    $activity->subject_type = 'System';
-                    $activity->subject_id = '0';
-                    $activity->log_name = 'Vendor Payout';
-                })
-                ->log(Auth::guard('manager')->user()->email." recorded a payout of GH¢ ".$request->pay_out_amount." to vendor, ".$vendor->name);
+                        /*--- log activity ---*/
+                        activity()
+                        ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+                        ->tap(function(Activity $activity) {
+                            $activity->subject_type = 'System';
+                            $activity->subject_id = '0';
+                            $activity->log_name = 'Vendor Payout';
+                        })
+                        ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." recorded a payout of GH¢ ".$request->pay_out_amount." to vendor, ".$vendor->name);
 
-                $success_message = "Payout of GH¢ ".$request->pay_out_amount." to ".$vendor->name." recorded successfully.";
+                        $success_message = "Payout of GH¢ ".$request->pay_out_amount." to ".$vendor->name." recorded successfully.";
+                        break;
+
+                    case 'Penalty':
+                        /*--- Record transaction ---*/
+                        $transaction = new AccountTransaction;
+                        $transaction->trans_type                = "Vendor Penalty";
+                        $transaction->trans_amount              = $request->pay_out_amount;
+                        $transaction->trans_credit_account_type = 4;
+                        $transaction->trans_credit_account      = $vendor->id;
+                        $transaction->trans_debit_account_type  = 1;
+                        $transaction->trans_debit_account       = "INT-SC001";
+                        $transaction->trans_description         = "Penalty of GH¢ ".$request->pay_out_amount." to ".$vendor->name;
+                        $transaction->trans_date                = date("Y-m-d G:i:s");
+                        $transaction->trans_recorder            = Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name;
+                        $transaction->save();
+
+                        /*--- Update Vendor Balance ---*/
+                        $vendor->balance -= $request->pay_out_amount;
+
+                        /*--- Notify vendor ---*/
+                        $sms = new SMS;
+                        $sms->sms_message = "Dear ".$vendor->name.", a penalty of GHS ".$request->pay_out_amount." has been recorded to you. Your new balance is GHS ".$vendor->balance;
+                        $sms->sms_phone = $vendor->phone;
+                        $sms->sms_state = 1;
+                        $sms->save();
+
+                        /*--- log activity ---*/
+                        activity()
+                        ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
+                        ->tap(function(Activity $activity) {
+                            $activity->subject_type = 'System';
+                            $activity->subject_id = '0';
+                            $activity->log_name = 'Vendor Penalty';
+                        })
+                        ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." recorded a penalty of GH¢ ".$request->pay_out_amount." to vendor, ".$vendor->name);
+
+                        $success_message = "Penalty of GH¢ ".$request->pay_out_amount." to ".$vendor->name." recorded successfully.";
+                        break;
+                    
+                    default:
+                        # code...
+                        break;
+                }
+                
                 $vendor->save();
                 
                 return redirect()->back()->with("success_message", $success_message);
@@ -1862,7 +1925,7 @@ class ManagerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Order Item Picked Up';
                 })
-                ->log(Auth::guard('manager')->user()->email." marked ordered item [ ".$order_item["id"]." ] ".$order_item["oi_quantity"]." ".$order_item["oi_name"]." as picked up.");
+                ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." marked ordered item [ ".$order_item["id"]." ] ".$order_item["oi_quantity"]." ".$order_item["oi_name"]." as picked up.");
 
                 /*--- Return with success message ---*/
                 return redirect()->back()->with("success_message", $order_item["oi_quantity"]." ".$order_item["oi_name"]." marked as picked up successfully.");
@@ -1885,7 +1948,7 @@ class ManagerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Pick-Up Guide Download';
                 })
-                ->log(Auth::guard('manager')->user()->email." downloaded Pick-Up Guide ".date('m-d-Y').".pdf");
+                ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." downloaded Pick-Up Guide ".date('m-d-Y').".pdf");
 
                 $pdf = PDF::loadView('portal.guides.pick-up', array('data' => $data));
                 return $pdf->download('Pick-Up Guide '.date('m-d-Y').'.pdf');
@@ -1980,7 +2043,7 @@ class ManagerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Order Item Delivered';
                 })
-                ->log(Auth::guard('manager')->user()->email." marked ordered item [ ".$order_item["id"]." ] ".$order_item["oi_quantity"]." ".$order_item["oi_name"]." as delivered.");
+                ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." marked ordered item [ ".$order_item["id"]." ] ".$order_item["oi_quantity"]." ".$order_item["oi_name"]." as delivered.");
 
                 /*--- Return with success message ---*/
                 return redirect()->back()->with("success_message", $order_item["oi_quantity"]." ".$order_item["oi_name"]." marked as delivered successfully.");
@@ -2003,7 +2066,7 @@ class ManagerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Delivery Guide Download';
                 })
-                ->log(Auth::guard('manager')->user()->email." downloaded Delivery Guide ".date('m-d-Y').".pdf");
+                ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." downloaded Delivery Guide ".date('m-d-Y').".pdf");
 
                 $pdf = PDF::loadView('portal.guides.delivery', array('data' => $data));
                 return $pdf->download('Delivery Guide '.date('m-d-Y').'.pdf');
@@ -2067,7 +2130,7 @@ class ManagerController extends Controller
             $activity->subject_id = '0';
             $activity->log_name = 'Sales Associate Registration';
         })
-        ->log(Auth::guard('manager')->user()->email." generated a coupon ".$coupon_id." worth GH¢".$request->value);
+        ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." generated a coupon ".$coupon_id." worth GH¢".$request->value);
         
         return redirect()->back()->with("success_message", "Coupon generated successfully.");
 
@@ -2196,7 +2259,7 @@ class ManagerController extends Controller
              $activity->subject_id = '0';
              $activity->log_name = 'Sales Associate Registration';
          })
-         ->log(Auth::guard('manager')->user()->email." added ".ucwords(strtolower($request->first_name))." ".ucwords(strtolower($request->last_name))." as a sales associate");
+         ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." added ".ucwords(strtolower($request->first_name))." ".ucwords(strtolower($request->last_name))." as a sales associate");
          
          return redirect()->back()->with("success_message", ucwords(strtolower($request->first_name))." ".ucwords(strtolower($request->last_name))." added successfully as a sales associate.");
 
@@ -2286,7 +2349,7 @@ class ManagerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Sales Associate Details Update';
                 })
-                ->log(Auth::guard('manager')->user()->email." updated the details of sales associate, ".$associate->first_name." ".$associate->last_name);
+                ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." updated the details of sales associate, ".$associate->first_name." ".$associate->last_name);
 
                 $success_message = $associate->first_name." ".$associate->last_name."'s details updated successfully.";
                 $associate->save();
@@ -2332,7 +2395,7 @@ class ManagerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Sales Associate Payout';
                 })
-                ->log(Auth::guard('manager')->user()->email." recorded a payout of GH¢ ".$request->pay_out_amount." to sales associate, ".$associate->first_name." ".$associate->last_name);
+                ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." recorded a payout of GH¢ ".$request->pay_out_amount." to sales associate, ".$associate->first_name." ".$associate->last_name);
 
                 $success_message = "Payout of GH¢ ".$request->pay_out_amount." to ".$associate->first_name." ".$associate->last_name." recorded successfully.";
                 $associate->save();
@@ -2404,7 +2467,7 @@ class ManagerController extends Controller
              $activity->subject_id = '0';
              $activity->log_name = 'Delivery Partner Registration';
          })
-         ->log(Auth::guard('manager')->user()->email." added ".ucwords(strtolower($request->first_name))." ".ucwords(strtolower($request->last_name))." as a delivery partner");
+         ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." added ".ucwords(strtolower($request->first_name))." ".ucwords(strtolower($request->last_name))." as a delivery partner");
          
          return redirect()->back()->with("success_message", ucwords(strtolower($request->first_name))." ".ucwords(strtolower($request->last_name))." added successfully as a delivery partner.");
     }
@@ -2483,7 +2546,7 @@ class ManagerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Delivery Partner Details Update';
                 })
-                ->log(Auth::guard('manager')->user()->email." updated the details of delivery, ".$partner->first_name." ".$partner->last_name);
+                ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." updated the details of delivery, ".$partner->first_name." ".$partner->last_name);
 
                 $success_message = $partner->first_name." ".$partner->last_name."'s details updated successfully.";
                 $partner->save();
@@ -2522,7 +2585,7 @@ class ManagerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Delivery Partner Payout';
                 })
-                ->log(Auth::guard('manager')->user()->email." recorded a payout of GH¢ ".$request->pay_out_amount." to delivery partner, ".$partner->first_name." ".$partner->last_name);
+                ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." recorded a payout of GH¢ ".$request->pay_out_amount." to delivery partner, ".$partner->first_name." ".$partner->last_name);
 
                 $success_message = "Payout of GH¢ ".$request->pay_out_amount." to ".$partner->first_name." ".$partner->last_name." recorded successfully.";
                 $partner->save();
@@ -2622,7 +2685,7 @@ class ManagerController extends Controller
             $activity->subject_id = '0';
             $activity->log_name = 'Sales Associate Payout';
         })
-        ->log(Auth::guard('manager')->user()->email." recorded a ".$request->payment_type." of GH¢ ".$request->payment_amount);
+        ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." recorded a ".$request->payment_type." of GH¢ ".$request->payment_amount);
 
         /*--- Return with success message ---*/
         return redirect()->back()->with("success_message", $request->payment_type." of GH¢ ".$request->payment_amount." recorded successfully.");
@@ -2685,7 +2748,7 @@ class ManagerController extends Controller
             $activity->subject_id = '0';
             $activity->log_name = 'Vendor Subscription Cancellation';
         })
-        ->log(Auth::guard('manager')->user()->email." cancelled ".$subscription[0]->name."'s subscription.");
+        ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." cancelled ".$subscription[0]->name."'s subscription.");
         
         return redirect()->back()->with("success_message", $subscription[0]->name."'s subscription has been successfully cancelled.");
     }

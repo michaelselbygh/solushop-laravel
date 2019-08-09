@@ -15,38 +15,40 @@
                         </a>
                     </li>
                     <li>
-                        <a class="menu-item" href="">
+                        <a class="menu-item" href="{{ route('vendor.show.add.product') }}">
                             <span>Add Product</span>
                         </a>
                     </li>
                 </ul>
             </li>
             <li class="nav-item">
-                <a href="">
+                <a href="{{ route('vendor.show.orders') }}">
                     <i class="la la-shopping-cart" style="color:#f68b1e;"></i>
                     <span class="menu-title">Orders</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="">
-                    <i class="la la-money" style="color:#f68b1e;"></i>
-                    <span class="menu-title">Accounts</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="" >
+                <a href="{{ route('vendor.show.subscription') }}" >
                     <i class="la la-ticket" style="color:#f68b1e;"></i>
                     <span class="menu-title">Subscription</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a href="" >
+                <a href="{{ route('vendor.show.conversations') }}" >
                     <i class="la la-envelope" style="color:#f68b1e;"></i>
-                    <span class="menu-title">Messages</span>
+                    <span class="menu-title">
+                        Messages
+                        @if(isset($vendor["unread_messages"]) and $vendor["unread_messages"]>0)
+                            <span style='color:white; background-color: red; padding: 4px 8px; border-radius:20px; margin-left:5px;'>
+                                {{ $vendor["unread_messages"] }}
+                            </span>
+                        @endif
+                    </span>
+
                 </a>
             </li>
             <li class="nav-item">
-                <a href="">
+                <a href="{{ route('vendor.show.terms.of.use') }}">
                     <i class="la la-exclamation-circle" style="color:#f68b1e;"></i>
                     <span class="menu-title">Terms of Use</span>
                 </a>

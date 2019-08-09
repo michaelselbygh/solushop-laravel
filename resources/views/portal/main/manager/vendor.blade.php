@@ -112,22 +112,34 @@
             <div class="card">
                 <div class="card-content collapse show">
                     <div class="card-body">
-                        <div class="row" style="margin-top: 10px;">
-                            <div class="col-sm-3">
-                            </div>
-                            <div class="col-sm-6" style="text-align: center;"> 
-                                <form method="POST" action="{{ route("manager.process.vendor", $vendor["username"]) }}">
-                                    @csrf
-                                    <div class="form-group" style="display: inline-block">
-                                        <input type="hidden" name="vendor_action" value="record_payout"/>
-                                        <input id="pay_out_amount" name="pay_out_amount" class="form-control round" placeholder="0.00" value="{{ $vendor["balance"] }}" type="number" min="0.1" max="{{ $vendor["balance"] }}" step="0.1" style="width: 100%;" required><br>
-                                        <button type="submit" name="record_payout" class="btn btn-success">
-                                                Record Payout
-                                        </button> 
+                        <form method="POST" action="{{ route("manager.process.vendor", $vendor["username"]) }}">
+                            @csrf
+                            <div class="row" style="margin-top: 10px;">
+                                <div class="col-sm-6">
+                                    <div class="form-group" style=" margin-bottom:0px;">
+                                        <label for="transaction_type">Type</label>
+                                        <fieldset class="form-group" >
+                                            <select class="form-control" name='transaction_type' id="transaction_type" style='border-radius:7px;' required>
+                                                <option>Pay-Out</option>
+                                                <option>Penalty</option>
+                                            </select>
+                                        </fieldset>
                                     </div>
-                                </form>
+                                </div>
+                                <div class="col-sm-6" style="text-align: center;"> 
+                                    <div class="form-group" style="display: inline-block; margin-bottom:0px;">
+                                        <label for="transaction_type">Amount</label>
+                                        <input type="hidden" name="vendor_action" value="record_transaction"/>
+                                        <input id="pay_out_amount" name="pay_out_amount" class="form-control round" placeholder="0.00" value="{{ $vendor["balance"] }}" type="number" min="0.1" step="0.1" style="width: 100%;" required><br> 
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                            <div class="form-actions" style="text-align:center; padding: 0px;">
+                                <button type="submit" name="record_transaction" class="btn btn-success">
+                                    Record Transaction 
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

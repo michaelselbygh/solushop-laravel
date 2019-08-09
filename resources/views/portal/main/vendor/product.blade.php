@@ -1,4 +1,4 @@
-@extends('portal.layouts.manager.master')
+@extends('portal.layouts.vendor.master')
 
 @section('page-title')
     {{ $product["product_name"] }}
@@ -19,53 +19,9 @@
                     <h5 class="card-title">Details ( {!! $product['state']['ps_html'] !!} )</h5>
                 </div>
                 <div class="col-md-7" style="text-align: right; margin-bottom: 5px;">
-                        @switch($product["state"]["id"])
-                        @case(1)
-                            {{-- Live | Disapprove, Delete--}}
-                            <button onclick="submitProductAction('disapprove|{{$product['id']}}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Disapprove {{ $product["product_name"] }}" style="margin-top: 3px;" class="btn btn-warning btn-sm round">
-                                <i class="ft-alert-triangle"></i>
-                            </button>
-                            <button onclick="submitProductAction('delete|{{$product['id']}}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Delete {{ $product["product_name"] }}" style="margin-top: 3px;" class="btn btn-danger btn-sm round">
-                                <i class="ft-trash"></i>
-                            </button>
-                            @break
-                        @case(2)
-                            {{-- Pending Approval | Approve, Reject, Delete--}}
-                            <button onclick="submitProductAction('approve|{{$product['id']}}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Approve {{ $product["product_name"] }}" style="margin-top: 3px;" class="btn btn-success btn-sm round">
-                                <i class="ft-check"></i>
-                            </button>
-                            <button onclick="submitProductAction('reject|{{$product['id']}}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Reject {{ $product["product_name"] }}" style="margin-top: 3px;" class="btn btn-warning btn-sm round">
-                                <i class="ft-x"></i>
-                            </button>
-                            <button onclick="submitProductAction('delete|{{$product['id']}}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Delete {{ $product["product_name"] }}" style="margin-top: 3px;" class="btn btn-danger btn-sm round">
-                                <i class="ft-trash"></i>
-                            </button>
-                            
-                            @break
-                        @case(3)
-                            {{-- Rejected | Approve, Delete--}}
-                            <button onclick="submitProductAction('approve|{{$product['id']}}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Approve {{ $product["product_name"] }}" style="margin-top: 3px;" class="btn btn-success btn-sm round">
-                                <i class="ft-check"></i>
-                            </button>
-                            <button onclick="submitProductAction('delete|{{$product['id']}}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Delete {{ $product["product_name"] }}" style="margin-top: 3px;" class="btn btn-danger btn-sm round">
-                                <i class="ft-trash"></i>
-                            </button>
-                            @break
-                        @case(5)
-                            {{-- Inactive | Approve, Reject, Delete--}}
-                            <button onclick="submitProductAction('approve|{{$product['id']}}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Approve {{ $product["product_name"] }}" style="margin-top: 3px;" class="btn btn-success btn-sm round">
-                                <i class="ft-check"></i>
-                            </button>
-                            <button onclick="submitProductAction('reject|{{$product['id']}}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Reject {{ $product["product_name"] }}" style="margin-top: 3px;" class="btn btn-warning btn-sm round">
-                                <i class="ft-x"></i>
-                            </button>
-                            <button onclick="submitProductAction('delete|{{$product['id']}}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Delete {{ $product["product_name"] }}" style="margin-top: 3px;" class="btn btn-danger btn-sm round">
-                                <i class="ft-trash"></i>
-                            </button>
-                            @break
-                        @default
-                            
-                    @endswitch
+                    <button onclick="submitProductAction('delete|{{$product['id']}}')" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Delete {{ $product["product_name"] }}" style="margin-top: 3px;" class="btn btn-danger btn-sm round">
+                        <i class="ft-trash"></i>
+                    </button>
                 </div>
             </div>
             
@@ -73,26 +29,23 @@
             <div class="card" style="">
                 <div class="card-content collapse show">
                     <div class="card-body">
-                        <form class="form" method="POST" action="{{ route("manager.process.product", $product["id"]) }}" enctype="multipart/form-data">
+                        <form class="form" method="POST" action="{{ route("vendor.process.product", $product["product_slug"]) }}" enctype="multipart/form-data">
                             @csrf
                             <div class="form-body">
                                 <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="vendor">Vendor</label>
-                                            <select class="form-control" name='vendor' id="vendor" style='border-radius:7px;' required>
-                                                @for ($i = 0; $i < sizeof($product["vendor_options"]); $i++)
-                                                    <option value="{{ $product["vendor_options"][$i]["id"] }}" @if($product["vendor_options"][$i]["id"] == $product["product_vid"]) selected="selected" @endif>
-                                                        {{ $product["vendor_options"][$i]["name"] }}
-                                                    </option>
-                                                @endfor
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-8">
                                         <div class="form-group">
                                             <label for="name">Name</label>
                                             <input id="name" name="name" class="form-control round" placeholder="Enter product name" value="{{ $product["product_name"] }}" type="text" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="type">Availability</label>
+                                            <select class="form-control" name='type' id="type" style='border-radius:7px;' required>
+                                                <option value='0' @if($product["product_type"] == 0) selected="selected" @endif>Available In Stock</option>
+                                                <option value='1' @if($product["product_type"] == 1) selected="selected" @endif>Available On Pre-Order</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -134,7 +87,7 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="settlement_price">Settlement Price</label>
-                                            <input id="settlement_price" name="settlement_price" class="form-control round" placeholder="Enter product settlement price" value="{{ $product["product_settlement_price"] }}" type="number" step="0.01" required>
+                                            <input id="settlement_price" name="settlement_price" class="form-control round" placeholder="Enter product settlement price" value="{{ $product["product_settlement_price"] }}" type="number" step="0.01" readonly>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -147,29 +100,6 @@
                                         <div class="form-group">
                                             <label for="discount">Discount</label>
                                             <input id="discount" name="discount" class="form-control round" placeholder="Enter product discount" value="{{ $product["product_discount"] }}" type="number" step="0.01" required>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="dd">Avg. Delivery Duration in Days</label>
-                                            <input id="dd" name="dd" class="form-control round" placeholder="Enter product delivery duration" value="{{ $product["product_dd"] }}" type="number" step="1" min="1" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="dc">Delivery Charge in GHS </label>
-                                            <input id="dc" name="dc" class="form-control round" placeholder="Enter product delivery charge" value="{{ $product["product_dc"] }}" type="number" step="1" min="1" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label for="type">Availability</label>
-                                            <select class="form-control" name='type' id="type" style='border-radius:7px;' required>
-                                                <option value='0' @if($product["product_type"] == 0) selected="selected" @endif>Available In Stock</option>
-                                                <option value='1' @if($product["product_type"] == 1) selected="selected" @endif>Available On Pre-Order</option>
-                                            </select>
                                         </div>
                                     </div>
                                 </div>
@@ -267,7 +197,7 @@
                                 @endif
                             </tbody>
                         </table>
-                        <form class="form" method="POST" action="{{ route("manager.process.product", $product["id"]) }}" enctype="multipart/form-data">
+                        <form class="form" method="POST" action="{{ route("vendor.process.product", $product["product_slug"]) }}" enctype="multipart/form-data">
                             @csrf
                             <div class="row">
                                 <div class="col-md-6" style="text-align: center; padding-top:5px;">
@@ -299,7 +229,7 @@
                 <div class="card-content collapse show">
                     <div class="card-body">
                         <div class="form-body">
-                            <form class="form" method="POST" action="{{ route("manager.process.product", $product["id"]) }}" enctype="multipart/form-data">
+                            <form class="form" method="POST" action="{{ route("vendor.process.product", $product["product_slug"]) }}" enctype="multipart/form-data">
                                 @csrf
                                 <div class="row">
                                     <div class="col-md-8">
@@ -382,13 +312,13 @@
         </div>
 
 
-        <form id="product-action-form" method="POST" action="{{ route("manager.process.products") }}">
+        <form id="product-action-form" method="POST" action="{{ route("vendor.process.products") }}">
             @csrf
             <input type="hidden" name="product_id" id="product_id"/>
             <input type="hidden" name="product_action" id="product_action"/>
         </form>
 
-        <form id="image-delete-form" method="POST" action="{{ route("manager.process.product", $product["id"]) }}">
+        <form id="image-delete-form" method="POST" action="{{ route("vendor.process.product", $product["product_slug"]) }}">
             @csrf
             <input type="hidden" name="image_id" id="image_id"/>
             <input type="hidden" name="product_action" value="delete_image"/>

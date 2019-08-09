@@ -13,16 +13,13 @@
                 <div class="card">
                     <div class="card-content collapse show">
                         <div class="card-body card-dashboard">
-                            <table class="table table-striped table-bordered zero-configuration" id="delivery-items">
+                            <table class="table table-striped table-bordered zero-configuration" id="products">
                                 <thead>
                                     <tr>
                                         <th>ID</th>
                                         <th>Preview</th>
                                         <th>Name</th>
                                         <th>State</th>
-                                        <th>Sold By</th>
-                                        <th>Main Phone</th>
-                                        <th>Alt. Phone</th>
                                         <th>Last Updated</th>
                                         <th style="min-width: 150px">Action</th>
                                     </tr>
@@ -42,12 +39,9 @@
                                             </td>
                                             <td>{{ $products[$i]["product_name"] }}</td>
                                             <td>{!! $products[$i]["state"]["ps_html"] !!}</td>
-                                            <td>{{ $products[$i]["vendor"]["name"] }}</td>
-                                            <td>{{ "0".substr($products[$i]["vendor"]["phone"], 3) }}</td>
-                                            <td>{{ "0".substr($products[$i]["vendor"]["alt_phone"], 3) }}</td>
-                                            <td>{{ $products[$i]["updated_at"] }}</td>
+                                            <td>{{ date('g:ia, l jS F Y', strtotime($products[$i]["updated_at"]))  }}</td>
                                             <td>
-                                                <a href="{{ url('portal/manager/product/'.$products[$i]["product_slug"]) }}">
+                                                <a href="{{ url('portal/vendor/product/'.$products[$i]["product_slug"]) }}">
                                                     <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="View {{ $products[$i]["product_name"] }}"  style="margin-top: 3px;" class="btn btn-info btn-sm round">
                                                         <i class="ft-eye"></i>
                                                     </button>
@@ -77,9 +71,8 @@
 
     <script>
     $(document).ready(function(){
-        $('#delivery-items').dataTable( {
+        $('#products').dataTable( {
             "order": [
-                [3, 'desc'],
                 [2, 'asc']
             ]
         } );

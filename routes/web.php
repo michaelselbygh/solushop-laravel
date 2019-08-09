@@ -158,6 +158,17 @@ Route::prefix('portal')->group(function(){
         Route::get('/logout', 'Auth\VendorLoginController@logout')->name('vendor.logout');
         Route::get('/products', 'VendorController@showProducts')->name('vendor.show.products');
         Route::post('/products', 'VendorController@processProducts')->name('vendor.process.products');
+        Route::get('/products/add', 'VendorController@showAddProduct')->name('vendor.show.add.product');
+        Route::post('/products/add', 'VendorController@processAddProduct')->name('vendor.process.add.product');
+        Route::get('/product/{productSlug}', 'VendorController@showProduct')->name('vendor.show.product');
+        Route::post('/product/{productSlug}', 'VendorController@processProduct')->name('vendor.process.product');
+        Route::get('/orders', 'VendorController@showOrders')->name('vendor.show.orders');
+        Route::get('/conversation/{conversationID}', 'VendorController@showConversation')->name('vendor.show.conversation');
+        Route::post('/conversation/{conversationID}', 'VendorController@processConversation')->name('vendor.process.conversation');
+        Route::get('/conversations', 'VendorController@showConversations')->name('vendor.show.conversations');
+        Route::get('/terms-of-use', 'VendorController@showTermsOfUse')->name('vendor.show.terms.of.use');
+        Route::get('/subscription', 'VendorController@showSubscription')->name('vendor.show.subscription');
+        Route::post('/subscription', 'VendorController@processSubscription')->name('vendor.process.subscription');
         Route::get('/', 'VendorController@index')->name('vendor.dashboard');
     });
 

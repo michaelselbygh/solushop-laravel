@@ -93,7 +93,7 @@ class DeliveryPartnerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Order Item Picked Up';
                 })
-                ->log(Auth::guard('delivery-partner')->user()->email." marked ordered item [ ".$order_item["id"]." ] ".$order_item["oi_quantity"]." ".$order_item["oi_name"]." as picked up.");
+                ->log(Auth::guard('delivery-partner')->user()->first_name." ".Auth::guard('delivery-partner')->user()->last_name." marked ordered item [ ".$order_item["id"]." ] ".$order_item["oi_quantity"]." ".$order_item["oi_name"]." as picked up.");
 
                 /*--- Return with success message ---*/
                 return redirect()->back()->with("success_message", $order_item["oi_quantity"]." ".$order_item["oi_name"]." marked as picked up successfully.");
@@ -116,7 +116,7 @@ class DeliveryPartnerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Pick-Up Guide Download';
                 })
-                ->log(Auth::guard('delivery-partner')->user()->email." downloaded Pick-Up Guide ".date('m-d-Y').".pdf");
+                ->log(Auth::guard('delivery-partner')->user()->first_name." ".Auth::guard('delivery-partner')->user()->last_name." downloaded Pick-Up Guide ".date('m-d-Y').".pdf");
 
                 $pdf = PDF::loadView('portal.guides.pick-up', array('data' => $data));
                 return $pdf->download('Pick-Up Guide '.date('m-d-Y').'.pdf');
@@ -206,7 +206,7 @@ class DeliveryPartnerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Order Item Delivered';
                 })
-                ->log(Auth::guard('delivery-partner')->user()->email." marked ordered item [ ".$order_item["id"]." ] ".$order_item["oi_quantity"]." ".$order_item["oi_name"]." as delivered.");
+                ->log(Auth::guard('delivery-partner')->user()->first_name." ".Auth::guard('delivery-partner')->user()->last_name." marked ordered item [ ".$order_item["id"]." ] ".$order_item["oi_quantity"]." ".$order_item["oi_name"]." as delivered.");
 
                 /*--- Return with success message ---*/
                 return redirect()->back()->with("success_message", $order_item["oi_quantity"]." ".$order_item["oi_name"]." marked as delivered successfully.");
@@ -229,7 +229,7 @@ class DeliveryPartnerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Delivery Guide Download';
                 })
-                ->log(Auth::guard('delivery-partner')->user()->email." downloaded Delivery Guide ".date('m-d-Y').".pdf");
+                ->log(Auth::guard('delivery-partner')->user()->first_name." ".Auth::guard('delivery-partner')->user()->last_name." downloaded Delivery Guide ".date('m-d-Y').".pdf");
 
                 $pdf = PDF::loadView('portal.guides.delivery', array('data' => $data));
                 return $pdf->download('Delivery Guide '.date('m-d-Y').'.pdf');
