@@ -979,6 +979,13 @@ class ManagerController extends Controller
     public function processProducts(Request $request){
         switch ($request->product_action) {
             case 'approve':
+                /*--- Check for subscription and allowance for new product ---*/
+                if (is_null(VendorSubscription::where('vs_vendor_id', $product->product_vid)->with('package')->first()) OR VendorSubscription::where('vs_vendor_id', $product->product_vid)->with('package')->first()->vs_days_left < 1) {
+                    return redirect()->back()->with("error_message", "Vendor has no active subscriptions. Please ask vendor to subscribe to be able to approve a product.");
+                }elseif(Product::where('product_vid', $product->product_vid)->whereIn('product_state', [1, 2, 3, 5])->get()->count() >= VendorSubscription::where('vs_vendor_id', $product->product_vid)->with('package')->first()->package->vs_package_product_cap){
+                    return redirect()->back()->with("error_message", "Upload limit for vendor reached on current vendor subscription. Please upgrade to enable approve");
+                }
+
                 /*--- change product state ---*/
                 Product::
                     where([
@@ -1815,7 +1822,7 @@ class ManagerController extends Controller
                         $transaction = new AccountTransaction;
                         $transaction->trans_type                = "Vendor Penalty";
                         $transaction->trans_amount              = $request->pay_out_amount;
-                        $transaction->trans_credit_account_type = 4;
+                        $transaction->trans_credit_account_type = 3;
                         $transaction->trans_credit_account      = $vendor->id;
                         $transaction->trans_debit_account_type  = 1;
                         $transaction->trans_debit_account       = "INT-SC001";

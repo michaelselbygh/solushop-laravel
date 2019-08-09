@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use \Mobile_Detect;
 use Auth;
 
+use App\AccountTransaction;
 use App\CartItem;
 use App\Conversation;
 use App\Coupon;
@@ -615,13 +616,14 @@ class AppMyAccountController extends Controller
                 }
             }else{
                 /*--- process payment internally ---*/
+
                 //reduce account balance
                 $customer = Customer::
                     where('id', Auth::user()->id)
                     ->with('chocolate', 'milk')
                     ->first();
 
-                $newCustomerBalance     = round((($customer->milk->milk_value * $customer->milkshake) - $customer->chocolate->chocolate_value) - $checkout['order']["order_subtotal"], 2);
+                $newCustomerBalance     = round((($customer->milk->milk_value * $customer->milkshake) - $customer->chocolate->chocolate_value) - $checkout['order']["total"], 2);
                 $newCustomerMilkshake   = ($newCustomerBalance + $customer->chocolate->chocolate_value) / $customer->milk->milk_value;
                 $customer->milkshake    = $newCustomerMilkshake;
 
@@ -629,12 +631,43 @@ class AppMyAccountController extends Controller
                 $customer->icono = NULL;
                 $customer->save();
 
+                /*--- Record transaction ---*/
+                $transaction = new AccountTransaction;
+                $transaction->trans_type                = "Order Payment (S-Wallet)";
+                $transaction->trans_amount              = round($checkout['order']["total"], 2);
+                $transaction->trans_credit_account_type = 5;
+                $transaction->trans_credit_account      = Auth::user()->id;
+                $transaction->trans_debit_account_type  = 1;
+                $transaction->trans_debit_account       = "INT-SC001";
+                $transaction->trans_description         = "Payment of GH¢ ".round($checkout['order']["total"], 2)." for order ".$checkout['order']["id"];
+                $transaction->trans_date                = date("Y-m-d G:i:s");
+                $transaction->trans_recorder            = "System";
+                $transaction->save();
+
+
                 //update order
                 Order::
                     where('id', $checkout['order']["id"])
                     ->update([
                         'order_state' => 2
                     ]);
+
+                /*--- Check first time order ---*/
+                if ($checkout['order']["id"] == Order::orderby('order_date', 'asc')->whereIn('order_state', [2, 3, 4, 5, 6])->where('order_customer_id', Auth::user()->id)->first()->id) {
+                    //record five cedis bonus
+                    /*--- Record transaction ---*/
+                    $transaction = new AccountTransaction;
+                    $transaction->trans_type                = "Sign up bonus for ".Auth::user()->email;
+                    $transaction->trans_amount              = 5;
+                    $transaction->trans_credit_account_type = 1;
+                    $transaction->trans_credit_account      = "INT-SC001";
+                    $transaction->trans_debit_account_type  = 6;
+                    $transaction->trans_debit_account       = Auth::user()->id;
+                    $transaction->trans_description         = "Payout of GH¢ 5 for first time order ".$checkout['order']["id"]." of customer ".Auth::user()->email;
+                    $transaction->trans_date                = date("Y-m-d G:i:s");
+                    $transaction->trans_recorder            = "System";
+                    $transaction->save();
+                }
                 
                 //update order items quantity
                 for ($i=0; $i < sizeof($checkout['checkout_items']); $i++) {

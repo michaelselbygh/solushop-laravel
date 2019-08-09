@@ -20,6 +20,7 @@ use App\OrderItem;
 use App\Product;
 use App\SMS;
 use App\VendorSubscription;
+use App\VSPayment;
 use App\WTUPayment;
 
 
@@ -237,7 +238,16 @@ class Kernel extends ConsoleKernel
                 ['wtu_payment_status', '=', "UNPAID"]
             ])->delete();
             
-        })->daily('23:59');
+        })->daily('2:00');
+
+        /*--- Delete unpaid subscription payments ---*/
+        $schedule->call(function () {
+
+            VSPayment::where([
+                ['vs_payment_State', '=', "UNPAID"]
+            ])->delete();
+            
+        })->daily('2:00');
 
         /*--- Update expired coupons ---*/
         $schedule->call(function () {

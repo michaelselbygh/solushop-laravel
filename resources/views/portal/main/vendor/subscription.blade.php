@@ -21,10 +21,20 @@
                                             <select class="form-control" name='package' id="package" style='border-radius:7px;' required>
                                                 @for ($i = 0; $i < sizeof($subscription["options"]); $i++)
                                                     <option value="{{ $subscription["options"][$i]->id }}">
-                                                        {{ $subscription["options"][$i]->vs_package_description }}
+                                                        @if($subscription["options"][$i]->vs_package_cost == 0)
+                                                            {{ $subscription["options"][$i]->vs_package_description }} - Free (Upload Limit : {{ $subscription["options"][$i]->vs_package_product_cap }} products.)
+                                                        @else
+                                                            {{ $subscription["options"][$i]->vs_package_description }} - GH¢ {{ $subscription["options"][$i]->vs_package_cost }} / month (Upload Limit : {{ $subscription["options"][$i]->vs_package_product_cap }} products.)
+                                                        @endif
+                                                        
                                                     </option>
                                                 @endfor
                                             </select>
+                                            <br>
+                                            <div class="form-group">
+                                                <label for="duration">Duration (In Months)</label>
+                                                <input id="duration" name="duration" class="form-control round" placeholder="Enter duration" value="1" type="number" step="1" required>
+                                            </div>
                                             <br>
                                             <div class="form-actions" style="text-align:center; padding: 0px;">
                                                 <button type="submit" class="btn btn-success">
@@ -39,6 +49,7 @@
                     </div>       
                 @else
                     <h5 class="card-title">Your Subscription on Solushop</h5>
+                    @include('portal.main.success-and-error.message')
                     <div class="card">
                         <div class="card-content collapse show">
                             <div class="card-body card-dashboard"> 
@@ -89,10 +100,35 @@
                                             <select class="form-control" name='package' id="package" style='border-radius:7px;' required>
                                                 @for ($i = 0; $i < sizeof($subscription["options"]); $i++)
                                                     <option value="{{ $subscription["options"][$i]->id }}">
-                                                        {{ $subscription["options"][$i]->vs_package_description }}
+                                                        @if ($subscription["options"][$i]->id == $subscription["active"]->package->id)
+                                                            @if($subscription["options"][$i]->vs_package_cost == 0)
+                                                                Extend {{ $subscription["options"][$i]->vs_package_description }} Subscription - Free (Upload Limit : {{ $subscription["options"][$i]->vs_package_product_cap }} products.)
+                                                            @else
+                                                                Extend {{ $subscription["options"][$i]->vs_package_description }} Subscription - GH¢ {{ $subscription["options"][$i]->vs_package_cost }} / month (Upload Limit : {{ $subscription["options"][$i]->vs_package_product_cap }} products.)
+                                                            @endif
+                                                            
+                                                        @elseif( $subscription["options"][$i]->id > $subscription["active"]->package->id)
+                                                            @if($subscription["options"][$i]->vs_package_cost == 0)
+                                                                Upgrade to {{ $subscription["options"][$i]->vs_package_description }} Subscription - Free (Upload Limit : {{ $subscription["options"][$i]->vs_package_product_cap }} products.)
+                                                            @else
+                                                                Upgrade to {{ $subscription["options"][$i]->vs_package_description }} Subscription - GH¢ {{ $subscription["options"][$i]->vs_package_cost }} / month (Upload Limit : {{ $subscription["options"][$i]->vs_package_product_cap }} products.)
+                                                            @endif
+                                                        @elseif($subscription["options"][$i]->id < $subscription["active"]->package->id)
+                                                            @if($subscription["options"][$i]->vs_package_cost == 0)
+                                                                Downgrade to {{ $subscription["options"][$i]->vs_package_description }} Subscription - Free (Upload Limit : {{ $subscription["options"][$i]->vs_package_product_cap }} products.)
+                                                            @else
+                                                                Downgrade to {{ $subscription["options"][$i]->vs_package_description }} Subscription - GH¢ {{ $subscription["options"][$i]->vs_package_cost }} / month (Upload Limit : {{ $subscription["options"][$i]->vs_package_product_cap }} products.)
+                                                            @endif
+                                                        @endif
+                                                        
                                                     </option>
                                                 @endfor
                                             </select>
+                                            <br>
+                                            <div class="form-group">
+                                                <label for="duration">Duration (In Months)</label>
+                                                <input id="duration" name="duration" class="form-control round" placeholder="Enter duration" value="1" type="number" step="1" required>
+                                            </div>
                                             <br>
                                             <div class="form-actions" style="text-align:center; padding: 0px;">
                                                 <button type="submit" class="btn btn-success">

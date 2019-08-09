@@ -2,6 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Slydepay\Order\Order as SlydepayOrder;
+use Slydepay\Order\OrderItem as SlydepayOrderItem;
+use Slydepay\Order\OrderItems as SlydepayOrderItems;
+use Slydepay\Slydepay;
+
 use Spatie\Activitylog\Contracts\Activity;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -26,6 +31,7 @@ use App\StockKeepingUnit;
 use App\Vendor;
 use App\VendorSubscription;
 use App\VSPackage;
+use App\VSPayment;
 use App\WishlistItem;
 
 class VendorController extends Controller
@@ -753,8 +759,144 @@ class VendorController extends Controller
             ->with("vendor", $vendor);
     }
 
-    public function processSubscription(){
+    public function processSubscription(Request $request){
+        /*--- Validate Submissions ---*/
+        if (!in_array($request->package, [1, 2, 3])) {
+            return redirect()->back()->with("error_message", "Subscription package not found.");
+        }elseif($request->duration < 1){
+            return redirect()->back()->with("error_message", "Duration must be 1 or more months.");
+        }
 
+        /*--- Check if selected package is free or paid ---*/
+        if ($request->package == 1) {
+            //free (Gold)
+            if(is_null(VendorSubscription::where('vs_vendor_id', Auth::guard('vendor')->user()->id)->first())){
+                //subscribe
+                $vendor_subscription = New VendorSubscription;
+                $vendor_subscription->vs_vendor_id = Auth::guard('vendor')->user()->id;
+                $vendor_subscription->vs_vsp_id = $request->package;
+                $vendor_subscription->vs_days_left = $request->duration * 30;
+                $vendor_subscription->save();
+
+                /*--- Log activity ---*/
+                activity()
+                ->causedBy(Vendor::where('id', Auth::guard('vendor')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Subscription Change';
+                })
+                ->log(Auth::guard('vendor')->user()->name." subscribed to package ".$vendor_subscription->vs_vsp_id." for ".($request->duration * 30)." days");
+
+                return redirect()->back()->with('success_message', 'Subscription successful and is valid for '.($request->duration * 30).' days');
+
+            }else{
+                if(VendorSubscription::where('vs_vendor_id', Auth::guard('vendor')->user()->id)->first()->vs_vsp_id == $request->package){
+                    //extend
+                    $vendor_subscription = VendorSubscription::where('vs_vendor_id', Auth::guard('vendor')->user()->id)->first();
+                    $vendor_subscription->vs_days_left = $vendor_subscription->vs_days_left + ($request->duration * 30);
+
+                    /*--- Log activity ---*/
+                    activity()
+                    ->causedBy(Vendor::where('id', Auth::guard('vendor')->user()->id)->get()->first())
+                    ->tap(function(Activity $activity) {
+                        $activity->subject_type = 'System';
+                        $activity->subject_id = '0';
+                        $activity->log_name = 'Subscription Extension';
+                    })
+                    ->log(Auth::guard('vendor')->user()->name." extended subscription to ".$vendor_subscription->vs_days_left." days");
+
+                    $vendor_subscription->save();
+                    return redirect()->back()->with('success_message', 'Subscription extended by '.($request->duration * 30).' days');
+                }else{
+                    //update
+                    $vendor_subscription = VendorSubscription::where('vs_vendor_id', Auth::guard('vendor')->user()->id)->first();
+                    $vendor_subscription->vs_vsp_id = $request->package;
+                    $vendor_subscription->vs_days_left = $request->duration * 30;
+
+                    /*--- Log activity ---*/
+                    activity()
+                    ->causedBy(Vendor::where('id', Auth::guard('vendor')->user()->id)->get()->first())
+                    ->tap(function(Activity $activity) {
+                        $activity->subject_type = 'System';
+                        $activity->subject_id = '0';
+                        $activity->log_name = 'Subscription Change';
+                    })
+                    ->log(Auth::guard('vendor')->user()->name." changed subscription to package ".$vendor_subscription->vs_vsp_id." for ".($request->duration * 30)." days");
+
+                    $vendor_subscription->save();
+                    return redirect()->back()->with('success_message', 'Subscription successful and is valid for '.($request->duration * 30).' days');
+
+                }
+            }
+        }else{
+            //check if package exists
+            if (is_null(VSPackage::
+                where('id', $request->package)
+                ->first())) {
+
+                return redirect()->back()->with("error_message", "Package not found");
+                
+            }
+
+            $vs_package = VSPackage::
+            where('id', $request->package)
+            ->first()
+            ->toArray();
+            //generate slydepay order
+
+            /*--- log activity ---*/
+            activity()
+            ->causedBy(Vendor::where('id', Auth::guard('vendor')->user()->id)->get()->first())
+            ->tap(function(Activity $activity) {
+                $activity->subject_type = 'System';
+                $activity->subject_id = '0';
+                $activity->log_name = 'Subscription Purchase Checkout';
+            })
+            ->log(Auth::guard('vendor')->user()->name.' checked out a subscription package purchase ['.$vs_package["vs_package_description"].'] for '.$request->duration." ".str_plural('month', $request->duration));
+
+            /*--- generate order externally (Slydepay) ---*/
+            $slydepay = new Slydepay("ceo@solutekworld.com", "1466854163614");
+
+        
+            $order_items = new SlydepayOrderItems([
+                new SlydepayOrderItem("Vendor Subscription", $vs_package["vs_package_description"], $vs_package["vs_package_cost"], $request->duration),
+            ]);
+
+            $shipping_cost = 0; 
+            $tax = 0;
+
+            // Create the Order object for this transaction. 
+            $slydepay_order = SlydepayOrder::createWithId(
+                $order_items,
+                rand(1000, 9999), 
+                $shipping_cost,
+                $tax,
+                "Vendor Subscription on Solushop Ghana",
+                "No comment"
+            );
+
+            try{
+                $response = $slydepay->processPaymentOrder($slydepay_order);
+                $redirect_url = $response->redirectUrl();
+                $redirect_url_break = explode("=", $redirect_url);
+
+                //generate subscription up payment
+                $VSPayment = new VSPayment;
+                $VSPayment->vs_payment_vendor_id    = Auth::guard('vendor')->user()->id;
+                $VSPayment->vs_payment_vsp_id       = $request->package;
+                $VSPayment->vs_payment_vspq         = $request->duration;
+                $VSPayment->vs_payment_amount       = $vs_package["vs_package_cost"] * $request->duration;
+                $VSPayment->vs_payment_token        = $redirect_url_break[1];
+                $VSPayment->vs_payment_type         = "New";
+                $VSPayment->vs_payment_state        = "UNPAID";
+                $VSPayment->save();
+
+                return redirect($redirect_url);
+            } catch (Slydepay\Exception\ProcessPayment $e) {
+                echo $e->getMessage();
+            }
+        }
     }
 
 }

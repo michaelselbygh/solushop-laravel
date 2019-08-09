@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Validator;
 use \Mobile_Detect;
 use Auth;
 
+use App\AccountTransaction;
 use App\CartItem;
 use App\Count;
 use App\Coupon;
@@ -433,6 +434,16 @@ class AppGeneralPagesController extends Controller
                     where("ci_customer_id", Auth::user()->id)
                     ->delete();
 
+                    /*--- log activity ---*/
+                    activity()
+                    ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
+                    ->tap(function(Activity $activity) {
+                        $activity->subject_type = 'System';
+                        $activity->subject_id = '0';
+                        $activity->log_name = 'Order Checkout';
+                    })
+                    ->log(Auth::user()->email.' checked out. [ '.$order_id.' ]');
+
 
                     if ($checkout['total_due'] > 0) {
                         /*--- generate order externally (Slydepay) ---*/
@@ -499,12 +510,42 @@ class AppGeneralPagesController extends Controller
                         $customer->icono = NULL;
                         $customer->save();
 
+                        /*--- Record transaction ---*/
+                        $transaction = new AccountTransaction;
+                        $transaction->trans_type                = "Order Payment (S-Wallet)";
+                        $transaction->trans_amount              = round($checkout["sub_total"], 2);
+                        $transaction->trans_credit_account_type = 5;
+                        $transaction->trans_credit_account      = Auth::user()->id;
+                        $transaction->trans_debit_account_type  = 1;
+                        $transaction->trans_debit_account       = "INT-SC001";
+                        $transaction->trans_description         = "Payment of GH¢ ".round($checkout["sub_total"], 2)." for order ".$order_id;
+                        $transaction->trans_date                = date("Y-m-d G:i:s");
+                        $transaction->trans_recorder            = "System";
+                        $transaction->save();
+
                         //update order
                         Order::
                             where('id', $order_id)
                             ->update([
                                 'order_state' => 2
                             ]);
+
+                        /*--- Check for first time order ---*/
+                        if ($order_id == Order::orderby('order_date', 'asc')->whereIn('order_state', [2, 3, 4, 5, 6])->where('order_customer_id', Auth::user()->id)->first()->id) {
+                            //record five cedis bonus
+                            /*--- Record transaction ---*/
+                            $transaction = new AccountTransaction;
+                            $transaction->trans_type                = "Sign up bonus for ".Auth::user()->email;
+                            $transaction->trans_amount              = 5;
+                            $transaction->trans_credit_account_type = 1;
+                            $transaction->trans_credit_account      = "INT-SC001";
+                            $transaction->trans_debit_account_type  = 6;
+                            $transaction->trans_debit_account       = Auth::user()->id;
+                            $transaction->trans_description         = "Payout of GH¢ 5 for first time order ".$order_id." of customer ".Auth::user()->email;
+                            $transaction->trans_date                = date("Y-m-d G:i:s");
+                            $transaction->trans_recorder            = "System";
+                            $transaction->save();
+                        }
                         
                         //update order items quantity
                         for ($i=0; $i < sizeof($checkout['checkout_items']); $i++) {
