@@ -5,7 +5,7 @@
 @endsection
 
 @section('content-body')
-    <form class="swerve" method="POST" action="{{ route("vendor.process.add.product") }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ route("vendor.process.add.product") }}" enctype="multipart/form-data">
         @csrf
         <div class="row">
             <div class="col-md-7">

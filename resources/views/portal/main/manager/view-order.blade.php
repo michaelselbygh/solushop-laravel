@@ -22,7 +22,7 @@
                     <form method="POST" action="{{ route("manager.process.order", $order["id"]) }}">
                         @csrf
                         @if ( in_array($order["order_state"]["id"], [1]) )
-                            <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Confirm Payment Received"  style="margin-top: 3px; background-color: green !important; border-color: green !important" class="btn btn-success btn-sm round" type="submit" name="order_action" value="confirm_order_payment">
+                            <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Confirm Payment Received"  style="margin-top: 3px;" class="btn btn-success btn-sm round" type="submit" name="order_action" value="confirm_order_payment">
                                 <i class="ft-check"></i>
                             </button>
                             <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Cancel Order ( No Refund )"  style="margin-top: 3px; background-color: black !important; border-color: black !important" class="btn btn-success btn-sm round" type="submit" name="order_action" value="cancel_order_no_refund">
@@ -35,7 +35,7 @@
                             <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Cancel Order ( Order Items Refund Only )"  style="margin-top: 3px;" class="btn btn-warning btn-sm round" type="submit" name="order_action" value="cancel_order_partial_refund">
                                     <i class="ft-x"></i>
                                 </button>
-                            <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Cancel Order ( Full Refund  )"  style="margin-top: 3px; background-color: red !important; border-color: red !important" class="btn btn-success btn-sm round" type="submit" name="order_action" value="cancel_order_full_refund">
+                            <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Cancel Order ( Full Refund  )"  style="margin-top: 3px; " class="btn btn-danger btn-sm round" type="submit" name="order_action" value="cancel_order_full_refund">
                                 <i class="ft-x"></i>
                             </button>
                             <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Cancel Order ( No Refund )"  style="margin-top: 3px; background-color: black !important; border-color: black !important" class="btn btn-success btn-sm round" type="submit" name="order_action" value="cancel_order_no_refund">
@@ -45,7 +45,7 @@
                             <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Cancel Order ( Order Items Refund Only )"  style="margin-top: 3px;" class="btn btn-warning btn-sm round" type="submit" name="order_action" value="cancel_order_partial_refund">
                                 <i class="ft-x"></i>
                             </button>
-                            <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Cancel Order ( Full Refund )"  style="margin-top: 3px; background-color: red !important; border-color: red !important" class="btn btn-success btn-sm round" type="submit" name="order_action" value="cancel_order_full_refund">
+                            <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Cancel Order ( Full Refund )"  style="margin-top: 3px;" class="btn btn-danger btn-sm round" type="submit" name="order_action" value="cancel_order_full_refund">
                                 <i class="ft-x"></i>
                             </button>
                             <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Cancel Order ( No Refund )"  style="margin-top: 3px; background-color: black !important; border-color: black !important" class="btn btn-success btn-sm round" type="submit" name="order_action" value="cancel_order_no_refund">
@@ -101,7 +101,7 @@
                                         </td>
                                         <td>
                                             <a target="new" href="{{ url("portal/manager/product/".$order["order_items"][$i]["sku"]["product"]["id"]) }}">
-                                                <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="View {{ $order["order_items"][$i]["oi_name"]  }}"  style="margin-top: 3px; background-color: black !important; border-color: black !important" class="btn btn-success btn-sm round">
+                                                <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="View {{ $order["order_items"][$i]["oi_name"]  }}"  style="margin-top: 3px;" class="btn btn-info btn-sm round">
                                                     <i class="ft-eye"></i>
                                                 </button>
                                             </a>

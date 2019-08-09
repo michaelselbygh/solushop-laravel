@@ -230,7 +230,7 @@ pre code {
 
 .table th,
 .table td {
-  border-bottom: 1px solid #e3ebf3;
+  border-bottom: none;
 }
 
 .table-bordered {

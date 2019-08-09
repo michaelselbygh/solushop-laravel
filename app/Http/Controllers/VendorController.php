@@ -114,7 +114,7 @@ class VendorController extends Controller
         }elseif(Product::where('product_vid', Auth::guard('vendor')->user()->id)->whereIn('product_state', [1, 2, 3, 5])->get()->count() >= VendorSubscription::where('vs_vendor_id', Auth::guard('vendor')->user()->id)->with('package')->first()->package->vs_package_product_cap){
             return redirect()->route('vendor.show.products')->with("error_message", "You have currently exceeded the maximum allowed products for upload on your current subscription. Please upgrade to continue uploading");
         }
-        
+
         /*--- Category Options ---*/
         $product["category_options"] = ProductCategory::orderBy('pc_description')->where('pc_level', 3)->get()->toArray();
         $vendor_id = Auth::guard('vendor')->user()->id;
@@ -733,11 +733,24 @@ class VendorController extends Controller
     }
 
     public function showSubscription(){
-        $subscription["options"] = VSPackage::all()->toArray();
-        $subscription["active"] = VendorSubscription::where('vs_vendor_id', Auth::guard('vendor')->user()->id)->with('package')->first();
+        $vendor_id = Auth::guard('vendor')->user()->id;
+        $unread_messages = DB::select(
+            "SELECT count(*) AS unread FROM messages, conversations WHERE conversations.id = messages.message_conversation_id AND message_sender <> '$vendor_id' AND (message_read NOT LIKE '%$vendor_id%') AND conv_key LIKE '%$vendor_id%'"
+        );
+
+        $vendor['unread_messages'] = $unread_messages[0]->unread;
+
+
+        $subscription["options"] = VSPackage::all();
+        if(!is_null(VendorSubscription::where('vs_vendor_id', Auth::guard('vendor')->user()->id)->with('package')->first())){
+            $subscription["active"] = VendorSubscription::where('vs_vendor_id', Auth::guard('vendor')->user()->id)->with('package')->first();
+            $subscription["active"]->product_count = Product::where('product_vid', Auth::guard('vendor')->user()->id)->whereIn('product_state', [1, 2, 3, 5])->get()->count();
+        }
+        
 
         return view("portal.main.vendor.subscription")
-            ->with("subscription", $subscription);
+            ->with("subscription", $subscription)
+            ->with("vendor", $vendor);
     }
 
     public function processSubscription(){
