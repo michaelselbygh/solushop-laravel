@@ -19,6 +19,7 @@ class CreateWtuPaymentsTable extends Migration
             $table->integer('wtu_payment_wtup_id');
             $table->string('wtu_payment_token');
             $table->string('wtu_payment_status', '10');
+            $table->string('wtu_tid', '10')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();
         });

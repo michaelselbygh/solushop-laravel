@@ -25,7 +25,8 @@ class CreateOrdersTable extends Migration
             $table->string('order_scoupon', '50')->nullable();
             $table->integer('order_state');
             $table->dateTime('order_date');
-            $table->double('order_date')->nullable();
+            $table->double('dp_shipping')->nullable();
+            $table->string('order_tid', '10')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();
         });

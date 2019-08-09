@@ -22,6 +22,7 @@ class CreateVsPaymentsTable extends Migration
             $table->string('vs_payment_token');
             $table->string('vs_payment_type', '20');
             $table->string('vs_payment_state', '10');
+            $table->string('vs_payment_tid', '10')->nullable();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();
         });

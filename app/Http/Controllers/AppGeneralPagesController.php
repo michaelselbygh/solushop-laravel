@@ -11,6 +11,7 @@ use Slydepay\Slydepay;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Input;
 use Spatie\Activitylog\Contracts\Activity;
 use Illuminate\Support\Facades\Validator;
 use \Mobile_Detect;
@@ -30,6 +31,10 @@ use App\SMS;
 use App\StockKeepingUnit;
 use App\Vendor;
 use App\WishlistItem;
+use App\WTUPackage;
+use App\WTUPayment;
+use App\VendorSubscription;
+use App\VSPayment;
 
 class AppGeneralPagesController extends Controller
 {
@@ -469,10 +474,12 @@ class AppGeneralPagesController extends Controller
                         $shipping_cost = $checkout['shipping']; 
                         $tax = 0;
 
+                        $order_tid = rand(100000, 999999);
+
                         // Create the Order object for this transaction. 
                         $slydepay_order = SlydepayOrder::createWithId(
                             $order_items,
-                            $order_id."-".rand(1000, 9999), 
+                            $order_tid, 
                             $shipping_cost,
                             $tax,
                             "Payment to Solushop Ghana for Order $order_id",
@@ -487,7 +494,8 @@ class AppGeneralPagesController extends Controller
                             Order::
                             where('id', $order_id)
                             ->update([
-                                'order_token' => $redirect_url_break[1]
+                                'order_token' => $redirect_url_break[1],
+                                'order_tid'   => $order_tid
                             ]);
 
                             return redirect($redirect_url);
@@ -1405,5 +1413,507 @@ class AppGeneralPagesController extends Controller
                     ->with('search_bar_pc_options', $search_bar_pc_options)
                     ->with('customer_information', $customer_information);
         };
+    }
+
+    public function processReceiveCallback(){
+        /*--- Get call back variables ---*/
+        $status_code         = filter_input(INPUT_GET, "status", FILTER_SANITIZE_STRING);
+        $transaction_id      = filter_input(INPUT_GET, "transac_id", FILTER_SANITIZE_STRING);
+        $order_reference      = filter_input(INPUT_GET, "cust_ref", FILTER_SANITIZE_STRING);
+        $payment_token       = filter_input(INPUT_GET, "pay_token", FILTER_SANITIZE_STRING);
+
+        
+        /*--- Check for payment type ---*/
+        $payment_type = "Not Set";
+        if(Order::where('order_token', $payment_token)->first()){
+
+            //order payment
+            $payment_type = "order";
+
+        }elseif(WTUPayment::where('wtu_payment_token', $payment_token)->first()){
+
+            //wallet top up payment
+            $payment_type = "wallet_top_up";
+
+        }elseif(VSPayment::where('vs_payment_token', $payment_token)->first()){
+
+            //subscription payment
+            $payment_type = "subscription";
+
+        }
+
+
+
+        echo $payment_type;
+
+        switch ($payment_type) {
+            case 'order':
+                /*--- Check for payment status and redirect appropriately ---*/
+                if($status_code != 0){
+                    return redirect()->route("show.account.orders")->with("error_message", "Order payment unsuccessful.");
+                }
+
+                /*--- process order ---*/
+                $order = Order::where('order_token', $payment_token)->first();
+
+                /*--- Order Items ---*/
+                $order->checkout_items = OrderItem::
+                where('oi_order_id', $order->id)
+                ->get()
+                ->toArray();
+
+                /*--- Order Total ---*/
+                $order_shipping = $order->order_shipping;
+                
+                //considering icono discount
+                if($order->order_scoupon != NULL AND trim($order->order_scoupon) != "NULL"){
+                    $order_subtotal = round(0.99 * $order->order_subtotal, 2);
+                }else{
+                    $order_subtotal = $order->order_subtotal;
+                }
+
+                $order_total = $order_subtotal + $order_shipping;
+                
+
+                /*--- check for customer account balance ---*/
+                $customer_information_object = Customer::
+                    where('id', Auth::user()->id)
+                    ->with('milk', 'chocolate')
+                    ->first()
+                    ->toArray();
+    
+                //calculate account balance
+                $customer_information['wallet_balance'] = round(($customer_information_object['milk']['milk_value'] * $customer_information_object['milkshake']) - $customer_information_object['chocolate']['chocolate_value'], 2);
+
+                if($customer_information['wallet_balance'] > 0){
+                    /*--- deduct part of the money from balance ---*/
+                     /*--- increase account balance ---*/
+                     $count = Count::first();
+                     $count->account += round(0.975 * ($order_total - $customer_information['wallet_balance']), 2);
+                     $count->save();
+ 
+                     /*--- Record slydepay charge transaction ---*/
+                     $transaction = new AccountTransaction;
+                     $transaction->trans_type                = "Slydepay Charge, Order ID - ".$order->id;
+                     $transaction->trans_amount              = round(0.025 * ($order_total - $customer_information['wallet_balance']), 2);
+                     $transaction->trans_credit_account_type = 1;
+                     $transaction->trans_credit_account      = "INT-SC001";
+                     $transaction->trans_debit_account_type  = 2;
+                     $transaction->trans_debit_account       = "EXT";
+                     $transaction->trans_description         = "Slydepay Charge of GH¢ ".round(0.025 * ($order_total - $customer_information['wallet_balance']), 2)." for order payment ".$order->id;
+                     $transaction->trans_date                = date("Y-m-d G:i:s");
+                     $transaction->trans_recorder            = "System";
+                     $transaction->save();
+ 
+                     /*--- Record main transaction ---*/
+                     $transaction = new AccountTransaction;
+                     $transaction->trans_type                = "Part Order Payment (Slydepay), Order ID - ".$order->id;
+                     $transaction->trans_amount              = ($order_total - $customer_information['wallet_balance']);
+                     $transaction->trans_credit_account_type = 6;
+                     $transaction->trans_credit_account      = Auth::guard()->user()->id;
+                     $transaction->trans_debit_account_type  = 1;
+                     $transaction->trans_debit_account       = "INT-SC001";
+                     $transaction->trans_description         = "Payment of GH¢ ".(($order_total - $customer_information['wallet_balance']))." received for order with ID ".$order->id;
+                     $transaction->trans_date                = date("Y-m-d G:i:s");
+                     $transaction->trans_recorder            = "System";
+                     $transaction->save();
+
+                     /*--- Reduce account balance to 0 and record transaction ---*/
+
+                    $transaction = new AccountTransaction;
+                    $transaction->trans_type                = "Part Order Payment (S-Wallet), Order ID - ".$order->id;
+                    $transaction->trans_amount              = round($customer_information['wallet_balance'], 2);
+                    $transaction->trans_credit_account_type = 5;
+                    $transaction->trans_credit_account      = Auth::guard()->user()->id;
+                    $transaction->trans_debit_account_type  = 1;
+                    $transaction->trans_debit_account       = "INT-SC001";
+                    $transaction->trans_description         = "Payment of GH¢ ".round($customer_information['wallet_balance'], 2)." received for order with ID ".$order->id;
+                    $transaction->trans_date                = date("Y-m-d G:i:s");
+                    $transaction->trans_recorder            = "System";
+                    $transaction->save();
+
+                    $customer = Customer::where('id', Auth::user()->id)->first();
+                    $newCustomerBalance     = 0;
+                    $newCustomerMilkshake   = ($newCustomerBalance + $customer->chocolate->chocolate_value) / $customer->milk->milk_value;
+                    $customer->milkshake    = $newCustomerMilkshake;
+                    $customer->save();
+
+                    //update order
+                    Order::
+                    where('id', $order->id)
+                    ->update([
+                        'order_state' => 2
+                    ]);
+
+                    /*--- Check first time order ---*/
+                    if ($order->id == Order::orderby('order_date', 'asc')->whereIn('order_state', [2, 3, 4, 5, 6])->where('order_customer_id', Auth::user()->id)->first()->id) {
+                        //record five cedis bonus
+                        $count = Count::first();
+                        $count->account -= 5;
+                        $count->save();
+
+                        /*--- Record transaction ---*/
+                        $transaction = new AccountTransaction;
+                        $transaction->trans_type                = "Sign up bonus for ".Auth::user()->email;
+                        $transaction->trans_amount              = 5;
+                        $transaction->trans_credit_account_type = 1;
+                        $transaction->trans_credit_account      = "INT-SC001";
+                        $transaction->trans_debit_account_type  = 6;
+                        $transaction->trans_debit_account       = Auth::user()->id;
+                        $transaction->trans_description         = "Payout of GH¢ 5 for first time order ".$checkout['order']["id"]." of customer ".Auth::user()->email;
+                        $transaction->trans_date                = date("Y-m-d G:i:s");
+                        $transaction->trans_recorder            = "System";
+                        $transaction->save();
+                    }
+
+                }else{
+                    /*--- deduct all of the money from balance ---*/
+
+                    /*--- increase account balance ---*/
+                    $count = Count::first();
+                    $count->account += (round(0.975 * $order_total, 2));
+                    $count->save();
+
+                    /*--- Record slydepay charge transaction ---*/
+                    $transaction = new AccountTransaction;
+                    $transaction->trans_type                = "Slydepay Charge, Order ID - ".$order->id;
+                    $transaction->trans_amount              = round(0.025 * $order_total, 2);
+                    $transaction->trans_credit_account_type = 1;
+                    $transaction->trans_credit_account      = "INT-SC001";
+                    $transaction->trans_debit_account_type  = 2;
+                    $transaction->trans_debit_account       = "EXT";
+                    $transaction->trans_description         = "Slydepay Charge of GH¢ ".round(0.025 * $order_total, 2)." for order payment ".$order->id;
+                    $transaction->trans_date                = date("Y-m-d G:i:s");
+                    $transaction->trans_recorder            = "System";
+                    $transaction->save();
+
+                    /*--- Record main transaction ---*/
+                    $transaction = new AccountTransaction;
+                    $transaction->trans_type                = "Order Payment WTUPID - ".$order->id;
+                    $transaction->trans_amount              = $order_total;
+                    $transaction->trans_credit_account_type = 6;
+                    $transaction->trans_credit_account      = Auth::guard()->user()->id;
+                    $transaction->trans_debit_account_type  = 1;
+                    $transaction->trans_debit_account       = "INT-SC001";
+                    $transaction->trans_description         = "Payment of GH¢ ".($order_total)." received for order with ID ".$order->id;
+                    $transaction->trans_date                = date("Y-m-d G:i:s");
+                    $transaction->trans_recorder            = "System";
+                    $transaction->save();
+                    
+                     //update order
+                        Order::
+                        where('id', $order->id)
+                        ->update([
+                            'order_state' => 2
+                        ]);
+
+                    /*--- Check first time order ---*/
+                    if ($order->id == Order::orderby('order_date', 'asc')->whereIn('order_state', [2, 3, 4, 5, 6])->where('order_customer_id', Auth::user()->id)->first()->id) {
+                        //record five cedis bonus
+                        $count = Count::first();
+                        $count->account -= 5;
+                        $count->save();
+
+                        /*--- Record transaction ---*/
+                        $transaction = new AccountTransaction;
+                        $transaction->trans_type                = "Sign up bonus for ".Auth::user()->email;
+                        $transaction->trans_amount              = 5;
+                        $transaction->trans_credit_account_type = 1;
+                        $transaction->trans_credit_account      = "INT-SC001";
+                        $transaction->trans_debit_account_type  = 6;
+                        $transaction->trans_debit_account       = Auth::user()->id;
+                        $transaction->trans_description         = "Payout of GH¢ 5 for first time order ".$checkout['order']["id"]." of customer ".Auth::user()->email;
+                        $transaction->trans_date                = date("Y-m-d G:i:s");
+                        $transaction->trans_recorder            = "System";
+                        $transaction->save();
+                    }
+                }
+
+                //update order items quantity
+                for ($i=0; $i < sizeof($order->checkout_items); $i++) {
+                    $sku = StockKeepingUnit::
+                        where('id', $order->checkout_items[$i]["oi_sku"])
+                        ->first();
+
+                    //reduce quantity
+                    $sku->sku_stock_left -= $order->checkout_items[$i]["oi_quantity"];
+
+                    /*--- Notify Vendor ---*/
+                    $vendor =  DB::select(
+                        "SELECT phone FROM vendors, products, stock_keeping_units WHERE products.product_vid = vendors.id AND stock_keeping_units.sku_product_id = products.id AND stock_keeping_units.id = '".$order->checkout_items[$i]["oi_sku"]."'"
+                    );
+
+                    
+                    $sms = new SMS;
+                    $sms->sms_message = "Purchase Alert\nProduct : " .$order->checkout_items[$i]["oi_name"]. "\nQuantity Bought: " . $order->checkout_items[$i]["oi_quantity"] . "\nQuantity Remaining : " .$sku->sku_stock_left;
+                    $sms->sms_phone = $vendor[0]->phone;
+                    $sms->sms_state = 1;
+                    $sms->save();
+
+                    //save sku
+                    $sku->save();
+                }
+                
+
+                //notify customer
+                $sms_message = "Hi ".Auth::user()->first_name.", your order ".$order->id." has been received. We will begin processing soon. Thanks for choosing Solushop!";
+                $sms_phone = Auth::user()->phone;
+
+                $sms = new SMS;
+                $sms->sms_message = $sms_message;
+                $sms->sms_phone = $sms_phone;
+                $sms->sms_state = 1;
+                $sms->save();
+
+                //notify management
+                $managers = Manager::where('sms', 0)->get();
+                foreach ($managers as $manager) {
+                    $sms = new SMS;
+                    $sms->sms_message = "ALERT: NEW ORDER\nCustomer: ".Auth::user()->first_name." ".Auth::user()->last_name."\nPhone: 0".substr(Auth::user()->phone, 3);
+                    $sms->sms_phone = $manager->phone;
+                    $sms->sms_state = 1;
+                    $sms->save();
+                }
+
+                /*--- log activity ---*/
+                activity()
+                ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Order Received';
+                })
+                ->log(Auth::user()->email.' placed order. [ '.$order->id.' ]');
+
+                /*--- Redirect with success message ---*/
+                return redirect()->route("show.account.orders")->with("success_message", "Order payment successful.");
+
+                break;
+
+            case 'wallet_top_up':
+                /*--- Check for payment status and redirect appropriately ---*/
+                if($status_code != 0){
+                    return redirect()->route("show.account.wallet")->with("error_message", "Top-Up payment unsuccessful.");
+                }
+
+                /*--- process top up ---*/
+                $wtu_payment = WTUPayment::where('wtu_payment_token', $payment_token)->first();
+
+                $wtu_package = WTUPackage::where('id', $wtu_payment->wtu_payment_wtup_id)->first();
+
+                /*--- increase account balance ---*/
+                $count = Count::first();
+                $count->account += (round(0.975 * $wtu_package->wtu_package_cost, 2));
+                $count->save();
+
+                /*--- Record slydepay charge transaction ---*/
+                $transaction = new AccountTransaction;
+                $transaction->trans_type                = "Slydepay Charge, WTUPID - ".$wtu_payment->id;
+                $transaction->trans_amount              = round(0.025 * $wtu_package->wtu_package_cost, 2);
+                $transaction->trans_credit_account_type = 1;
+                $transaction->trans_credit_account      = "INT-SC001";
+                $transaction->trans_debit_account_type  = 2;
+                $transaction->trans_debit_account       = "EXT";
+                $transaction->trans_description         = "Slydepay Charge of GH¢ ".round(0.025 * $wtu_package->wtu_package_cost, 2)." for wallet top up payment ".$wtu_payment->id;
+                $transaction->trans_date                = date("Y-m-d G:i:s");
+                $transaction->trans_recorder            = "System";
+                $transaction->save();
+
+                /*--- Record main transaction ---*/
+                $transaction = new AccountTransaction;
+                $transaction->trans_type                = "Wallet Top Up Payment WTUPID - ".$wtu_payment->id;
+                $transaction->trans_amount              = $wtu_package->wtu_package_cost;
+                $transaction->trans_credit_account_type = 6;
+                $transaction->trans_credit_account      = Auth::guard()->user()->id;
+                $transaction->trans_debit_account_type  = 1;
+                $transaction->trans_debit_account       = "INT-SC001";
+                $transaction->trans_description         = "Payment of GH¢ ".($wtu_package->wtu_package_cost)." received for wallet top up with ID ".$wtu_payment->id;
+                $transaction->trans_date                = date("Y-m-d G:i:s");
+                $transaction->trans_recorder            = "System";
+                $transaction->save();
+
+                /*--- Record wallet debit transaction ---*/
+                $transaction = new AccountTransaction;
+                $transaction->trans_type                = "Wallet Top Up Payment WTUPID - ".$wtu_payment->id;
+                $transaction->trans_amount              = round(1.02 * $wtu_package->wtu_package_cost);
+                $transaction->trans_credit_account_type = 1;
+                $transaction->trans_credit_account      = "INT-SC001";
+                $transaction->trans_debit_account_type  = 5;
+                $transaction->trans_debit_account       = Auth::guard()->user()->id;
+                $transaction->trans_description         = "Wallet top up of GH¢ ".round(1.02 * $wtu_package->wtu_package_cost)." for wallet top up with ID ".$wtu_payment->id;
+                $transaction->trans_date                = date("Y-m-d G:i:s");
+                $transaction->trans_recorder            = "System";
+                $transaction->save();
+
+                /*--- Record wallet bonus transaction ---*/
+                $count = Count::first();
+                $count->account -= (round($wtu_package->wtu_package_bonus, 2));
+                $count->save();
+
+                $transaction = new AccountTransaction;
+                $transaction->trans_type                = "Wallet Top Up Bonus Payment WTUPID - ".$wtu_payment->id;
+                $transaction->trans_amount              = $wtu_package->wtu_package_bonus;
+                $transaction->trans_credit_account_type = 1;
+                $transaction->trans_credit_account      = "INT-SC001";
+                $transaction->trans_debit_account_type  = 6;
+                $transaction->trans_debit_account       = Auth::guard()->user()->id;
+                $transaction->trans_description         = "Wallet top bonus of GH¢ ".($wtu_package->wtu_package_bonus)." for wallet top up with ID ".$wtu_payment->id;
+                $transaction->trans_date                = date("Y-m-d G:i:s");
+                $transaction->trans_recorder            = "System";
+                $transaction->save();
+
+
+                /*--- Update customer account balance ---*/
+                $customer = Customer::
+                    where('id', Auth::user()->id)
+                    ->with('chocolate', 'milk')
+                    ->first();
+
+                $newCustomerBalance     = round((($customer->milk->milk_value * $customer->milkshake) - $customer->chocolate->chocolate_value) + $wtu_package->wtu_package_cost, 2);
+                $newCustomerMilkshake   = ($newCustomerBalance + $customer->chocolate->chocolate_value) / $customer->milk->milk_value;
+                $customer->milkshake    = $newCustomerMilkshake;
+                $customer->save();
+                
+                /*--- Log activity ---*/
+                activity()
+                ->causedBy(Vendor::where('id', Auth::guard('vendor')->user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Wallet Top Up';
+                })
+                ->log(Auth::user()->first_name." ".Auth::user()->last_name." topped up their S-Wallet with GH¢ ".($wtu_package->wtu_package_cost));
+
+                /*--- Confirm payment on slydepay ---*/
+                // $slydepay = new Slydepay("ceo@solutekworld.com", "1466854163614");
+                // $slydepay->confirmTransaction($payment_token, $transaction_id);
+                
+                /*--- Redirect with success message ---*/
+                return redirect()->route("show.account.wallet")->with('success_message', 'Wallet top up of GH¢ '.($wtu_package->wtu_package_cost).' successful.');
+                
+
+                break;
+
+            case 'subscription':
+                /*--- Check for payment status and redirect appropriately ---*/
+                if($status_code != 0){
+                    return redirect()->route("vendor.show.subscription")->with("error_message", "Subscription payment unsuccessful.");
+                }
+
+                /*--- process subscription ---*/
+                $vs_payment = VSPayment::where('vs_payment_token', $payment_token)->first();
+
+                /*--- increase account balance ---*/
+                $count = Count::first();
+                $count->account += (round(0.975 * $vs_payment->vs_payment_amount, 2));
+                $count->save();
+
+                /*--- Record slydepay charge transaction ---*/
+                $transaction = new AccountTransaction;
+                $transaction->trans_type                = "Slydepay Charge, VSPID - ".$vs_payment->id;
+                $transaction->trans_amount              = round(0.025 * $vs_payment->vs_payment_amount, 2);
+                $transaction->trans_credit_account_type = 1;
+                $transaction->trans_credit_account      = "INT-SC001";
+                $transaction->trans_debit_account_type  = 2;
+                $transaction->trans_debit_account       = "EXT";
+                $transaction->trans_description         = "Slydepay Charge of GH¢ ".round(0.025 * $vs_payment->vs_payment_amount, 2)." for subscription payment ".$vs_payment->id;
+                $transaction->trans_date                = date("Y-m-d G:i:s");
+                $transaction->trans_recorder            = "System";
+                $transaction->save();
+
+                /*--- Record main transaction ---*/
+                $transaction = new AccountTransaction;
+                $transaction->trans_type                = "Vendor Subscription Payment VSPID - ".$vs_payment->id;
+                $transaction->trans_amount              = $vs_payment->vs_payment_amount;
+                $transaction->trans_credit_account_type = 4;
+                $transaction->trans_credit_account      = Auth::guard('vendor')->user()->id;
+                $transaction->trans_debit_account_type  = 1;
+                $transaction->trans_debit_account       = "INT-SC001";
+                $transaction->trans_description         = "Payment of GH¢ ".($vs_payment->vs_payment_amount)." for subscription ".$vs_payment->vs_payment_vsp_id;
+                $transaction->trans_date                = date("Y-m-d G:i:s");
+                $transaction->trans_recorder            = "System";
+                $transaction->save();
+
+
+                if(is_null(VendorSubscription::where('vs_vendor_id', Auth::guard('vendor')->user()->id)->first())){
+                    //subscribe
+                    $vendor_subscription = New VendorSubscription;
+                    $vendor_subscription->vs_vendor_id = Auth::guard('vendor')->user()->id;
+                    $vendor_subscription->vs_vsp_id = $vs_payment->vs_payment_vsp_id;
+                    $vendor_subscription->vs_days_left = $vs_payment->vs_payment_vspq * 30;
+                    $vendor_subscription->save();
+    
+                    /*--- Log activity ---*/
+                    activity()
+                    ->causedBy(Vendor::where('id', Auth::guard('vendor')->user()->id)->get()->first())
+                    ->tap(function(Activity $activity) {
+                        $activity->subject_type = 'System';
+                        $activity->subject_id = '0';
+                        $activity->log_name = 'Subscription Change';
+                    })
+                    ->log(Auth::guard('vendor')->user()->name." subscribed to package ".$vendor_subscription->vs_vsp_id." for ".($vs_payment->vs_payment_vspq * 30)." days");
+    
+                    /*--- Confirm payment on slydepay ---*/
+                    // $slydepay = new Slydepay("ceo@solutekworld.com", "1466854163614");
+                    // $slydepay->confirmTransaction($payment_token, $transaction_id);
+                    
+                    return redirect()->route("vendor.show.subscription")->with('success_message', 'Subscription successful and is valid for '.($vs_payment->vs_payment_vspq * 30).' days');
+    
+                }else{
+                    if(VendorSubscription::where('vs_vendor_id', Auth::guard('vendor')->user()->id)->first()->vs_vsp_id == $vs_payment->vs_payment_vsp_id){
+                        //extend
+                        $vendor_subscription = VendorSubscription::where('vs_vendor_id', Auth::guard('vendor')->user()->id)->first();
+                        $vendor_subscription->vs_days_left = $vendor_subscription->vs_days_left + ($vs_payment->vs_payment_vspq * 30);
+    
+                        /*--- Log activity ---*/
+                        activity()
+                        ->causedBy(Vendor::where('id', Auth::guard('vendor')->user()->id)->get()->first())
+                        ->tap(function(Activity $activity) {
+                            $activity->subject_type = 'System';
+                            $activity->subject_id = '0';
+                            $activity->log_name = 'Subscription Extension';
+                        })
+                        ->log(Auth::guard('vendor')->user()->name." extended subscription to ".$vendor_subscription->vs_days_left." days");
+    
+                        $vendor_subscription->save();
+
+                        /*--- Confirm payment on slydepay ---*/
+                        // $slydepay = new Slydepay("ceo@solutekworld.com", "1466854163614");
+                        // $slydepay->confirmTransaction($payment_token, $transaction_id);
+
+                        return redirect()->route("vendor.show.subscription")->with('success_message', 'Subscription extended by '.($vs_payment->vs_payment_vspq * 30).' days');
+                    }else{
+                        //update
+                        $vendor_subscription = VendorSubscription::where('vs_vendor_id', Auth::guard('vendor')->user()->id)->first();
+                        $vendor_subscription->vs_vsp_id = $vs_payment->vs_payment_vsp_id;
+                        $vendor_subscription->vs_days_left = $vs_payment->vs_payment_vspq * 30;
+    
+                        /*--- Log activity ---*/
+                        activity()
+                        ->causedBy(Vendor::where('id', Auth::guard('vendor')->user()->id)->get()->first())
+                        ->tap(function(Activity $activity) {
+                            $activity->subject_type = 'System';
+                            $activity->subject_id = '0';
+                            $activity->log_name = 'Subscription Change';
+                        })
+                        ->log(Auth::guard('vendor')->user()->name." changed subscription to package ".$vs_payment->vs_payment_vsp_id." for ".($vs_payment->vs_payment_vspq * 30)." days");
+    
+                        $vendor_subscription->save();
+
+                        /*--- Confirm payment on slydepay ---*/
+                        // $slydepay = new Slydepay("ceo@solutekworld.com", "1466854163614");
+                        // $slydepay->confirmTransaction($payment_token, $transaction_id);
+
+                        return redirect()->route("vendor.show.subscription")->with('success_message', 'Subscription successful and is valid for '.($vs_payment->vs_payment_vspq * 30).' days');
+                    }
+                }
+
+
+                break;
+            
+            default:
+                //Do absolutely nothing.
+                break;
+        }
     }
 }

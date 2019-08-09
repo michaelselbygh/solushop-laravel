@@ -82,6 +82,9 @@ Route::get('/cron/delete-unpaid-orders', 'CronsController@deleteUnpaidOrders');
 Route::get('/cron/delete-unpaid-wtu-payments', 'CronsController@deleteUnpaidWTUPayments');
 Route::get('/cron/update-expired-coupons', 'CronsController@updateExpiredCoupons');
 
+//receive call back from slydepay
+Route::get('receive-callback', 'AppGeneralPagesController@processReceiveCallback');
+
 //portal routes
 Route::prefix('portal')->group(function(){
     //manager routes

@@ -589,10 +589,12 @@ class AppMyAccountController extends Controller
                 $shipping_cost = $checkout['order']["order_shipping"]; 
                 $tax = 0;
 
+                $order_tid = rand(100000, 999999);
+
                 // Create the Order object for this transaction. 
                 $slydepay_order = SlydepayOrder::createWithId(
                     $order_items,
-                    $checkout['order']["id"]."-".rand(1000, 9999), 
+                    $order_tid, 
                     $shipping_cost,
                     $tax,
                     "Payment to Solushop Ghana for Order ".$checkout['order']["id"],
@@ -607,7 +609,8 @@ class AppMyAccountController extends Controller
                     Order::
                     where('id', $checkout['order']["id"])
                     ->update([
-                        'order_token' => $redirect_url_break[1]
+                        'order_token' => $redirect_url_break[1],
+                        'order_tid'   => $order_tid
                     ]);
 
                     return redirect($redirect_url);
@@ -644,6 +647,16 @@ class AppMyAccountController extends Controller
                 $transaction->trans_recorder            = "System";
                 $transaction->save();
 
+                /*--- log activity ---*/
+                activity()
+                ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
+                ->tap(function(Activity $activity) {
+                    $activity->subject_type = 'System';
+                    $activity->subject_id = '0';
+                    $activity->log_name = 'Order Received';
+                })
+                ->log(Auth::user()->email.' placed order. [ '.$checkout["order"]["id"].' ]');
+
 
                 //update order
                 Order::
@@ -655,6 +668,10 @@ class AppMyAccountController extends Controller
                 /*--- Check first time order ---*/
                 if ($checkout['order']["id"] == Order::orderby('order_date', 'asc')->whereIn('order_state', [2, 3, 4, 5, 6])->where('order_customer_id', Auth::user()->id)->first()->id) {
                     //record five cedis bonus
+                    $count = Count::first();
+                    $count->account -= 5;
+                    $count->save();
+
                     /*--- Record transaction ---*/
                     $transaction = new AccountTransaction;
                     $transaction->trans_type                = "Sign up bonus for ".Auth::user()->email;
@@ -1078,10 +1095,12 @@ class AppMyAccountController extends Controller
         $shipping_cost = 0; 
         $tax = 0;
 
+        $wtp_tid = rand(100000, 999999);
+
         // Create the Order object for this transaction. 
         $slydepay_order = SlydepayOrder::createWithId(
             $order_items,
-            rand(1000, 9999), 
+            $wtp_tid, 
             $shipping_cost,
             $tax,
             "Wallet Top Up on Solushop Ghana",
@@ -1098,7 +1117,8 @@ class AppMyAccountController extends Controller
             $WTUPayment->wtu_payment_customer_id    = Auth::user()->id;
             $WTUPayment->wtu_payment_wtup_id        = $request->wtup_id;
             $WTUPayment->wtu_payment_token          = $redirect_url_break[1];
-            $WTUPayment->wtu_payment_status         = "UNPAID";
+            $WTUPayment->wtu_payment_status         = "UNPAID"; 
+            $WTUPayment->wtp_tid                    = $wtp_tid;
             $WTUPayment->save();
 
             return redirect($redirect_url);

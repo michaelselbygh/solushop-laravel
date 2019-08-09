@@ -866,10 +866,12 @@ class VendorController extends Controller
             $shipping_cost = 0; 
             $tax = 0;
 
+            $vs_payment_tid = rand(100000, 999999);
+
             // Create the Order object for this transaction. 
             $slydepay_order = SlydepayOrder::createWithId(
                 $order_items,
-                rand(1000, 9999), 
+                $vs_payment_tid, 
                 $shipping_cost,
                 $tax,
                 "Vendor Subscription on Solushop Ghana",
@@ -890,6 +892,7 @@ class VendorController extends Controller
                 $VSPayment->vs_payment_token        = $redirect_url_break[1];
                 $VSPayment->vs_payment_type         = "New";
                 $VSPayment->vs_payment_state        = "UNPAID";
+                $VSPayment->vs_payment_tid          = $vs_payment_tid;
                 $VSPayment->save();
 
                 return redirect($redirect_url);

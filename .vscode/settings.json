@@ -15,6 +15,7 @@
         "id",
         "lbdate",
         "lbday",
+        "mgmt",
         "michaelselbygh",
         "neglmanagement",
         "order",
@@ -31,8 +32,16 @@
         "ubdate",
         "ubday",
         "vs",
+        "vspid",
         "vspq",
         "wtu",
-        "wtup"
+        "wtup",
+        "wtupid"
+    ],
+    "cSpell.ignoreWords": [
+        "cust",
+        "id",
+        "ref",
+        "transac"
     ]
 }
