@@ -1,8 +1,6 @@
 @extends('portal.layouts.manager.master')
 
-@section('page-title')
-    Pick-Up History
-@endsection
+@section('page-title')Pick-Up History @endsection
 
 @section('content-body')
     <section id="configuration">

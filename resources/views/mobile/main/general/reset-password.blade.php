@@ -1,11 +1,7 @@
 @extends('mobile.layouts.general')
-@section('page-title')
-    Reset Password
-@endsection
+@section('page-title')Reset Password @endsection
 @section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
-@section('page-description')
-    Lost your password? No problem. Let's help you recover it.
-@endsection
+@section('page-description')Lost your password? No problem. Let's help you recover it. @endsection
 @section('page-content')
     <div class="page page-home">
         @include('mobile.main.general.includes.toolbar')

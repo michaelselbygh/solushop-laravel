@@ -1,11 +1,7 @@
 @extends('mobile.layouts.general')
-@section('page-title')
-    Let's get talking.
-@endsection
+@section('page-title')Let's get talking. @endsection
 @section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
-@section('page-description')
-    Questions or suggestions? Let's talk. We are always happy to hear from you.
-@endsection
+@section('page-description')Questions or suggestions? Let's talk. We are always happy to hear from you. @endsection
 @section('page-content')
     <div class="page page-home">
         @include('mobile.main.general.includes.toolbar')

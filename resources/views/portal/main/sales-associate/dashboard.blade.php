@@ -1,8 +1,6 @@
 @extends('portal.layouts.sales-associate.master')
 
-@section('page-title')
-    Dashboard 
-@endsection
+@section('page-title')Dashboard @endsection
 
 @section('content-body')
     <section id="configuration">

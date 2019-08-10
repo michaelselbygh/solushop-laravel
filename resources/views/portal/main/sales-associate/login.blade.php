@@ -1,8 +1,6 @@
 @extends('portal.layouts.login.index')
 
-@section('entity')
-    Sales Associate
-@endsection
+@section('entity')Sales Associate @endsection
 
 @section('login')
     <form class="form-horizontal form-simple" action="{{ route('sales-associate.login.submit') }}" method="POST" >

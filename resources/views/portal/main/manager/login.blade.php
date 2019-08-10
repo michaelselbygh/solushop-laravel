@@ -1,8 +1,6 @@
 @extends('portal.layouts.login.index')
 
-@section('entity')
-    Manager
-@endsection
+@section('entity')Manager @endsection
 
 @section('login')
     <form class="form-horizontal form-simple" action="{{ route('manager.login.submit') }}" method="POST" >

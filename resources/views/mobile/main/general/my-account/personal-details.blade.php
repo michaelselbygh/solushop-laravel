@@ -1,11 +1,7 @@
 @extends('mobile.layouts.my-account')
-@section('page-title')
-    Personal Details
-@endsection
+@section('page-title')Personal Details @endsection
 @section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
-@section('page-description')
-    Manage your personal details on Solushop Ghana
-@endsection
+@section('page-description')Manage your personal details on Solushop Ghana @endsection
 @section('page-content')
     <div class="page">
         <div class="navbar navbar-page">

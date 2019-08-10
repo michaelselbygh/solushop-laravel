@@ -1,11 +1,7 @@
 @extends('app.layouts.general')
-@section('page-title')
-    Shop @if(isset($category['pc_description'])) {{ $category['pc_description'] }} @endif
-@endsection
+@section('page-title')Shop @if(isset($category['pc_description'])) {{ $category['pc_description'] }} @endif @endsection
 @section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
-@section('page-description')
-    Solushop is Ghana&#039;s most trusted Online Shopping Mall ➜Shop electronics, accessories, books, fashion &amp; more online ✔ Great customer care ✔ Top quality products ✓ super fast shipping ✓ Order now and enjoy a revolutionary shopping experience!
-@endsection
+@section('page-description')Solushop is Ghana&#039;s most trusted Online Shopping Mall ➜Shop electronics, accessories, books, fashion &amp; more online ✔ Great customer care ✔ Top quality products ✓ super fast shipping ✓ Order now and enjoy a revolutionary shopping experience! @endsection
 @section('page-content')
     <!--Heading Banner Area Start-->
     <section class="heading-banner-area pt-10">

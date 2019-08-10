@@ -1,8 +1,6 @@
 @extends('portal.layouts.vendor.master')
 
-@section('page-title')
-   Subscription
-@endsection
+@section('page-title')Subscription @endsection
 
 @section('content-body')
     <section id="configuration">

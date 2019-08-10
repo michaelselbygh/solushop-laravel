@@ -1,11 +1,7 @@
 @extends('mobile.layouts.general')
-@section('page-title')
-    Page not found
-@endsection
+@section('page-title')Page not found @endsection
 @section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
-@section('page-description')
-    Resource unaivailable or moved to different location.
-@endsection
+@section('page-description')Resource unaivailable or moved to different location. @endsection
 @section('page-content')
     <div class="page page-home">
         @include('mobile.main.general.includes.toolbar')

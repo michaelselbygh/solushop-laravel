@@ -1,8 +1,6 @@
 @extends('portal.layouts.delivery-partner.master')
 
-@section('page-title')
-    Pick Ups
-@endsection
+@section('page-title')Pick Ups @endsection
 
 @section('content-body')
     <section id="configuration">

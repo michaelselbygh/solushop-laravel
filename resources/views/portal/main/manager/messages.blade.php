@@ -1,8 +1,6 @@
 @extends('portal.layouts.manager.master')
 
-@section('page-title')
-   {{ $messages["type"] }} Messages
-@endsection
+@section('page-title'){{ $messages["type"] }} Messages @endsection
 
 @section('content-body')
     <section id="configuration">

@@ -1,11 +1,7 @@
 @extends('app.layouts.my-account')
-@section('page-title')
-    My Account
-@endsection
+@section('page-title')My Account @endsection
 @section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
-@section('page-description')
-    Manage your account on Solushop Ghana
-@endsection
+@section('page-description')Manage your account on Solushop Ghana @endsection
 @section('page-content')
     <!--Heading Banner Area Start-->
     <section class="heading-banner-area pt-10">

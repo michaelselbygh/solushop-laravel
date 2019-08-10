@@ -1,11 +1,7 @@
 @extends('mobile.layouts.my-account')
-@section('page-title')
-    Messages
-@endsection
+@section('page-title')Messages @endsection
 @section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
-@section('page-description')
-    Manage your messages on Solushop Ghana
-@endsection
+@section('page-description')Manage your messages on Solushop Ghana @endsection
 @section('page-content')
     <div class="page">
         <div class="navbar navbar-page">

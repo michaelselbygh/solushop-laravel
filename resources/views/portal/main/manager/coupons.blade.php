@@ -1,8 +1,6 @@
 @extends('portal.layouts.manager.master')
 
-@section('page-title')
-    Coupons
-@endsection
+@section('page-title')Coupons @endsection
 
 @section('content-body')
     <section id="configuration">

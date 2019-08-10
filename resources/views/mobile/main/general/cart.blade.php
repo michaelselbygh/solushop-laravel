@@ -1,11 +1,7 @@
 @extends('mobile.layouts.general')
-@section('page-title')
-    Cart
-@endsection
+@section('page-title')Cart @endsection
 @section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
-@section('page-description')
-    Your cart on Solushop Ghana.
-@endsection
+@section('page-description')Your cart on Solushop Ghana. @endsection
 @section('page-content')
     <div class="page">
         @include('mobile.main.general.includes.toolbar')

@@ -1,8 +1,6 @@
 @extends('portal.layouts.vendor.master')
 
-@section('page-title')
-    {{ $product["product_name"] }}
-@endsection
+@section('page-title'){{ $product["product_name"] }}@endsection
 
 @section('content-body')
     <div class="row">

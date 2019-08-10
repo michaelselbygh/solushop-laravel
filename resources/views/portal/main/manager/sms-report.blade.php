@@ -1,8 +1,6 @@
 @extends('portal.layouts.manager.master')
 
-@section('page-title')
-    SMS Report
-@endsection
+@section('page-title')SMS Report @endsection
 
 @section('content-body')
     <section id="configuration">

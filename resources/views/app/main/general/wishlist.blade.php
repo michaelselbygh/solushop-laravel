@@ -1,11 +1,7 @@
 @extends('app.layouts.general')
-@section('page-title')
-    Wishlist
-@endsection
+@section('page-title')Wishlist @endsection
 @section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
-@section('page-description')
-    Your wishlist on Solushop Ghana.
-@endsection
+@section('page-description')Your wishlist on Solushop Ghana. @endsection
 @section('page-content')
     <!--Heading Banner Area Start-->
     <section class="heading-banner-area pt-10">

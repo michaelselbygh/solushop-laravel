@@ -1,8 +1,6 @@
 @extends('portal.layouts.vendor.master')
 
-@section('page-title')
-    Add Product
-@endsection
+@section('page-title')Add Product @endsection
 
 @section('content-body')
     <form method="POST" action="{{ route("vendor.process.add.product") }}" enctype="multipart/form-data">

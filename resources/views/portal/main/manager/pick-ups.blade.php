@@ -1,8 +1,6 @@
 @extends('portal.layouts.manager.master')
 
-@section('page-title')
-    Active Pick-Ups
-@endsection
+@section('page-title')Active Pick-Ups @endsection
 
 @section('content-body')
     <section id="configuration">

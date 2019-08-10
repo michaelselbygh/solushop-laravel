@@ -1,8 +1,6 @@
 @extends('portal.layouts.sales-associate.master')
 
-@section('page-title')
-   Terms of Use
-@endsection
+@section('page-title')Terms of Use @endsection
 
 @section('content-body')
     <section id="configuration">

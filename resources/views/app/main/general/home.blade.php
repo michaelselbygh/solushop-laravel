@@ -1,13 +1,9 @@
 
 
 @extends('app.layouts.home')
-@section('page-title')
-    Ghana's Most Trusted Online Store.
-@endsection
+@section('page-title')Ghana's Most Trusted Online Store. @endsection
 @section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
-@section('page-description')
-    Solushop is Ghana&#039;s most trusted Online Shopping Mall ➜Shop electronics, accessories, books, fashion &amp; more online ✔ Great customer care ✔ Top quality products ✓ super fast shipping ✓ Order now and enjoy a revolutionary shopping experience!
-@endsection
+@section('page-description')Solushop is Ghana&#039;s most trusted Online Shopping Mall ➜Shop electronics, accessories, books, fashion &amp; more online ✔ Great customer care ✔ Top quality products ✓ super fast shipping ✓ Order now and enjoy a revolutionary shopping experience! @endsection
 @section('page-content')
 <section class="slider-area pt-30 white-bg pb-10">
         <div class="container">

@@ -1,11 +1,7 @@
 @extends('app.layouts.my-account') 
-@section('page-title')
-    Conversation with {{ $conversation["vendor"]["name"] }}
-@endsection
+@section('page-title')Conversation with {{ $conversation["vendor"]["name"] }} @endsection
 @section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
-@section('page-description')
-    Send {{ $conversation["vendor"]["name"] }} a message on Solushop Ghana.
-@endsection
+@section('page-description')Send {{ $conversation["vendor"]["name"] }} a message on Solushop Ghana. @endsection
 @section('page-content')
     <!--Heading Banner Area Start-->
     <section class="heading-banner-area pt-10">

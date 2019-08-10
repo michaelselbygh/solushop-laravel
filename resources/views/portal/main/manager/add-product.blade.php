@@ -1,8 +1,6 @@
 @extends('portal.layouts.manager.master')
 
-@section('page-title')
-    Add Product
-@endsection
+@section('page-title')Add Product @endsection
 
 @section('content-body')
     <form class="swerve" method="POST" action="{{ route("manager.process.add.product") }}" enctype="multipart/form-data">

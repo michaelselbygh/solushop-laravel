@@ -1,8 +1,6 @@
 @extends('portal.layouts.vendor.master')
 
-@section('page-title')
-    Conversation with {{ $conversation["customer"]["first_name"]." ".$conversation["customer"]["last_name"] }}
-@endsection
+@section('page-title')Conversation with {{ $conversation["customer"]["first_name"]." ".$conversation["customer"]["last_name"] }}@endsection
 
 @section('content-body')
     <div class="row">

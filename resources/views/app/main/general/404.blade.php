@@ -1,11 +1,7 @@
 @extends('app.layouts.general')
-@section('page-title')
-    Page not found
-@endsection
+@section('page-title')Page not found @endsection
 @section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
-@section('page-description')
-    Resource unaivailable or moved to different location.
-@endsection
+@section('page-description')Resource unaivailable or moved to different location. @endsection
 @section('page-content')
     <!--Heading Banner Area Start-->
     <section class="heading-banner-area pt-10">

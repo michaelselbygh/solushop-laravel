@@ -1,8 +1,6 @@
 @extends('portal.layouts.manager.master')
 
-@section('page-title')
-    Customer - {{ $customer["first_name"]." ".$customer["last_name"] }}
-@endsection
+@section('page-title')Customer - {{ $customer["first_name"]." ".$customer["last_name"] }}@endsection
 
 @section('content-body')
     <div class="row">

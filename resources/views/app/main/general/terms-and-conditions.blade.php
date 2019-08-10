@@ -1,11 +1,7 @@
 @extends('app.layouts.general')
-@section('page-title')
-    Terms and Conditions
-@endsection
+@section('page-title')Terms and Conditions @endsection
 @section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
-@section('page-description')
-    Terms and conditions governing the use of Solushop.
-@endsection
+@section('page-description')Terms and conditions governing the use of Solushop. @endsection
 @section('page-content')
     <!--Heading Banner Area Start-->
     <section class="heading-banner-area pt-10">

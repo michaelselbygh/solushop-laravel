@@ -1,8 +1,6 @@
 @extends('portal.layouts.manager.master')
 
-@section('page-title')
-    @if(isset($orders["filter"]) AND !is_null($orders["filter"])) {{ $orders["filter"] }} @endif Orders
-@endsection
+@section('page-title')@if(isset($orders["filter"]) AND !is_null($orders["filter"])) {{ $orders["filter"] }} @endif Orders @endsection
 
 @section('content-body')
     <h5 class="card-title">@if(isset($orders["filter"]) AND !is_null($orders["filter"])) {{ $orders["filter"] }} @endif Orders</h5>

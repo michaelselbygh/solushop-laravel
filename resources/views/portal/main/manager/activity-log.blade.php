@@ -1,8 +1,6 @@
 @extends('portal.layouts.manager.master')
 
-@section('page-title')
-    Activity Log
-@endsection
+@section('page-title')Activity Log @endsection
 
 @section('content-body')
     <section id="configuration">

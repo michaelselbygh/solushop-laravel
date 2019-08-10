@@ -1,8 +1,6 @@
 @extends('portal.layouts.manager.master')
 
-@section('page-title')
-    Sales Associate - {{ $sales_associate["first_name"]." ".$sales_associate["last_name"] }}
-@endsection
+@section('page-title')Sales Associate - {{ $sales_associate["first_name"]." ".$sales_associate["last_name"] }}@endsection
 
 @section('content-body')
     <div class="row">

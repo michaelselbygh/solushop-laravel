@@ -1,8 +1,6 @@
 @extends('portal.layouts.manager.master')
 
-@section('page-title')
-   Generate Coupon
-@endsection
+@section('page-title')Generate Coupon @endsection
 
 @section('content-body')
     <div class="row">

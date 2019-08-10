@@ -1,8 +1,6 @@
 @extends('portal.layouts.manager.master')
 
-@section('page-title')
-    Sales Associates
-@endsection
+@section('page-title')Sales Associates @endsection
 
 @section('content-body')
     <section id="configuration">

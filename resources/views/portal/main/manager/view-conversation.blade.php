@@ -1,8 +1,6 @@
 @extends('portal.layouts.manager.master')
 
-@section('page-title')
-    Conversation between {{ $conversation["customer"]["first_name"]." ".$conversation["customer"]["last_name"] }} and {{ $conversation["vendor"]["name"] }}
-@endsection
+@section('page-title')Conversation between {{ $conversation["customer"]["first_name"]." ".$conversation["customer"]["last_name"] }} and {{ $conversation["vendor"]["name"] }} @endsection
 
 @section('content-body')
     <div class="row">

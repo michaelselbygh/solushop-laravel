@@ -1,8 +1,6 @@
 @extends('portal.layouts.sales-associate.master')
 
-@section('page-title')
-    Orders
-@endsection
+@section('page-title')Orders @endsection
 
 @section('content-body')
     <h5 class="card-title">Orders</h5>

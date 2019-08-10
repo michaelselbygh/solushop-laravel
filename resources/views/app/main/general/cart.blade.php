@@ -1,11 +1,7 @@
 @extends('app.layouts.general')
-@section('page-title')
-    Cart
-@endsection
+@section('page-title')Cart @endsection
 @section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
-@section('page-description')
-    Your cart on Solushop Ghana.
-@endsection
+@section('page-description')Your cart on Solushop Ghana. @endsection
 @section('page-content')
     <!--Heading Banner Area Start-->
     <section class="heading-banner-area pt-10">

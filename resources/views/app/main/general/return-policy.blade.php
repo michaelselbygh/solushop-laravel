@@ -1,11 +1,7 @@
 @extends('app.layouts.general')
-@section('page-title')
-    Return Policy
-@endsection
+@section('page-title')Return Policy @endsection
 @section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
-@section('page-description')
-    How we handle returns and refunds.
-@endsection
+@section('page-description')How we handle returns and refunds. @endsection
 @section('page-content')
     <!--Heading Banner Area Start-->
     <section class="heading-banner-area pt-10">

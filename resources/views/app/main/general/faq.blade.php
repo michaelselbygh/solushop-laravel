@@ -1,11 +1,7 @@
 @extends('app.layouts.general')
-@section('page-title')
-    Frequently asked questions.
-@endsection
+@section('page-title')Frequently asked questions. @endsection
 @section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
-@section('page-description')
-    Check out these frequently asked questions on Solushop Ghana.
-@endsection
+@section('page-description')Check out these frequently asked questions on Solushop Ghana. @endsection
 @section('page-content')
     <!--Heading Banner Area Start-->
     <section class="heading-banner-area pt-10">

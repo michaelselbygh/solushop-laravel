@@ -1,11 +1,7 @@
 @extends('mobile.layouts.general')
-@section('page-title')
-    Return Policy
-@endsection
+@section('page-title')Return Policy @endsection
 @section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
-@section('page-description')
-    How we handle returns and refunds.
-@endsection
+@section('page-description')How we handle returns and refunds. @endsection
 @section('page-content')
     <div class="page page-home">
         @include('mobile.main.general.includes.toolbar')

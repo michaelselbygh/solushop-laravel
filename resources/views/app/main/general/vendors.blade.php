@@ -1,11 +1,7 @@
 @extends('app.layouts.general')
-@section('page-title')
-    Our Amazing Vendors 
-@endsection
+@section('page-title')Our Amazing Vendors @endsection
 @section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
-@section('page-description')
-    Check out our amazing vendors on Solushop Ghana.
-@endsection
+@section('page-description')Check out our amazing vendors on Solushop Ghana. @endsection
 @section('page-content')
     <!--Heading Banner Area Start-->
     <section class="heading-banner-area pt-10">

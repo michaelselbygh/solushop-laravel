@@ -24,6 +24,14 @@ class AppVendorController extends Controller
             return redirect()->route('page.not.found');
         }
 
+        if (sizeof(DB::select(
+            "SELECT vendors.id, name, username FROM vendors, vendor_subscriptions  where vendors.id = vendor_subscriptions.vs_vendor_id and vendor_subscriptions.vs_days_left > 0 and vendors.username = :vendor_slug",
+            ['vendor_slug' => $vendorSlug]
+        )) < 1) {
+            //vendor subscription done
+            return redirect()->route('page.not.found');
+        }
+
         $vendorObject = DB::select(
             "SELECT vendors.id, name, username FROM vendors, vendor_subscriptions  where vendors.id = vendor_subscriptions.vs_vendor_id and vendor_subscriptions.vs_days_left > 0 and vendors.username = :vendor_slug",
             ['vendor_slug' => $vendorSlug]

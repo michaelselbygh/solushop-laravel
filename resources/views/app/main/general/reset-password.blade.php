@@ -1,11 +1,7 @@
 @extends('app.layouts.general')
-@section('page-title')
-    Reset Password
-@endsection
+@section('page-title')Reset Password @endsection
 @section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
-@section('page-description')
-    Lost your password? No problem. Let's help you recover it.
-@endsection
+@section('page-description')Lost your password? No problem. Let's help you recover it. @endsection
 @section('page-content')
     <!--Heading Banner Area Start-->
     <section class="heading-banner-area pt-10">

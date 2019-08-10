@@ -1,11 +1,7 @@
 @extends('mobile.layouts.general')
-@section('page-title')
-    Terms and Conditions
-@endsection
+@section('page-title')Terms and Conditions @endsection
 @section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
-@section('page-description')
-    Terms and conditions governing the use of Solushop.
-@endsection
+@section('page-description')Terms and conditions governing the use of Solushop. @endsection
 @section('page-content')
     <div class="page page-home">
         @include('mobile.main.general.includes.toolbar')

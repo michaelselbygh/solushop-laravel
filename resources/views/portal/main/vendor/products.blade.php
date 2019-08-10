@@ -1,8 +1,6 @@
 @extends('portal.layouts.vendor.master')
 
-@section('page-title')
-    Products
-@endsection
+@section('page-title')Products @endsection
 
 @section('content-body')
     <section id="configuration">

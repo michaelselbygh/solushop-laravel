@@ -1,11 +1,7 @@
 @extends('app.layouts.general')
-@section('page-title')
-    Let's get talking.
-@endsection
+@section('page-title')Let's get talking. @endsection
 @section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
-@section('page-description')
-    Questions or suggestions? Let's talk. We are always happy to hear from you.
-@endsection
+@section('page-description')Questions or suggestions? Let's talk. We are always happy to hear from you. @endsection
 @section('page-content')
     <!--Heading Banner Area Start-->
     <section class="heading-banner-area pt-10">

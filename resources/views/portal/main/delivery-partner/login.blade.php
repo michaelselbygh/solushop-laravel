@@ -1,8 +1,6 @@
 @extends('portal.layouts.login.index')
 
-@section('entity')
-    Delivery Partner
-@endsection
+@section('entity')Delivery Partner @endsection
 
 @section('login')
     <form class="form-horizontal form-simple" action="{{ route('delivery-partner.login.submit') }}" method="POST" >

@@ -1,11 +1,7 @@
 @extends('mobile.layouts.general')
-@section('page-title')
-    Wishlist
-@endsection
+@section('page-title')Wishlist @endsection
 @section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
-@section('page-description')
-    Your wishlist on Solushop Ghana.
-@endsection
+@section('page-description')Your wishlist on Solushop Ghana. @endsection
 @section('page-content')
     <div class="page">
         @include('mobile.main.general.includes.toolbar')
@@ -32,7 +28,7 @@
                                 <h6>
                                     Looks like you're not logged in.
                                     <br>
-                                    Login below to access your cart.
+                                    Login below to access your wishlist.
                                 </h6>
                             </div>
                             <a href="{{ route("login") }}" class="external">

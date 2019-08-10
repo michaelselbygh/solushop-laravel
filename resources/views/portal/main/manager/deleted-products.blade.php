@@ -1,8 +1,6 @@
 @extends('portal.layouts.manager.master')
 
-@section('page-title')
-    Deleted Products
-@endsection
+@section('page-title')Deleted Products @endsection
 
 @section('content-body')
     <section id="configuration">

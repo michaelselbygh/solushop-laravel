@@ -1,8 +1,6 @@
 @extends('portal.layouts.manager.master')
 
-@section('page-title')
-    Delivery History
-@endsection
+@section('page-title')Delivery History @endsection
 
 @section('content-body')
     <section id="configuration">

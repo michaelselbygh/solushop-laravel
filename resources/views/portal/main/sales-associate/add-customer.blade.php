@@ -1,8 +1,6 @@
 @extends('portal.layouts.sales-associate.master')
 
-@section('page-title')
-    Add Customer
-@endsection
+@section('page-title')Add Customer @endsection
 
 @section('content-body')
     <section id="configuration">

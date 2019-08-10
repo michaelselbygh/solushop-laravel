@@ -1,14 +1,7 @@
 @extends('mobile.layouts.general')
-@section('page-title')
-    Checkout
-@endsection
+@section('page-title')Checkout @endsection
 @section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
-@section('page-description')
-    Checkout from Solushop Ghana
-@endsection
-@section('page-description')
-    Check out these frequently asked questions on Solushop Ghana.
-@endsection
+@section('page-description')Checkout from Solushop Ghana @endsection
 @section('page-content')
     <div class="page page-home">
         <div class="tabs page-content">

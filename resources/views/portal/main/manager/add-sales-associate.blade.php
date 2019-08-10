@@ -1,8 +1,6 @@
 @extends('portal.layouts.manager.master')
 
-@section('page-title')
-   Add Sales Associate
-@endsection
+@section('page-title')Add Sales Associate @endsection
 
 @section('content-body')
     <div class="row">

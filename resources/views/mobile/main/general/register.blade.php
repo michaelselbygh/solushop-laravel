@@ -1,11 +1,7 @@
 @extends('mobile.layouts.general')
-@section('page-title')
-    Register
-@endsection
+@section('page-title')Register @endsection
 @section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
-@section('page-description')
-    Register on Solushop, Ghana's Most Trusted Store.
-@endsection
+@section('page-description')Register on Solushop, Ghana's Most Trusted Store.@endsection
 @section('page-content')
     <div class="page page-home">
         @include('mobile.main.general.includes.toolbar')
@@ -27,6 +23,7 @@
                 </div>
 
                 <div class="about segments-page">
+                    <br><br><br>
                     <div class="container">
                         <div class="" style="text-align:center; margin: 0; position: absolute; top: 50%; left: 50%; -ms-transform: translate(-50%, -50%); transform: translate(-50%, -50%);">
                             <form class="list" method="POST" action="{{ route('login') }}">

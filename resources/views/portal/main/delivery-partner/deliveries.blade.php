@@ -1,8 +1,6 @@
 @extends('portal.layouts.delivery-partner.master')
 
-@section('page-title')
-    Deliveries
-@endsection
+@section('page-title')Deliveries @endsection
 
 @section('content-body')
     <section id="configuration">

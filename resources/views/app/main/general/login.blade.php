@@ -1,11 +1,7 @@
 @extends('app.layouts.general')
-@section('page-title')
-    Login or Register
-@endsection
+@section('page-title')Login or Register @endsection
 @section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
-@section('page-description')
-    Login or Register to Solushop, Ghana's Most Trusted Store.
-@endsection
+@section('page-description')Login or Register to Solushop, Ghana's Most Trusted Store. @endsection
 @section('page-content')
     <!--Heading Banner Area Start-->
     <section class="heading-banner-area pt-10">

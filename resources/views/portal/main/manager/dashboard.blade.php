@@ -1,8 +1,6 @@
 @extends('portal.layouts.manager.master')
 
-@section('page-title')
-    Manager Dashboard
-@endsection
+@section('page-title')Manager Dashboard @endsection
 
 @section('content-body')
     <div class="row">

@@ -1,8 +1,6 @@
 @extends('portal.layouts.manager.master')
 
-@section('page-title')
-    Order {{ $order["id"] }}
-@endsection
+@section('page-title')Order {{ $order["id"] }}@endsection
 
 @section('content-body')
     <div class="row">

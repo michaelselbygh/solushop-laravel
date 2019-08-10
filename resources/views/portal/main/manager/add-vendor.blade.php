@@ -1,8 +1,6 @@
 @extends('portal.layouts.manager.master')
 
-@section('page-title')
-   Add Vendor
-@endsection
+@section('page-title')Add Vendor @endsection
 
 @section('content-body')
     <div class="row">

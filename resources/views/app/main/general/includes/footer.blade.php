@@ -62,7 +62,7 @@
                                    @if (Auth::check())
                                         <li><a href="{{ route('show.account.dashboard') }}">My Account</a></li>
                                     @else
-                                        <li><a href="{{ route('customer.logout') }}">Login / Register</a></li>
+                                        <li><a href="{{ route('login') }}">Login / Register</a></li>
                                     @endif
                                 <li><a href="{{ route('show.wishlist') }}">Wishlist</a></li>
                                 <li><a href="{{ route('show.cart') }}">Shopping Cart</a></li>

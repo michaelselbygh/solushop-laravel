@@ -1,11 +1,7 @@
 @extends('app.layouts.general')
-@section('page-title')
-    Checkout
-@endsection
+@section('page-title')Checkout @endsection
 @section('page-image'){{ url('app/assets/img/Solushop.jpg') }}@endsection
-@section('page-description')
-    Checkout from Solushop Ghana
-@endsection
+@section('page-description')Checkout from Solushop Ghana @endsection
 @section('page-content')
     <!--Heading Banner Area Start-->
     <section class="heading-banner-area pt-10">

@@ -1,8 +1,6 @@
 @extends('portal.layouts.manager.master')
 
-@section('page-title')
-    Delivery Partner - {{ $delivery_partner["first_name"]." ".$delivery_partner["last_name"] }}
-@endsection
+@section('page-title')Delivery Partner - {{ $delivery_partner["first_name"]." ".$delivery_partner["last_name"] }}@endsection
 
 @section('content-body')
     <div class="row">
