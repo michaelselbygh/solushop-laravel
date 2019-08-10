@@ -5167,7 +5167,7 @@ input.form-control.input-lg {
   padding: 0.75rem 0.75rem;
   font-size: 12px;
   line-height: 1.45;
-  border-radius: 20px;
+  border-radius: 10px;
 }
 
 select.form-control:not([size]):not([multiple]).form-group-lg .form-control,

@@ -961,7 +961,7 @@ class ManagerController extends Controller
             $activity->subject_id = '0';
             $activity->log_name = 'Management Message Sent';
         })
-        ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name.' sent a message ['.$request->message.'] in conversation ID $conversationID');
+        ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." sent a message [".$request->message."] in conversation ID $conversationID");
 
         return redirect()->back()->with("success_message", "Message sent successfully.");
     }
@@ -977,7 +977,9 @@ class ManagerController extends Controller
     }
 
     public function processProducts(Request $request){
+        $product = Product::where('id', $request->product_id)->first();
         switch ($request->product_action) {
+            
             case 'approve':
                 /*--- Check for subscription and allowance for new product ---*/
                 if (is_null(VendorSubscription::where('vs_vendor_id', $product->product_vid)->with('package')->first()) OR VendorSubscription::where('vs_vendor_id', $product->product_vid)->with('package')->first()->vs_days_left < 1) {

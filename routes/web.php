@@ -180,6 +180,16 @@ Route::prefix('portal')->group(function(){
         Route::get('/login', 'Auth\SalesAssociateLoginController@showLoginForm')->name('sales-associate.login');
         Route::post('/login', 'Auth\SalesAssociateLoginController@login')->name('sales-associate.login.submit');
         Route::get('/logout', 'Auth\SalesAssociateLoginController@logout')->name('sales-associate.logout');
+        Route::get('/terms-of-use', 'SalesAssociateController@showTermsOfUse')->name('sales-associate.show.terms.of.use');
+        Route::get('/customers', 'SalesAssociateController@showCustomers')->name('sales-associate.show.customers');
+        Route::get('/customers/add', 'SalesAssociateController@showAddCustomer')->name('sales-associate.show.add.customer');
+        Route::post('/customers/add', 'SalesAssociateController@processAddCustomer')->name('sales-associate.process.add.customer');
+        Route::get('/orders', 'SalesAssociateController@showOrders')->name('sales-associate.show.orders');
+        Route::get('/order/{orderID}', 'SalesAssociateController@showOrder')->name('sales-associate.show.order');
+        Route::get('/orders/add', 'SalesAssociateController@showAddOrderOne')->name('sales-associate.show.add.order.step-1');
+        Route::get('/orders/add/{customerID}', 'SalesAssociateController@showAddOrderTwo')->name('sales-associate.show.add.order.step-2');
+        Route::get('/orders/add/{customerID}/{addressID}', 'SalesAssociateController@showAddOrderThree')->name('sales-associate.show.add.order.step-3');
+        Route::post('/orders/add/{customerID}/{addressID}', 'SalesAssociateController@processAddOrder')->name('sales-associate.process.add.order');
         Route::get('/', 'SalesAssociateController@index')->name('sales-associate.dashboard');
     });
 

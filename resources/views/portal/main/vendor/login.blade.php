@@ -29,6 +29,6 @@
         </fieldset>
         <div class="form-group row">
         </div>
-        <button type="submit" name="login" class="btn btn-info btn-lg btn-block" style="background-color: #f68c20 !important; border-color: #f68c20 !important; border-radius: 20px;"><i class="ft-unlock"></i> Login</button>
+        <button type="submit" name="login" class="btn btn-info btn-lg btn-block" style="background-color: #f68c20 !important; border-color: #f68c20 !important; border-radius: 10px;"><i class="ft-unlock"></i> Login</button>
     </form>
 @endsection
