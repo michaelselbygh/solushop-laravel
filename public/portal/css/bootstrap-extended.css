@@ -220,7 +220,7 @@ pre code {
 
 .table thead th {
   vertical-align: bottom;
-  border-top: 1px solid #e3ebf3;
+  border-top: none;
 }
 
 .table-bordered th,

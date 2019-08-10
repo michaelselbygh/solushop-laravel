@@ -428,7 +428,7 @@ class LoginController extends Controller
 
             //set success message
             $messageType = 'success_message';
-            $messageContent = 'Password reset successfully. Please give up to a minute to receive the sms.';
+            $messageContent = 'Password reset via sms.';
 
 
         }else{

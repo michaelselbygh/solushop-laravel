@@ -16,6 +16,8 @@
                         <h5 class="card-title" style="text-align: right">Account Balance - <b>GH¢ {{ round(Auth::guard('sales-associate')->user()->balance , 2) }} </b></h5>
                     </div>
                 </div>
+
+                
                 <div class="card">
                     <div class="card-content collapse show">
                         <div class="card-body card-dashboard">
@@ -78,6 +80,17 @@
                 </div>
             </div>
             <div class="col-4">
+                <h5 class="card-title">Badge</h5>
+                <div class="card">
+                    <div class="row">
+                        <div class="col-md-12" style="padding-top: 10px;">
+                            <div style="text-align:center">
+                                    <img style="width:155px; height:auto; padding:10px;" src="{{url("portal/images/s-team-badges/".$sales_associate["badge_info"]["sab_image"]) }}"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <h5 class="card-title">Details</h5>
                 <div class="card">
                     <div class="row">
                         <div class="col-md-12" style="padding-top: 30px; padding-left:30px;">
@@ -98,15 +111,6 @@
                                     GH¢ {{ round($sales_associate["sales"], 2) }} <br>
                                 </div>
                                 
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="row">
-                        <div class="col-md-12" style="padding-top: 10px;">
-                            <div style="text-align:center">
-                                    <img style="width:155px; height:auto; padding:10px;" src="{{url("portal/images/s-team-badges/".$sales_associate["badge_info"]["sab_image"]) }}"/>
                             </div>
                         </div>
                     </div>

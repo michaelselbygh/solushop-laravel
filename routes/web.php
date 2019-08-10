@@ -188,6 +188,7 @@ Route::prefix('portal')->group(function(){
         Route::get('/order/{orderID}', 'SalesAssociateController@showOrder')->name('sales-associate.show.order');
         Route::get('/orders/add', 'SalesAssociateController@showAddOrderOne')->name('sales-associate.show.add.order.step-1');
         Route::get('/orders/add/{customerID}', 'SalesAssociateController@showAddOrderTwo')->name('sales-associate.show.add.order.step-2');
+        Route::post('/orders/add/{customerID}', 'SalesAssociateController@processAddOrderTwo')->name('sales-associate.process.add.order.step-2');
         Route::get('/orders/add/{customerID}/{addressID}', 'SalesAssociateController@showAddOrderThree')->name('sales-associate.show.add.order.step-3');
         Route::post('/orders/add/{customerID}/{addressID}', 'SalesAssociateController@processAddOrder')->name('sales-associate.process.add.order');
         Route::get('/', 'SalesAssociateController@index')->name('sales-associate.dashboard');
