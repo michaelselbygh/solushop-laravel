@@ -4,6 +4,8 @@
 @section('page-description')Buy {{ $product['product_name'] }} from Solushop - Ghana's Most Trusted Online Store @endsection
 @section('page-content')
     <div class="page">
+        @include('mobile.main.general.includes.toolbar')
+        @include('mobile.main.general.includes.navbar')
         <div class="page-content">
             <div id="tab-1" class="tab tab-active">
                 <!-- home -->

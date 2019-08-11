@@ -142,7 +142,7 @@
                         <h5 class="card-title">Stock</h5>
                     </div>
                     <div class="col-md-6" style="text-align:right; margin-bottom: 5px;">
-                        <button data-toggle="tooltip" id="addVariation" data-popup="tooltip-custom" data-original-title="Add Variation" style="margin-top: 3px;" class="btn btn-info btn-sm round">
+                        <button type="button" data-toggle="tooltip" id="addVariation" data-popup="tooltip-custom" data-original-title="Add Variation" style="margin-top: 3px;" class="btn btn-info btn-sm round">
                             <i class="ft-plus"></i>
                         </button>
                     </div>

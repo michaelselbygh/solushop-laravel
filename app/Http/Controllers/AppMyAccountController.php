@@ -1118,7 +1118,7 @@ class AppMyAccountController extends Controller
             $WTUPayment->wtu_payment_wtup_id        = $request->wtup_id;
             $WTUPayment->wtu_payment_token          = $redirect_url_break[1];
             $WTUPayment->wtu_payment_status         = "UNPAID"; 
-            $WTUPayment->wtp_tid                    = $wtp_tid;
+            $WTUPayment->wtu_tid                    = $wtp_tid;
             $WTUPayment->save();
 
             return redirect($redirect_url);

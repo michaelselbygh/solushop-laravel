@@ -2853,4 +2853,18 @@ class ManagerController extends Controller
         $pdf = PDF::loadView('portal.guides.pick-up', array('data' => $data));
         return $pdf->download('Pick-Up Guide'.date('m-d-Y').'.pdf');
     }
+
+    public function broadcastSubscribedVendors(){
+        $subscribed_vendors = DB::select(
+            "SELECT *, vendor_subscriptions.id as subscription_id, vendor_subscriptions.created_at as subscription_created_at, vendor_subscriptions.updated_at as subscription_updated_at FROM vendors, vendor_subscriptions, vs_packages WHERE vendors.id = vendor_subscriptions.vs_vendor_id AND vendor_subscriptions.vs_vsp_id = vs_packages.id AND vs_days_left > 0"
+        );
+
+        for ($i=0; $i < sizeof($subscribed_vendors); $i++) { 
+            $sms = new SMS;
+            $sms->sms_message = "Hiya ".$subscribed_vendors[$i]->name.", it's a great time to be with Solushop. We have released a new update that introduces new and exciting features for you. Access your portal with the link and credentials below.\n\nUsername : ".$subscribed_vendors[$i]->username."\nPasscode: ".$subscribed_vendors[$i]->passcode."\nLink: https://www.solushop.com.gh/portal/vendor\n\nAccess your shop here:\nhttps://www.solushop.com.gh/shop/".$subscribed_vendors[$i]->username;
+            $sms->sms_phone = $subscribed_vendors[$i]->phone;
+            $sms->sms_state = 1;
+            $sms->save();
+        }
+    }
 }

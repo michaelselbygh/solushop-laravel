@@ -1883,12 +1883,12 @@ ul li {
 .md .tracking-order .accordion-list .accordion-item .accordion-item-toggle {
     height: 35px;
     line-height: 35px;
-    background: #001337;
+    background: #eee;
     padding: 0 16px;
     font-size: 14px;
     font-weight: 400;
     border-radius: 5px 5px 5px 5px;
-    color: white;
+    color: #001337;
 }
 .md .tracking-order .accordion-list .accordion-item .accordion-item-toggle span {
     float: right;

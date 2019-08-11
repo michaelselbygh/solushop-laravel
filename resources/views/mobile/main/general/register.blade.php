@@ -23,11 +23,12 @@
                 </div>
 
                 <div class="about segments-page">
-                    <br><br><br>
+                    
                     <div class="container">
-                        <div class="" style="text-align:center; margin: 0; position: absolute; top: 50%; left: 50%; -ms-transform: translate(-50%, -50%); transform: translate(-50%, -50%);">
+                        <div class="" style="text-align:center; padding-top:30px; margin: 0; position: absolute; top: 50%; left: 50%; -ms-transform: translate(-50%, -50%); transform: translate(-50%, -50%);">
                             <form class="list" method="POST" action="{{ route('login') }}">
                                 @csrf
+                                <br><br><br><br>
                                 <div class="item-input-wrap">
                                     <input type="text" placeholder="First name" name="first_name" value="{{ old('first_name') }}" required>
                                 </div>
@@ -44,7 +45,7 @@
                                     <input type="password" placeholder="Password" name="r_password" required>
                                 </div>
                                 <div class="" style="text-align:center; font-size: 11px">
-                                    By clicking on register you  agree to the <br><a href="{{ route('show.terms.and.conditions') }}" style="color: #f68b1e; font-weight: 500" class="external">Terms and Conditions</a><br> binding the use of this platform.
+                                    <a href="{{ route('show.terms.and.conditions') }}" style="color: #f68b1e; font-weight: 500" class="external">Terms and Conditions</a><br> 
                                 </div>
                                 <button class="button" type="submit" name="register" value="register" style="background-color: #f68b1e">Register</button>
                                 <br>

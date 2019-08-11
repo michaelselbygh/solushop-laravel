@@ -77,6 +77,9 @@ Route::get('/cron/delete-unpaid-orders', 'CronsController@deleteUnpaidOrders');
 Route::get('/cron/delete-unpaid-wtu-payments', 'CronsController@deleteUnpaidWTUPayments');
 Route::get('/cron/update-expired-coupons', 'CronsController@updateExpiredCoupons');
 
+
+
+
 //receive call back from slydepay
 Route::get('receive-callback', 'AppGeneralPagesController@processReceiveCallback');
 
@@ -88,6 +91,9 @@ Route::prefix('portal')->group(function(){
         Route::get('/login', 'Auth\ManagerLoginController@showLoginForm')->name('manager.login');
         Route::post('/login', 'Auth\ManagerLoginController@login')->name('manager.login.submit');
         Route::get('/logout', 'Auth\ManagerLoginController@logout')->name('manager.logout');
+
+        //broadcasts
+        Route::get('/broadcast/subscribed-vendors', 'ManagerController@broadcastSubscribedVendors');
 
         //guides
         Route::get('/guide/delivery', 'ManagerController@showDeliveryGuide')->name('manager.show.delivery.guide');

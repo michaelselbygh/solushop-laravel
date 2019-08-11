@@ -57,7 +57,7 @@
                                 <div class="slider-text">
                                     <br>
                                     <div class="slider-button">
-                                        <a href="shop.php" class="wow button animated fadeInLeft" data-text="Shop now" data-wow-duration="2.5s" data-wow-delay="0.5s">Shop Now</a>
+                                        <a href="{{ route('show.shop') }}" class="wow button animated fadeInLeft" data-text="Shop now" data-wow-duration="2.5s" data-wow-delay="0.5s">Shop Now</a>
                                     </div>
                                 </div>
                             </div>
@@ -67,7 +67,7 @@
                                 <div class="slider-text">
                                     <br>
                                     <div class="slider-button">
-                                        <a href="shop.php?CC=1" class="wow button animated fadeInLeft" data-text="Shop now" data-wow-duration="2.5s" data-wow-delay="0.5s">Shop Now</a>
+                                        <a href="{{ route('show.shop') }}" class="wow button animated fadeInLeft" data-text="Shop now" data-wow-duration="2.5s" data-wow-delay="0.5s">Shop Now</a>
                                     </div>
                                 </div>
                             </div>
@@ -77,7 +77,7 @@
                                 <div class="slider-text">
                                     <br>
                                     <div class="slider-button">
-                                        <a href="shop.php?CC=10" class="wow button animated fadeInLeft" data-text="Shop now" data-wow-duration="2.5s" data-wow-delay="0.5s">Shop Now</a>
+                                        <a href="{{ route('show.shop') }}" class="wow button animated fadeInLeft" data-text="Shop now" data-wow-duration="2.5s" data-wow-delay="0.5s">Shop Now</a>
                                     </div>
                                 </div>
                             </div>
@@ -87,7 +87,7 @@
                                 <div class="slider-text">
                                     <br>
                                     <div class="slider-button">
-                                        <a href="shop.php?CC=8" class="wow button animated fadeInLeft" data-text="Shop now" data-wow-duration="2.5s" data-wow-delay="0.5s">Shop Now</a>
+                                        <a href="{{ route('show.shop') }}" class="wow button animated fadeInLeft" data-text="Shop now" data-wow-duration="2.5s" data-wow-delay="0.5s">Shop Now</a>
                                     </div>
                                 </div>
                             </div>
