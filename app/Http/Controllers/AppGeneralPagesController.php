@@ -1777,7 +1777,7 @@ class AppGeneralPagesController extends Controller
                 
                 /*--- Log activity ---*/
                 activity()
-                ->causedBy(Vendor::where('id', Auth::guard('vendor')->user()->id)->get()->first())
+                ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
                 ->tap(function(Activity $activity) {
                     $activity->subject_type = 'System';
                     $activity->subject_id = '0';

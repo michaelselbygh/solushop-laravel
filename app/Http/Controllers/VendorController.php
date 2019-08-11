@@ -102,7 +102,7 @@ class VendorController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Product Deleted';
                 })
-                ->log(Auth::guard('manager')->user()->name." deleted product ".$request->product_id);
+                ->log(Auth::guard('vendor')->user()->name." deleted product ".$request->product_id);
                 return redirect()->route("vendor.show.products")->with("success_message", "Product ".$request->product_id." deleted successfully.");
                 break;
 
@@ -122,7 +122,7 @@ class VendorController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Product Deactivated';
                 })
-                ->log(Auth::guard('manager')->user()->name." deactivated product ".$request->product_id);
+                ->log(Auth::guard('vendor')->user()->name." deactivated product ".$request->product_id);
                 return redirect()->route("vendor.show.products")->with("success_message", "Product ".$request->product_id." deactivated successfully.");
                 break;
 
@@ -142,7 +142,7 @@ class VendorController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Product Activated';
                 })
-                ->log(Auth::guard('manager')->user()->name." activated product ".$request->product_id);
+                ->log(Auth::guard('vendor')->user()->name." activated product ".$request->product_id);
                 return redirect()->route("vendor.show.products")->with("success_message", "Product ".$request->product_id." activated successfully.");
                 break;
             

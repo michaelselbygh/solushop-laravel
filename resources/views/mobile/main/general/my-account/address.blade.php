@@ -33,7 +33,7 @@
                             </select>
                         </div>
                         <div class="item-input-wrap">
-                                <input type="text" name="address_details" value="" placeholder="Enter address details." required>
+                                <input type="text" name="address_details" value="" placeholder="Address details. Eg Adenta Flats near kfc" required>
                         </div>
                         <input type="hidden" name="checkout_action" value="update_personal_details"/>
                         <button class="button"name="add_address"  type="submit">Add Address</button>

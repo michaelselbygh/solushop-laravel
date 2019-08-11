@@ -35,7 +35,7 @@
                         <div class="accordion-list"> 
                             @for ($i = 0; $i < sizeof($addresses["addresses"]); $i++)
                                 <div class="accordion-item">
-                                    <div class="accordion-item-toggle" style="background-color: #f68b1e;">
+                                    <div class="accordion-item-toggle" style="background-color: #f68b1e; color:white">
                                         @if(strlen($addresses["addresses"][$i]["ca_town"].", ".$addresses["addresses"][$i]["ca_address"]) > 50)
                                             {{ substr($addresses["addresses"][$i]["ca_town"].", ".$addresses["addresses"][$i]["ca_address"], 0, 50)." . . ." }}
                                         @else

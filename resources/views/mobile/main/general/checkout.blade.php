@@ -27,7 +27,7 @@
                         <div class="container">
                             <div class="accordion-list">                    
                                 <div class="accordion-item accordion-item-opened">
-                                    <div class="accordion-item-toggle" style="background-color: #f68b1e; ">
+                                    <div class="accordion-item-toggle" style="background-color: #f68b1e; color:white;">
                                         Personal Details
                                     </div>
                                     <div class="accordion-item-content">
@@ -55,7 +55,7 @@
                                     </div>
                                 </div>
                                 <div class="accordion-item">
-                                    <div class="accordion-item-toggle" style="background-color: #f68b1e; ">
+                                    <div class="accordion-item-toggle" style="background-color: #f68b1e; color:white;">
                                         Delivery Address
                                     </div>
                                     <div class="accordion-item-content">
@@ -93,7 +93,7 @@
                                             <h5 style='text-align:center; margin-top:50px'>Oops! Looks like you have no addresses set up</h5>
                                             <td class="product-add-to-cart" >
                                                 <div style='text-align:center;'>
-                                                    <a href='{{ route("show.account.add.address") }}'>
+                                                    <a href='{{ route("show.account.add.address") }}' class="external">
                                                         <button class="button" >Add New Address</button>
                                                     </a>
                                                     <br><br>
@@ -104,7 +104,7 @@
                                     </div>
                                 </div>
                                 <div class="accordion-item">
-                                    <div class="accordion-item-toggle" style="background-color: #f68b1e; ">
+                                    <div class="accordion-item-toggle" style="background-color: #f68b1e; color:white;">
                                        Order Summary
                                     </div>
                                     <div class="accordion-item-content">
@@ -181,7 +181,7 @@
                                     </div>
                                 </div>
                                 <div class="accordion-item">
-                                    <div class="accordion-item-toggle" style="background-color: #f68b1e; ">
+                                    <div class="accordion-item-toggle" style="background-color: #f68b1e; color:white;">
                                         Additional Order Details (Optional)
                                     </div>
                                     <div class="accordion-item-content">
