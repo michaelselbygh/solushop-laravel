@@ -75,7 +75,7 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="settlement_price">Settlement Price</label>
-                                            <input id="settlement_price" name="settlement_price" class="form-control round" placeholder="Enter product settlement price" value="" type="number" step="0.01" required>
+                                            <input id="settlement_price" name="settlement_price" class="form-control round" placeholder="Enter product settlement price" value="" type="number" step="0.01" readonly>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -87,7 +87,7 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="discount">Discount</label>
-                                            <input id="discount" name="discount" class="form-control round" placeholder="Enter product discount" value="" type="number" step="0.01" required>
+                                            <input id="discount" name="discount" class="form-control round" placeholder="Enter product discount" value="0" type="number" step="0.01" required>
                                         </div>
                                     </div>
                                 </div>
@@ -140,7 +140,7 @@
                                     <div class="row">
                                         <div class="col-md-8">
                                             <div class="form-group">
-                                                <input class="form-control round" name='variantDescription0' value="None" type="text" readonly>
+                                                <input class="form-control round" name='variantDescription0' value="None" type="text">
                                             </div>
                                         </div>
                                         <div class="col-md-4">

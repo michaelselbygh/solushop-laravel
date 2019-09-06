@@ -8,6 +8,9 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Spatie\Activitylog\Contracts\Activity;
 use Auth;
+use Mail;
+
+use App\Mail\Alert;
 
 use App\Customer;
 use App\Count;
@@ -284,6 +287,7 @@ class LoginController extends Controller
             $sms->sms_state = 1;
             $sms->save();
 
+          
             //queue sign up message for managers
             $customerCount = Customer::count();
 
@@ -297,6 +301,16 @@ class LoginController extends Controller
             // }
 
             Auth::loginUsingId($customerID);
+
+            $data = array(
+                'subject' => 'Welcome - Solushop Ghana',
+                'name' => Auth::user()->first_name,
+                'message' => "A warm welcome to the Solushop family. Your Solushop Wallet has been credited with GHS 5.00 as your signup bonus. If you need any assistance, kindly call or Whatsapp customer care on 0506753093. Happy Shopping!"
+            );
+
+            Mail::to(Auth::user()->email, Auth::user()->first_name)
+                ->queue(new Alert($data));
+
 
             /*--- log activity ---*/
             activity()
@@ -416,31 +430,41 @@ class LoginController extends Controller
             $sms->sms_state = 1;
             $sms->save();
 
+            $data = array(
+                'subject' => 'Password Reset - Solushop Ghana',
+                'name' => $customer->first_name,
+                'message' => "Your password has been reset.<br>Temporary password - $newPassword <br><br>Happy Shopping!"
+            );
+
+            Mail::to($customer->email, $customer->first_name)
+                ->queue(new Alert($data));
+
             /*--- log activity ---*/
             activity()
-            ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
+            ->causedBy(Customer::where('id', $customer->id)->get()->first())
             ->tap(function(Activity $activity) {
                 $activity->subject_type = 'System';
                 $activity->subject_id = '0';
                 $activity->log_name = 'Customer Password Reset';
             })
-            ->log(Auth::user()->email.' reset their account password with phone number '.$request->phone);
+            ->log($request->email.' reset their account password with phone number '.$request->phone);
 
             //set success message
             $messageType = 'success_message';
-            $messageContent = 'Password reset via sms.';
+            $messageContent = 'Password reset successfully.';
 
 
         }else{
             /*--- log activity ---*/
             activity()
-            ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
             ->tap(function(Activity $activity) {
-                $activity->subject_type = 'System';
-                $activity->subject_id = '0';
-                $activity->log_name = 'Customer Password Reset Attempt';
+               $activity->causer_type = 'App\Customer';
+               $activity->causer_id = '-';
+               $activity->subject_type = 'System';
+               $activity->subject_id = '0';
+               $activity->log_name = 'Customer Password Reset Attempt';
             })
-            ->log(Auth::user()->email.'attempted to reset account password with phone number '.$request->phone);
+            ->log($request->email.' attempted to reset password with phone number '.$request->phone);
 
             //set error message
             $messageType = 'error_message';

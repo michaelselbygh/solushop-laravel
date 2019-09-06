@@ -5,13 +5,13 @@
 @section('content-body')
     <section id="configuration">
         <div class="row">
-            <div class="col-12">
+            <div class="col-md-12">
                 <div class="row">
-                    <div class="col-5">
-                        <h5 class="card-title">Transaction History</h5>
+                    <div class="col-md-5">
+                        <h5 class="card-title">Transactions</h5>
                     </div>
-                    <div class="col-7">
-                        <h5 class="card-title" style="text-align: right">Account Balance - <b>GH¢ {{ round(Auth::guard('vendor')->user()->balance , 2) }} </b></h5>
+                    <div class="col-md-7">
+                        <h5 class="card-title" style="text-align: right">Balance - <b>GH¢ {{ round(Auth::guard('vendor')->user()->balance , 2) }} </b></h5>
                     </div>
                 </div>
                 <div class="card">

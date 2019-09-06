@@ -165,7 +165,9 @@
                                             @elseif($product['product_type'] == 1)
                                                 <button class="quantity-button bts-popup-trigger" style='float:left; margin-right:10px;' type="button"><i style='padding-right:5px; font-size: 18px;' class='ion-android-cart'></i> Add to Cart</button>
                                             @endif
-                                            
+                                            <a href="{{ url("https://api.whatsapp.com/send?phone=233506753093&text=Vendor: ".$product['vendor']['name'].urlencode("\r\n")."Product: ".$product['product_name'].urlencode("\r\n")."Quantity: 1".urlencode("\r\n")."Name: ".$customer_information['whatsapp_name'].urlencode("\r\n")."Address: " ) }}"  target="_blank">
+                                                <button class="quantity-button" style='float:left; margin-right:10px; background-color: green' type="button" name='order_via_whatsapp' value='NoValue'><i style='padding-right:5px; font-size: 18px;' class='fa fa-whatsapp'></i>Order Via Whatsapp</button>
+                                            </a>
                                             @if (Auth::check()) 
                                                 <div class="bts-popup" role="alert" >
                                                     <div class="bts-popup-container"style='background-color:white;'>
@@ -452,7 +454,7 @@
                         <!--Section Title1 Start-->
                         <div class="section-title1-border">
                             <div class="section-title1">
-                                <h3>Product Reviews</h3>
+                                <h3>Add a review</h3>
                             </div>
                         </div> 
                         <!--Section Title1 End-->
@@ -466,8 +468,10 @@
                                 <div class="review-form-wrapper" style="text-align:center;" >
                                     <div class="review-form">
                                         <h3>Add a review </h3><br>
-                                        <form action="#" method='POST'>
+                                        <form action="{{ url('shop/'.$product['vendor']['username'].'/'.$product['product_slug']) }}" method='POST'>
+                                            @csrf
                                             <label>Rating</label>
+                                            <input type="hidden" name="pid" id='pid' value='{{ $product['id'] }}'/>
                                             <input type="hidden" name="ratingValue" id='ratingValue' value='5'/>
                                             <div class="comment-form-rating">
                                                 <div class="stars" data-rating="{{$product['signed_in_customer_review_rating']}}" >
@@ -487,6 +491,7 @@
                                                     <button name='submitRating' type="submit" value="{{ $product['signed_in_customer_review_edited'] }}" class="form-button">Save</button>
                                                 </div>
                                             </div>
+                                            <input type="hidden" name="product_action" value="add_review" />
                                     </form>
                                 </div>
                             </div>

@@ -167,7 +167,7 @@
                                     <div class="row">
                                         <div class="col-md-8">
                                             <div class="form-group">
-                                                <input class="form-control round" name='variantDescription0' value="None" type="text" readonly>
+                                                <input class="form-control round" name='variantDescription0' value="None" type="text">
                                             </div>
                                         </div>
                                         <div class="col-md-4">

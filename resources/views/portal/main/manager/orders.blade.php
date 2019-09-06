@@ -81,7 +81,7 @@
 
 
     <div class="row">
-        <div id="recent-transactions" class="col-12">
+        <div id="recent-transactions" class="col-md-12">
             <div class="card" style="min-height: 450px">
                 <div class="card-content">
                     <div class="card-body card-dashboard">

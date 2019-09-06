@@ -5,13 +5,13 @@
 @section('content-body')
     <section id="configuration">
         <div class="row">
-            <div class="col-8">
+            <div class="col-md-8">
                 <div class="row">
-                    <div class="col-5">
-                        <h5 class="card-title">Transaction History</h5>
+                    <div class="col-md-5">
+                        <h5 class="card-title">Transactions</h5>
                     </div>
-                    <div class="col-7">
-                        <h5 class="card-title" style="text-align: right">Account Balance - <b>GH¢ {{ round(Auth::guard('sales-associate')->user()->balance , 2) }} </b></h5>
+                    <div class="col-md-7">
+                        <h5 class="card-title" style="text-align: right">Balance - <b>GH¢ {{ round(Auth::guard('sales-associate')->user()->balance , 2) }} </b></h5>
                     </div>
                 </div>
 
@@ -77,7 +77,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-4">
+            <div class="col-md-4">
                 <h5 class="card-title">Badge</h5>
                 <div class="card">
                     <div class="row">
@@ -94,14 +94,14 @@
                         <div class="col-md-12" style="padding-top: 30px; padding-left:30px;">
                             <div class="row">
                                 <div class="col-md-1"></div>
-                                <div class="col-md-4" style="font-weight: 600;">
+                                <div class="col-4" style="font-weight: 600;">
                                     ID : <br>
                                     Status : <br>
                                     Coupon : <br>
                                     Commision  : <br>
                                     Total Sales : <br><br><br>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-7">
                                     STM-{{ $sales_associate["id"] }} <br>
                                     {{ $sales_associate["badge_info"]["sab_description"] }} <br>
                                     {{ substr($sales_associate["id_file"], 0, 24) }} <br>

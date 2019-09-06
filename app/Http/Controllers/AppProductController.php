@@ -285,11 +285,13 @@ class AppProductController extends Controller
                     );
 
                     $customer_information['unread_messages'] = $unread_messages[0]->unread;
+                    $customer_information['whatsapp_name'] = Auth::user()->first_name." ".Auth::user()->last_name;
 
                 }else{
                     $customer_information['wallet_balance'] = 0;
                     $customer_information['cart_count'] = 0;
                     $customer_information['wishlist_count'] = 0;
+                    $customer_information['whatsapp_name'] = "";
                 }
                 
                 $detect = new Mobile_Detect;
@@ -414,6 +416,51 @@ class AppProductController extends Controller
                             $messageContent = 'Product added to wishlist.';
                         }
                     }
+                }
+            }elseif($request->product_action == "add_review"){
+
+                if (ProductReview::where('pr_customer_id', Auth::user()->id)->where('pr_product_id', $request->pid)->first()) {
+                    $product_review = ProductReview::where('pr_customer_id', Auth::user()->id)->where('pr_product_id', $request->pid)->first();
+                    $product_review->pr_edited = 1;
+                    $product_review->pr_rating = $request->ratingValue;
+                    $product_review->pr_comment = $request->message;
+                    $product_review->save();
+
+                    /*--- Log activity ---*/
+                    activity()
+                    ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
+                    ->tap(function(Activity $activity) {
+                        $activity->subject_type = 'System';
+                        $activity->subject_id = '0';
+                        $activity->log_name = 'Product Review Edited';
+                    })
+                    ->log(Auth::user()->email.' edited review on product '.$request->pid);
+
+                    $messageType = 'success_message';
+                    $messageContent = 'Product review edited successfully.';
+
+                }else{
+                    $product_review =  new ProductReview;
+                    $product_review->pr_customer_id = Auth::user()->id;
+                    $product_review->pr_product_id = $request->pid;
+                    $product_review->pr_edited = 0;
+                    $product_review->pr_rating = $request->ratingValue;
+                    $product_review->pr_comment = $request->message;
+                    $product_review->pr_date = date("M j, Y");
+                    $product_review->save();
+
+                    /*--- Log activity ---*/
+                    activity()
+                    ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
+                    ->tap(function(Activity $activity) {
+                        $activity->subject_type = 'System';
+                        $activity->subject_id = '0';
+                        $activity->log_name = 'Product Review Added';
+                    })
+                    ->log(Auth::user()->email.' added review on product '.$request->pid);
+
+                    $messageType = 'success_message';
+                    $messageContent = 'Product review added successfully.';
                 }
             }
         }else{

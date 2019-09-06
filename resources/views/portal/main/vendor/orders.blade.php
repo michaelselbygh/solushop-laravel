@@ -5,9 +5,9 @@
 @section('content-body')
     <section id="configuration">
         <div class="row">
-            <div class="col-12">
+            <div class="col-md-12">
                 <div class="row">
-                    <div class="col-12"  style="margin-top:10px;">
+                    <div class="col-md-12"  style="margin-top:10px;">
                         <h5 class="card-title">Orders Due for Pick Up</h5>
                     </div>
                 </div>

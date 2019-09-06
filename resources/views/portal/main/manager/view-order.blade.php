@@ -31,8 +31,8 @@
                                 <i class="ft-check"></i>
                             </button>
                             <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Cancel Order ( Order Items Refund Only )"  style="margin-top: 3px;" class="btn btn-warning btn-sm round" type="submit" name="order_action" value="cancel_order_partial_refund">
-                                    <i class="ft-x"></i>
-                                </button>
+                                <i class="ft-x"></i>
+                            </button>
                             <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="Cancel Order ( Full Refund  )"  style="margin-top: 3px; " class="btn btn-danger btn-sm round" type="submit" name="order_action" value="cancel_order_full_refund">
                                 <i class="ft-x"></i>
                             </button>

@@ -249,7 +249,7 @@ class AppShopController extends Controller
                 ->whereIn('id', $search_result_product_ids)
                 ->where('product_state', '1') 
                 ->with('vendor', 'images', 'skus', 'reviews')
-                ->paginate(30)
+                ->paginate(500)
                 ->onEachSide(2);
         }
         

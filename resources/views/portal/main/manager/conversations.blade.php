@@ -5,7 +5,7 @@
 @section('content-body')
     <section id="configuration">
         <div class="row">
-            <div class="col-12">
+            <div class="col-md-12">
                 <h5 class="card-title">Manage Conversations</h5>
                 <div class="card">
                     <div class="card-content collapse show">

@@ -236,7 +236,7 @@
                                                 <button onclick="submitImageDelete({{ $product['images'][$i]['id'] }})" data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="View {{ $product["images"][$i]["pi_path"].".jpg" }}"  style="margin-top: 3px;" class="btn btn-danger btn-sm round">
                                                     <i class="ft-trash"></i>
                                                 </button>
-                                            </td>
+                                            </td>   
                                         </tr>
                                     @endfor
                                 @else

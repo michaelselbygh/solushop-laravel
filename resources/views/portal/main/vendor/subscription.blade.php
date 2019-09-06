@@ -5,7 +5,7 @@
 @section('content-body')
     <section id="configuration">
         <div class="row">
-            <div class="col-4">
+            <div class="col-md-4">
                 @if (!isset($subscription["active"]))
                     <h5 class="card-title">Subscribe on Solushop</h5>
                     <div class="card">
@@ -14,7 +14,7 @@
                                 <form method="POST" action="{{ route("vendor.process.subscription") }}" enctype="multipart/form-data">
                                     @csrf
                                     <div class="row">
-                                        <div class="col-12">
+                                        <div class="col-md-12">
                                             <label for="package">Select Package</label>
                                             <select class="form-control" name='package' id="package" style='border-radius:7px;' required>
                                                 @for ($i = 0; $i < sizeof($subscription["options"]); $i++)
@@ -36,7 +36,7 @@
                                             <br>
                                             <div class="form-actions" style="text-align:center; padding: 0px;">
                                                 <button type="submit" class="btn btn-success">
-                                                        Subscribe
+                                                    Subscribe
                                                 </button>
                                             </div>
                                         </div>
@@ -93,7 +93,7 @@
                                 <form method="POST" action="{{ route("vendor.process.subscription") }}" enctype="multipart/form-data">
                                     @csrf
                                     <div class="row">
-                                        <div class="col-12">
+                                        <div class="col-md-12">
                                             <label for="package">Select Package</label>
                                             <select class="form-control" name='package' id="package" style='border-radius:7px;' required>
                                                 @for ($i = 0; $i < sizeof($subscription["options"]); $i++)

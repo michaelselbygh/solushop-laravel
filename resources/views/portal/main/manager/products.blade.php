@@ -5,7 +5,7 @@
 @section('content-body')
     <section id="configuration">
         <div class="row">
-            <div class="col-12">
+            <div class="col-md-12">
                 <h5 class="card-title">Products</h5>
                 @include('portal.main.success-and-error.message')
                 <div class="card">
@@ -15,13 +15,13 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
+                                        <th>SKUs</th>
                                         <th>Preview</th>
                                         <th>Name</th>
                                         <th>State</th>
                                         <th>Sold By</th>
                                         <th>Main Phone</th>
                                         <th>Alt. Phone</th>
-                                        <th>Last Updated</th>
                                         <th style="min-width: 150px">Action</th>
                                     </tr>
                                 </thead>
@@ -29,6 +29,12 @@
                                     @for($i=0; $i<sizeof($products); $i++) 
                                         <tr>
                                             <td>{{ $products[$i]["id"] }}</td>
+                                            <td>
+                                                {{ $products[$i]["skus"][0]['id'] }}
+                                                @for ($j = 1; $j < sizeof($products[$i]["skus"]); $j++)
+                                                    {{ ", ".$products[$i]["skus"][$j]['id'] }}
+                                                @endfor
+                                            </td>
                                             <td>
                                                 <ul class="list-unstyled users-list m-0">
                                                     <li data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="{{ $products[$i]["product_name"] }}" class="avatar avatar-sm pull-up">
@@ -43,7 +49,6 @@
                                             <td>{{ $products[$i]["vendor"]["name"] }}</td>
                                             <td>{{ "0".substr($products[$i]["vendor"]["phone"], 3) }}</td>
                                             <td>{{ "0".substr($products[$i]["vendor"]["alt_phone"], 3) }}</td>
-                                            <td>{{ $products[$i]["updated_at"] }}</td>
                                             <td>
                                                 <a href="{{ url('portal/manager/product/'.$products[$i]["id"]) }}">
                                                     <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="View {{ $products[$i]["product_name"] }}"  style="margin-top: 3px;" class="btn btn-info btn-sm round">
@@ -112,8 +117,8 @@
     $(document).ready(function(){
         $('#delivery-items').dataTable( {
             "order": [
-                [3, 'desc'],
-                [2, 'asc']
+                [4, 'desc'],
+                [3, 'asc']
             ]
         } );
     })

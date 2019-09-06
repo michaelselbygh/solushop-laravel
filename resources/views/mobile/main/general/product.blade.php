@@ -184,6 +184,13 @@
                             <div class="col-20" style="text-align:center">
                                 <button class="button" onclick="document.getElementById('wishlist-form').submit();" style="background-color: #f68b1e" ><i class="ti-heart" style="margin-right: 0px;"></i></button>
                             </div>
+                            <div class="col-100" style="text-align:center">
+                                <div class="content-button">
+                                    <a href="{{ url("https://api.whatsapp.com/send?phone=233506753093&text=Vendor: ".$product['vendor']['name'].urlencode("\r\n")."Product: ".urlencode($product['product_name']).urlencode("\r\n")."Quantity: 1".urlencode("\r\n")."Name: ".urlencode($customer_information['whatsapp_name']).urlencode("\r\n")."Address: " ) }}" class="external" target="_blank">
+                                        <button class="button" style="font-weight: 400; background-color: green"> Order Via Whatsapp</button>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                         <div class="information-product-wrapper section-wrapper">   
                             <div class="wrap-title">
@@ -272,7 +279,7 @@
                     <div class="small-divider"></div>
                     <!-- end  small divider -->
     
-                    @if(sizeof($product["reviews"]) > 0)
+                    @if(sizeof($product["reviews"]) > 0 OR $product['signed_in_customer_purchase'] == 0) 
                         <div class="container">
                             <div class="review-product-wrapper section-wrapper">
                                 <div class="wrap-title">
@@ -299,9 +306,11 @@
                                     <div class="wrap-title">
                                         <h3>Leave a review</h3>
                                     </div>
-                                    <form class="list">
+                                    <form class="list" action="{{ url('shop/'.$product['vendor']['username'].'/'.$product['product_slug']) }}" method='POST'>
+                                        @csrf
                                         <label>Rating</label>
                                         <input type="hidden" name="ratingValue" id='ratingValue' value='5'/>
+                                        <input type="hidden" name="pid" id='pid' value='{{ $product['id'] }}'/>
                                         <div class="comment-form-rating">
                                             <div class="stars" data-rating="{{$product['signed_in_customer_review_rating']}}" >
                                                 <span class="star"></span>
@@ -312,9 +321,10 @@
                                             </div>
                                         </div>
                                         <div class="item-input-wrap">
-                                            <textarea placeholder="Comment*" required></textarea>
+                                            <textarea placeholder="Comment*" name="message" required>@if(isset($product['signed_in_customer_review_comment']) AND trim($product['signed_in_customer_review_comment']) != ""){{$product['signed_in_customer_review_comment']}}@endif</textarea>
                                         </div>
                                         <button class="button">Save Review</button>
+                                        <input type="hidden" name="product_action" value="add_review" />
                                     </form>
                                 @endif
                             </div>

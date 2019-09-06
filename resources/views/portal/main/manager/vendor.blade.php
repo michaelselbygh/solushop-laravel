@@ -36,6 +36,20 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
+                                            <label for="username">Username</label>
+                                            <input id="username" name="username" class="form-control round" value="{{ $vendor["username"] }}" type="text" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="pin">PIN</label>
+                                            <input id="pin" name="pin"  class="form-control round" value="{{ $vendor["passcode"] }}" type="text" readonly> 
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
                                             <label for="main_phone">Main Phone Number</label>
                                             <input id="main_phone" name="main_phone"  class="form-control round" placeholder="Enter main phone e.g. 0204456789" value="{{ "0".substr($vendor["phone"], 3) }}" type="text" required>
                                         </div>

@@ -9,6 +9,11 @@ use App\Exports\ActivityLogExport;
 use App\Exports\SMSExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
+use Spatie\Activitylog\Contracts\Activity; 
+use Mail;
+
+use App\Mail\Alert;
+use App\Mail\DevReport;
 
 use App\ActivityLog;
 use App\Conversation;
@@ -52,13 +57,35 @@ class Kernel extends ConsoleKernel
         /*--- SMS and Activity Log Reports and Table Clears ---*/
         $schedule->call(function () {
             //generate exports
-            Excel::store(new ActivityLogExport, '/reports/activity/'.date('Y-m-d').'.csv');
-            Excel::store(new SMSExport, '/reports/sms/'.date('Y-m-d').'.csv');
+            Excel::store(new ActivityLogExport, '/reports/activity/activity-report-'.date('Y-m-d').'.csv');
+            Excel::store(new SMSExport, '/reports/sms/sms-report-'.date('Y-m-d').'.csv');
 
             //empty tables
             SMS::truncate();
             ActivityLog::truncate();
-        })->weeklyOn(7, '23:59');
+
+            //send report
+            $data = array(
+                'subject' => "SMS and Activity Reports for ".date("F Y"),
+                'name' => "Solushop Dev Team",
+                'message' => "SMS and Activity Reports for ".date("F Y")." generated successfully. Please find attached."
+            );
+
+            Mail::to("dev@solushop.com.gh", "Dev")
+                ->queue(new DevReport($data));
+
+            /*--- log activity ---*/
+            activity()
+            ->tap(function(Activity $activity) {
+                $activity->causer_type = 'App\System';
+                $activity->causer_id = '-';
+                $activity->subject_type = 'System';
+                $activity->subject_id = '0';
+                $activity->log_name = 'Reports Exported and Cleared (Automated Task)';
+            })
+            ->log('Reports generated and exported to Development Team successfully (dev@solushop.com.gh)');
+
+        })->monthlyOn(date('t'), "23:59");
 
         /*--- Process SMS Queue ---*/
         $schedule->call(function () {
@@ -111,6 +138,16 @@ class Kernel extends ConsoleKernel
                         $sms->sms_state = 1;
                         $sms->save();
 
+                        /*--- Notify Vendor via Mail ---*/
+                        $data = array(
+                            'subject' => '5 days to Subscription Expiry - Solushop Ghana',
+                            'name' => $vendor_subscription->vendor->name,
+                            'message' => "Time flies when you're with the right people. Looks like your subscription is about expiring. Kindly extend your subscription when you have the chance to. You have 5 days left."
+                        );
+
+                        Mail::to($vendor_subscription->vendor->email, $vendor_subscription->vendor->name)
+                            ->queue(new Alert($data));
+
                         break;
 
                     case 3:
@@ -122,6 +159,16 @@ class Kernel extends ConsoleKernel
                         $sms->sms_phone = $vendor_subscription->vendor->phone;
                         $sms->sms_state = 1;
                         $sms->save();
+
+                        /*--- Notify Vendor via Mail ---*/
+                        $data = array(
+                            'subject' => '3 days to Subscription Expiry - Solushop Ghana',
+                            'name' => $vendor_subscription->vendor->name,
+                            'message' => "Did you forget to extend your subscription? No worries, we're here to remind you. You have 3 days left on your subscription."
+                        );
+
+                        Mail::to($vendor_subscription->vendor->email, $vendor_subscription->vendor->name)
+                            ->queue(new Alert($data));
                         
                         break;
                     
@@ -134,6 +181,15 @@ class Kernel extends ConsoleKernel
                         $sms->sms_phone = $vendor_subscription->vendor->phone;
                         $sms->sms_state = 1;
                         $sms->save();
+
+                        $data = array(
+                            'subject' => '1 day to Subscription Expiry - Solushop Ghana',
+                            'name' => $vendor_subscription->vendor->name,
+                            'message' => "Please dont leave. You have only 24 hours remaining on your subscription. Please extend your subscription as soon as possible. We don't want to lose you."
+                        );
+
+                        Mail::to($vendor_subscription->vendor->email, $vendor_subscription->vendor->name)
+                            ->queue(new Alert($data));
                         
                         break;
                     
@@ -154,6 +210,15 @@ class Kernel extends ConsoleKernel
                         $sms->sms_phone = $vendor_subscription->vendor->phone;
                         $sms->sms_state = 1;
                         $sms->save();
+
+                        $data = array(
+                            'subject' => 'Subscription Expired - Solushop Ghana',
+                            'name' => $vendor_subscription->vendor->name,
+                            'message' => "We hate to see you go but your subscription has expired. Please reactivate under the subscription tab in your portal. Please don't keep us missing you for too long."
+                        );
+
+                        Mail::to($vendor_subscription->vendor->email, $vendor_subscription->vendor->name)
+                            ->queue(new Alert($data));
                         
                         break;
                     default:
@@ -164,7 +229,7 @@ class Kernel extends ConsoleKernel
                 $vendor_subscription->save();
             }
         
-        })->daily('10:00');
+        })->dailyAt('10:00');
 
         /*--- Count Update ---*/
         $schedule->call(function () {
@@ -177,7 +242,7 @@ class Kernel extends ConsoleKernel
 
             $count->save();
         
-        })->daily('23:59');
+        })->dailyAt('23:59');
 
          /*--- Delete empty conversations older than 3 days ---*/
          $schedule->call(function () {
@@ -202,7 +267,7 @@ class Kernel extends ConsoleKernel
                 }
             }
         
-        })->daily('23:59');
+        })->dailyAt('23:59');
 
          /*--- Delete unpaid orders older than 7 days ---*/
          $schedule->call(function () {
@@ -229,7 +294,7 @@ class Kernel extends ConsoleKernel
                     ['id', '=', $orders[$i]["id"]]
                 ])->delete();
             }
-        })->daily('23:59');
+        })->dailyAt('2:00');
 
         /*--- Delete unpaid wallet top up payments ---*/
         $schedule->call(function () {
@@ -238,7 +303,7 @@ class Kernel extends ConsoleKernel
                 ['wtu_payment_status', '=', "UNPAID"]
             ])->delete();
             
-        })->daily('2:00');
+        })->dailyAt('2:00');
 
         /*--- Delete unpaid subscription payments ---*/
         $schedule->call(function () {
@@ -247,7 +312,7 @@ class Kernel extends ConsoleKernel
                 ['vs_payment_State', '=', "UNPAID"]
             ])->delete();
             
-        })->daily('2:00');
+        })->dailyAt('2:00');
 
         /*--- Update expired coupons ---*/
         $schedule->call(function () {
@@ -260,7 +325,36 @@ class Kernel extends ConsoleKernel
                 'coupon_state' => '4'
             ]);
             
-        })->daily('23:59');
+        })->dailyAt('23:59');
+
+        /*--- Check for pending approvals ---*/
+        $schedule->call(function () {
+            //select count of pending approvals
+            $count = Product::
+            where('product_state', '2')
+            ->get()->count();
+
+            if ($count > 0) {
+                if ($count == 1) {
+                    $message = "There is 1 product pending approval. Kindly review and approve or reject.";
+                }else{
+                    $message = "There are $count products pending approval. Kindly review and approve or reject.";
+                }
+
+                //send alert
+                $data = array(
+                    'subject' => "Products Pending Approval",
+                    'name' => "Support",
+                    'message' => $message
+                );
+
+                Mail::to("support@solushop.com.gh", "Support")
+                    ->queue(new Alert($data));
+            }
+
+            
+
+        })->hourly();
     }
 
     /**

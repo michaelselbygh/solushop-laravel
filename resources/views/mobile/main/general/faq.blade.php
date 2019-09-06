@@ -29,7 +29,7 @@
                             <div class="accordion-list">                    
                                 <div class="accordion-item accordion-item-opened">
                                     <div class="accordion-item-toggle">
-                                        Are all products on Solushop original and genuine?
+                                        Are all products on Solushop genuine?
                                     </div>
                                     <div class="accordion-item-content">
                                         <br>

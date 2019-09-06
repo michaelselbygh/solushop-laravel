@@ -93,7 +93,7 @@
                                         @for($i=0; $i < sizeof($customer_information["addresses"]); $i++) 
                                             <tr>
                                                 <td>
-                                                    <input style='height:15px;' type='radio' value='{{ $customer_information["addresses"][$i]['id'] }}' name='default_address' @if($customer_information["addresses"][$i]['id'] == Auth::user()->default_address) checked @endif/>
+                                                    <input style='height:15px;' type='radio' value='{{ $customer_information["addresses"][$i]['id'] }}' name='default_address' @if($customer_information["addresses"][$i]['id'] == Auth::user()->default_address OR $i == 0) checked @endif/>
                                                 </td>
                                                 <td>{{ $customer_information["addresses"][$i]['ca_region'] }}</td>
                                                 <td>{{ $customer_information["addresses"][$i]['ca_town'] }}</td>
@@ -108,7 +108,7 @@
                             <div class="register-submit" style="text-align:center;">
                                 <button type="submit" name="UpdateDefaultAddress" class="form-button">Update Default Address</button>&nbsp;
                                 <a href='{{ route("show.account.add.address") }}'>
-                                    <button name="add-address" type='submit' class="form-button">Add New Address</button>
+                                    <button name="add-address" type='button' class="form-button">Add New Address</button>
                                 </a>
                             </div>
                         </form>

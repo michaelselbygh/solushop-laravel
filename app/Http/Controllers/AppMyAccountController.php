@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use \Mobile_Detect;
 use Auth;
+use Mail;
+
+use App\Mail\Alert;
 
 use App\AccountTransaction;
 use App\CartItem;
@@ -697,7 +700,7 @@ class AppMyAccountController extends Controller
 
                     /*--- Notify Vendor ---*/
                     $vendor =  DB::select(
-                        "SELECT phone FROM vendors, products, stock_keeping_units WHERE products.product_vid = vendors.id AND stock_keeping_units.sku_product_id = products.id AND stock_keeping_units.id = '".$checkout['checkout_items'][$i]["oi_sku"]."'"
+                        "SELECT phone, email, name FROM vendors, products, stock_keeping_units WHERE products.product_vid = vendors.id AND stock_keeping_units.sku_product_id = products.id AND stock_keeping_units.id = '".$checkout['checkout_items'][$i]["oi_sku"]."'"
                     );
 
                     
@@ -706,6 +709,15 @@ class AppMyAccountController extends Controller
                     $sms->sms_phone = $vendor[0]->phone;
                     $sms->sms_state = 1;
                     $sms->save();
+
+                    $data = array(
+                        'subject' => 'Purchase Alert - Solushop Ghana',
+                        'name' => $vendor[0]->name,
+                        'message' => "You have a new order.<br><br>Product : " .$checkout["checkout_items"][$i]["oi_name"]. "<br>Quantity Bought: " . $checkout["checkout_items"][$i]["oi_quantity"] . "<br>Quantity Remaining : " .$sku->sku_stock_left."<br>"
+                    );
+
+                    Mail::to($vendor[0]->email, $vendor[0]->name)
+                        ->queue(new Alert($data));
 
                     //save sku
                     $sku->save();
@@ -722,14 +734,27 @@ class AppMyAccountController extends Controller
                 $sms->sms_state = 1;
                 $sms->save();
 
+                $data = array(
+                    'subject' => 'Order Received - Solushop Ghana',
+                    'name' => Auth::user()->first_name,
+                    'message' => "Your order ".$checkout['order']["id"]." has been received. We will begin processing soon. Thanks for choosing Solushop!"
+                );
+
+                Mail::to(Auth::user()->email, Auth::user()->first_name)
+                    ->queue(new Alert($data));
+
                 //notify management
-                $managers = Manager::where('sms', 0)->get();
+                $managers = Manager::get();
                 foreach ($managers as $manager) {
-                    $sms = new SMS;
-                    $sms->sms_message = "ALERT: NEW ORDER\nCustomer: ".Auth::user()->first_name." ".Auth::user()->last_name."\nPhone: 0".substr(Auth::user()->phone, 3);
-                    $sms->sms_phone = $manager->phone;
-                    $sms->sms_state = 1;
-                    $sms->save();
+
+                    $data = array(
+                        'subject' => 'New Order - Solushop Ghana',
+                        'name' => $manager->first_name,
+                        'message' => "This email is to inform you that a new order ".$checkout['order']["id"]." has been received. If you are not required to take any action during order processing, please treat this email as purely informational.<br><br>Customer: ".Auth::user()->first_name." ".Auth::user()->last_name."<br>Phone: 0".substr(Auth::user()->phone, 3)
+                    );
+
+                    Mail::to($manager->email, $manager->first_name)
+                        ->queue(new Alert($data));
                 }
 
                 return redirect()->back()->with("success_message", "Order ".$checkout['order']["id"]." placed successfully.");
@@ -993,13 +1018,23 @@ class AppMyAccountController extends Controller
         $address->ca_address        = $request->address_details;
         $address->save();
 
+
+        
+
+        if(CustomerAddress::where('ca_customer_id', Auth::user()->id)->get()->count() == 1){
+            Customer::find(Auth::user()->id)
+            ->update([
+                'default_address' => $address->id
+            ]);
+        }
+
         /*--- log activity ---*/
         activity()
         ->causedBy(Customer::where('id', Auth::user()->id)->get()->first())
         ->tap(function(Activity $activity) {
             $activity->subject_type = 'System';
             $activity->subject_id = '0';
-            $activity->log_name = 'Address Address';
+            $activity->log_name = 'Address Added';
         })
         ->log(Auth::user()->email.' added an address.');
 

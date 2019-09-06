@@ -32,8 +32,8 @@
                         <div class="accordion-list">
                             @foreach ($orders as $order)
                                 <div class="accordion-item">
-                                    <div class="accordion-item-toggle" style="font-size: 12px; background-color: #f68b1e;">
-                                        <b>{{ $order->id }}</b> - {{ date('g:ia, l jS F Y', strtotime($order->order_date)) }}
+                                    <div class="accordion-item-toggle" style="font-size: 12px; background-color: #f68b1e; color: white">
+                                        <b>{{ $order->id }}</b> - {{ date('g:ia, jS F Y', strtotime($order->order_date)) }}
                                     </div>
                                     <div class="accordion-item-content">
                                         <br>

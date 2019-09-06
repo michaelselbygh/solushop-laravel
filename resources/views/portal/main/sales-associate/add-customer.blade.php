@@ -5,7 +5,7 @@
 @section('content-body')
     <section id="configuration">
         <div class="row">
-            <div class="col-5">
+            <div class="col-md-5">
                 <h5 class="card-title">Add Customer</h5>
                 @include('portal.main.success-and-error.message')
                 <div class="card">

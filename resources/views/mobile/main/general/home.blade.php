@@ -131,7 +131,7 @@
                                 </div>
                                 <div class="col-25">
                                     <div class="content">
-                                        <a href=" {{ url('shop/category/grocery') }} " class="external">
+                                        <a href=" {{ url('shop/category/groceries') }} " class="external">
                                             <i class="ti-gift"></i>
                                             <span>Grocery</span>
                                         </a>

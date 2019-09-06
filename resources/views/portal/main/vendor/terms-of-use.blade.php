@@ -5,7 +5,7 @@
 @section('content-body')
     <section id="configuration">
         <div class="row">
-            <div class="col-7">
+            <div class="col-md-7">
                 <h5 class="card-title">Terms Of Use on Solushop Ghana</h5>
                 <div class="card">
                     <div class="card-content collapse show">

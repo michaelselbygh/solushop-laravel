@@ -5,12 +5,12 @@
 @section('content-body')
     <section id="configuration">
         <div class="row">
-            <div class="col-12">
+            <div class="col-md-12">
                 <div class="row">
-                    <div class="col-6"  style="margin-top:10px;">
+                    <div class="col-md-6"  style="margin-top:10px;">
                         <h5 class="card-title">Active Deliveries</h5>
                     </div>
-                    <div class="col-6" style="text-align: right; margin-bottom:10px;">
+                    <div class="col-md-6" style="text-align: right; margin-bottom:10px;">
                         @if(sizeof($delivery_items) > 0)
                         <form method="POST" action="{{ route('manager.process.active.deliveries') }}">
                                 @csrf
@@ -40,7 +40,7 @@
                                         <th>Quantity</th>
                                         <th>Created At</th>
                                         <th>Updated At</th>
-                                        <th>Action</th>
+                                        <th style="min-width: 100px;">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody> 

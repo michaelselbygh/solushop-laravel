@@ -104,7 +104,7 @@ class AppHomeController extends Controller
 
         /*---selecting home page categories and products---*/
         $sections       = array();
-        $sections['id_init'] = ['27', '94', '89', '69', '75', '16', '31', '54', '62', '41', '9'];
+        $sections['id_init'] = ['27', '94', '89', '69', '75', '16', '31', '54', '62', '41', '9', '102'];
 
         $sectionCategoryObjects = ProductCategory::
                 whereIn('id', $sections['id_init'])

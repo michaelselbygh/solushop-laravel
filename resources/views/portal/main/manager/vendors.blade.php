@@ -5,7 +5,7 @@
 @section('content-body')
     <section id="configuration">
         <div class="row">
-            <div class="col-12">
+            <div class="col-md-12">
                 <h5 class="card-title">Vendors</h5>
                 @include('portal.main.success-and-error.message')
                 <div class="card">
@@ -65,6 +65,8 @@
     $(document).ready(function(){
         $('#vendors').dataTable( {
             "order": [
+                [5, 'desc'],
+                [4, 'asc'],
                 [1, 'asc']
             ]
         } );

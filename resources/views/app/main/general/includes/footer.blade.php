@@ -15,7 +15,7 @@
                             <!--Footer Logo End-->
                             <!--Footer Content Start-->
                             <div class="footer-content">
-                                <div><a href="index.php"><img src="{{ url('app/assets/img/logo/logo2.png') }}" alt="Solushop Logo" style="width: 130px;
+                                <div><a href="{{ route('home') }}"><img src="{{ url('app/assets/img/logo/logo2.png') }}" alt="Solushop Logo" style="width: 130px;
                                     height: auto;"></a>
                                 </div>
                                 <p>Ghana's Most Trusted Online Store.</p>

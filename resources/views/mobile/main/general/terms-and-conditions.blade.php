@@ -130,7 +130,7 @@
                                 <div class="accordion-item-content">
                                     <br>
                                     <p>
-                                        Users are required to submit a valid email address and phone number (s) before they can post advertisements. These contact details of the User shall not be publicly.
+                                        Users are required to submit a valid email address and phone number before they can purchase. These details are private and will be treated as such.
                                     </p>
                                     <br>
                                 </div>

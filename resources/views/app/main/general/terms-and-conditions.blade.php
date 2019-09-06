@@ -185,7 +185,7 @@
                                 <div id="collapse8" class="panel-collapse collapse">
                                     <div class="panel-body">
                                         <p>
-                                            Users are required to submit a valid email address and phone number (s) before they can post advertisements. These contact details of the User shall not be publicly.
+                                            Users are required to submit a valid email address and phone number before they can purchase on Solushop. These details are private and will be treated as such.
                                         </p>
                                     </div>
                                 </div>

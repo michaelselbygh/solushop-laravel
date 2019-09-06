@@ -5,7 +5,7 @@
 @section('content-body')
     <section id="configuration">
         <div class="row">
-            <div class="col-8">
+            <div class="col-md-8">
                 <h5 class="card-title">Add Order - Step 2 (Select {{$customer_addresses["customer"]["first_name"] }}'s Address)</h5>
                 <div class="card">
                     <div class="card-content collapse show">
@@ -49,7 +49,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-4">
+            <div class="col-md-4">
                 <h5 class="card-title">Add Customer Address </h5>
                 @include('portal.main.success-and-error.message')
                 <div class="card">

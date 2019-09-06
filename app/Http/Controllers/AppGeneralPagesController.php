@@ -16,6 +16,9 @@ use Spatie\Activitylog\Contracts\Activity;
 use Illuminate\Support\Facades\Validator;
 use \Mobile_Detect;
 use Auth;
+use Mail;
+
+use App\Mail\Alert;
 
 use App\AccountTransaction;
 use App\CartItem;
@@ -45,6 +48,7 @@ class AppGeneralPagesController extends Controller
             /*--- Checkout Items ---*/
             $checkout["checkout_items_id_object"] = CartItem::
                 where('ci_customer_id', Auth::user()->id)
+                ->orderBy('ci_sku', 'desc')
                 ->with('sku')
                 ->get()
                 ->toArray();
@@ -65,9 +69,10 @@ class AppGeneralPagesController extends Controller
                 ->join('vendors', 'products.product_vid', '=', 'vendors.id')
                 ->whereIn('stock_keeping_units.id', $checkout['checkout_items_id_array'])
                 ->with('product', 'product_images')
-                ->orderBy('stock_keeping_units.id')
+                ->orderBy('stock_keeping_units.id', 'desc')
                 ->get()
                 ->toArray();
+
 
             /*--- Get Customer information ---*/
             $customer_information_object = Customer::
@@ -119,7 +124,7 @@ class AppGeneralPagesController extends Controller
 
             
             //calculating shipping
-            if(isset(Auth::user()->default_address) and strtolower((Auth::user()->default_address)) != "none"){
+            if(isset(Auth::user()->default_address) and strtolower((Auth::user()->default_address)) != "none" and strtolower((Auth::user()->default_address)) != "null"){
                 $checkout_sf_object = CustomerAddress::
                     where([
                         ['ca_customer_id',"=", Auth::user()->id],
@@ -147,7 +152,7 @@ class AppGeneralPagesController extends Controller
                     $checkout['due_from_wallet'] = $customer_information['wallet_balance'];
                     $checkout['total_due'] = $checkout['sub_total'] - $checkout['due_from_wallet'];
                 }
-            }else{
+            }else{ 
                 $checkout['total_due'] = $checkout['sub_total'];
             }
 
@@ -266,6 +271,7 @@ class AppGeneralPagesController extends Controller
                     /*--- Checkout Items ---*/
                     $checkout["checkout_items_id_object"] = CartItem::
                         where('ci_customer_id', Auth::user()->id)
+                        ->orderBy('ci_sku', 'desc')
                         ->with('sku')
                         ->get()
                         ->toArray();
@@ -290,8 +296,8 @@ class AppGeneralPagesController extends Controller
                         ->join('vendors', 'products.product_vid', '=', 'vendors.id')
                         ->whereIn('stock_keeping_units.id', $checkout['checkout_items_id_array'])
                         ->with('product', 'product_images')
-                        ->orderBy('stock_keeping_units.id')
-                        ->get()
+                        ->orderBy('stock_keeping_units.id', 'desc')
+                        ->get(['*', 'stock_keeping_units.id as sku_id'])
                         ->toArray();
         
                     /*--- Get Customer information ---*/
@@ -420,7 +426,7 @@ class AppGeneralPagesController extends Controller
                     for ($i=0; $i < sizeof($checkout['checkout_items']); $i++) {
                         $order_item = new OrderItem;
                         $order_item->oi_order_id            = $order_id;
-                        $order_item->oi_sku                 = $checkout['checkout_items_id_array'][$i];
+                        $order_item->oi_sku                 =  $checkout["checkout_items"][$i]["sku_id"];
                         $order_item->oi_name                = $checkout["checkout_items"][$i]["product_name"];
                         if (trim(strtolower($checkout["checkout_items"][$i]["sku_variant_description"] )) != "none") {
                             $order_item->oi_name .= " - ".$checkout["checkout_items"][$i]["sku_variant_description"];
@@ -571,6 +577,15 @@ class AppGeneralPagesController extends Controller
                             $sms->sms_state = 1;
                             $sms->save();
 
+                            $data = array(
+                                'subject' => 'Purchase Alert - Solushop Ghana',
+                                'name' => $checkout["checkout_items"][$i]["name"],
+                                'message' => "You have a new order.<br><br>Product : " .$checkout["checkout_items"][$i]["product_name"]. "<br>Quantity Bought: " . $checkout['ci_quantity'][$i] . "<br>Quantity Remaining : " .$sku->sku_stock_left."<br>"
+                            );
+    
+                            Mail::to($checkout["checkout_items"][$i]["email"], $checkout["checkout_items"][$i]["name"])
+                                ->queue(new Alert($data));
+
                             //save sku
                             $sku->save();
                         }
@@ -586,14 +601,32 @@ class AppGeneralPagesController extends Controller
                         $sms->sms_state = 1;
                         $sms->save();
 
+                        $data = array(
+                            'subject' => 'Order Received - Solushop Ghana',
+                            'name' => Auth::user()->first_name,
+                            'message' => "Your order $order_id has been received. We will begin processing soon. Thanks for choosing Solushop!"
+                        );
+
+                        Mail::to(Auth::user()->email, Auth::user()->first_name)
+                            ->queue(new Alert($data));
+
                         //notify management
-                        $managers = Manager::where('sms', 0)->get();
+                        $managers = Manager::get();
                         foreach ($managers as $manager) {
-                            $sms = new SMS;
-                            $sms->sms_message = "ALERT: NEW ORDER\nCustomer: ".Auth::user()->first_name." ".Auth::user()->last_name."\nPhone: 0".substr(Auth::user()->phone, 3);
-                            $sms->sms_phone = $manager->phone;
-                            $sms->sms_state = 1;
-                            $sms->save();
+                            // $sms = new SMS;
+                            // $sms->sms_message = "ALERT: NEW ORDER\nCustomer: ".Auth::user()->first_name." ".Auth::user()->last_name."\nPhone: 0".substr(Auth::user()->phone, 3);
+                            // $sms->sms_phone = $manager->phone;
+                            // $sms->sms_state = 1;
+                            // $sms->save();
+
+                            $data = array(
+                                'subject' => 'New Order - Solushop Ghana',
+                                'name' => $manager->first_name,
+                                'message' => "This email is to inform you that a new order $order_id has been received. If you are not required to take any action during order processing, please treat this email as purely informational.<br><br>Customer: ".Auth::user()->first_name." ".Auth::user()->last_name."<br>Phone: 0".substr(Auth::user()->phone, 3)
+                            );
+    
+                            Mail::to($manager->email, $manager->first_name)
+                                ->queue(new Alert($data));
                         }
 
                         return redirect()->route('show.account.orders')->with("success_message", "Order $order_id placed successfully.");
@@ -909,6 +942,17 @@ class AppGeneralPagesController extends Controller
                                 $sms->sms_phone = $sms_phone;
                                 $sms->sms_state = 1;
                                 $sms->save();
+
+                                $data = array(
+                                    'subject' => 'Cash Coupon Redeemed - Solushop Ghana',
+                                    'name' => Auth::user()->first_name,
+                                    'message' => "You have successfully redeemed a coupon worth GHS $coupon_value. Your account balance is now GHS $newCustomerBalance"
+                                );
+        
+                                Mail::to(Auth::user()->email, Auth::user()->first_name)
+                                    ->queue(new Alert($data));
+
+                                
 
                                 /*--- log activity ---*/
                                 activity()
@@ -1401,17 +1445,21 @@ class AppGeneralPagesController extends Controller
 
         $detect = new Mobile_Detect;
         if( $detect->isMobile() && !$detect->isTablet() ){
-            return view('mobile.main.general.404')
-            ->with('customer_information', $customer_information);
+            return response()
+                ->view('mobile.main.general.404', [
+                    'customer_information' => $customer_information
+                ], 404);
         }else{
             /*---selecting search bar categories (level 2 categories)---*/
             $search_bar_pc_options = ProductCategory::
             where('pc_level', 2) 
             ->orderBy('pc_description')   
             ->get(['id', 'pc_description', 'pc_slug']);
-            return view('app.main.general.404')
-                    ->with('search_bar_pc_options', $search_bar_pc_options)
-                    ->with('customer_information', $customer_information);
+            return response()
+                    ->view('app.main.general.404', [
+                        'search_bar_pc_options' => $search_bar_pc_options,
+                        'customer_information' => $customer_information
+                    ], 404);
         };
     }
 
@@ -1551,13 +1599,13 @@ class AppGeneralPagesController extends Controller
 
                         /*--- Record transaction ---*/
                         $transaction = new AccountTransaction;
-                        $transaction->trans_type                = "Sign up bonus for ".Auth::user()->email;
+                        $transaction->trans_type                = "Sign up bonus for Customer";
                         $transaction->trans_amount              = 5;
                         $transaction->trans_credit_account_type = 1;
                         $transaction->trans_credit_account      = "INT-SC001";
                         $transaction->trans_debit_account_type  = 6;
                         $transaction->trans_debit_account       = Auth::user()->id;
-                        $transaction->trans_description         = "Payout of GH¢ 5 for first time order ".$checkout['order']["id"]." of customer ".Auth::user()->email;
+                        $transaction->trans_description         = "Payout of GH¢ 5 for first time order ".$order->id." of customer ".Auth::user()->first_name." ".Auth::user()->last_name;
                         $transaction->trans_date                = date("Y-m-d G:i:s");
                         $transaction->trans_recorder            = "System";
                         $transaction->save();
@@ -1586,7 +1634,7 @@ class AppGeneralPagesController extends Controller
 
                     /*--- Record main transaction ---*/
                     $transaction = new AccountTransaction;
-                    $transaction->trans_type                = "Order Payment WTUPID - ".$order->id;
+                    $transaction->trans_type                = "Order Payment for Order ID - ".$order->id;
                     $transaction->trans_amount              = $order_total;
                     $transaction->trans_credit_account_type = 6;
                     $transaction->trans_credit_account      = Auth::guard()->user()->id;
@@ -1613,13 +1661,13 @@ class AppGeneralPagesController extends Controller
 
                         /*--- Record transaction ---*/
                         $transaction = new AccountTransaction;
-                        $transaction->trans_type                = "Sign up bonus for ".Auth::user()->email;
+                        $transaction->trans_type                = "Sign up bonus for Customer";
                         $transaction->trans_amount              = 5;
                         $transaction->trans_credit_account_type = 1;
                         $transaction->trans_credit_account      = "INT-SC001";
                         $transaction->trans_debit_account_type  = 6;
                         $transaction->trans_debit_account       = Auth::user()->id;
-                        $transaction->trans_description         = "Payout of GH¢ 5 for first time order ".$checkout['order']["id"]." of customer ".Auth::user()->email;
+                        $transaction->trans_description         = "Payout of GH¢ 5 for first time order ".$order->id." of customer ".Auth::user()->first_name." ".Auth::user()->last_name;
                         $transaction->trans_date                = date("Y-m-d G:i:s");
                         $transaction->trans_recorder            = "System";
                         $transaction->save();
@@ -1637,7 +1685,7 @@ class AppGeneralPagesController extends Controller
 
                     /*--- Notify Vendor ---*/
                     $vendor =  DB::select(
-                        "SELECT phone FROM vendors, products, stock_keeping_units WHERE products.product_vid = vendors.id AND stock_keeping_units.sku_product_id = products.id AND stock_keeping_units.id = '".$order->checkout_items[$i]["oi_sku"]."'"
+                        "SELECT phone, email, name FROM vendors, products, stock_keeping_units WHERE products.product_vid = vendors.id AND stock_keeping_units.sku_product_id = products.id AND stock_keeping_units.id = '".$order->checkout_items[$i]["oi_sku"]."'"
                     );
 
                     
@@ -1646,6 +1694,15 @@ class AppGeneralPagesController extends Controller
                     $sms->sms_phone = $vendor[0]->phone;
                     $sms->sms_state = 1;
                     $sms->save();
+
+                    $data = array(
+                        'subject' => 'Purchase Alert - Solushop Ghana',
+                        'name' => $vendor[0]->name,
+                        'message' => "You have a new order.<br><br>Product : " .$order->checkout_items[$i]["oi_name"]. "<br>Quantity Bought: " . $order->checkout_items[$i]["oi_quantity"] . "<br>Quantity Remaining : " .$sku->sku_stock_left."<br>"
+                    );
+
+                    Mail::to($vendor[0]->email, $vendor[0]->name)
+                        ->queue(new Alert($data));
 
                     //save sku
                     $sku->save();
@@ -1662,14 +1719,27 @@ class AppGeneralPagesController extends Controller
                 $sms->sms_state = 1;
                 $sms->save();
 
+                $data = array(
+                    'subject' => 'Order Received - Solushop Ghana',
+                    'name' => Auth::user()->first_name,
+                    'message' => "Your order $order->id has been received. We will begin processing soon. Thanks for choosing Solushop!"
+                );
+
+                Mail::to(Auth::user()->email, Auth::user()->first_name)
+                    ->queue(new Alert($data));
+
                 //notify management
                 $managers = Manager::where('sms', 0)->get();
                 foreach ($managers as $manager) {
-                    $sms = new SMS;
-                    $sms->sms_message = "ALERT: NEW ORDER\nCustomer: ".Auth::user()->first_name." ".Auth::user()->last_name."\nPhone: 0".substr(Auth::user()->phone, 3);
-                    $sms->sms_phone = $manager->phone;
-                    $sms->sms_state = 1;
-                    $sms->save();
+
+                    $data = array(
+                        'subject' => 'New Order - Solushop Ghana',
+                        'name' => $manager->first_name,
+                        'message' => "This email is to inform you that a new order $order->id has been received. If you are not required to take any action during order processing, please treat this email as purely informational.<br><br>Customer: ".Auth::user()->first_name." ".Auth::user()->last_name."<br>Phone: 0".substr(Auth::user()->phone, 3)
+                    );
+
+                    Mail::to($manager->email, $manager->first_name)
+                        ->queue(new Alert($data));
                 }
 
                 /*--- log activity ---*/
@@ -1855,8 +1925,8 @@ class AppGeneralPagesController extends Controller
                     ->log(Auth::guard('vendor')->user()->name." subscribed to package ".$vendor_subscription->vs_vsp_id." for ".($vs_payment->vs_payment_vspq * 30)." days");
     
                     /*--- Confirm payment on slydepay ---*/
-                    // $slydepay = new Slydepay("ceo@solutekworld.com", "1466854163614");
-                    // $slydepay->confirmTransaction($payment_token, $transaction_id);
+                    $slydepay = new Slydepay("ceo@solutekworld.com", "1466854163614");
+                    $slydepay->confirmTransaction($payment_token, $transaction_id);
                     
                     return redirect()->route("vendor.show.subscription")->with('success_message', 'Subscription successful and is valid for '.($vs_payment->vs_payment_vspq * 30).' days');
     

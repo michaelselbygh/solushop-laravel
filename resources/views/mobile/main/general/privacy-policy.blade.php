@@ -219,7 +219,7 @@
                             </div>
                             <div class="accordion-item">
                                 <div class="accordion-item-toggle">
-                                    14. Disclaimer of Warranties and Limitation of Liabilities
+                                    14. Disclaimer of Warranties
                                 </div>
                                 <div class="accordion-item-content">
                                     <br>

@@ -12,6 +12,9 @@ use Illuminate\Validation\Rule;
 use Auth;
 use PDF;
 use Image;
+use Mail;
+
+use App\Mail\Alert;
 
 use App\AccountTransaction;
 use App\ActivityLog;
@@ -341,6 +344,15 @@ class ManagerController extends Controller
                     $sms->sms_state = 1;
                     $sms->save();
 
+                    $data = array(
+                        'subject' => 'Purchase Alert - Solushop Ghana',
+                        'name' => $order["order_items"][$i]["sku"]["product"]["vendor"]["name"],
+                        'message' => "You have a new order.<br><br>Product: ".$order["order_items"][$i]["oi_name"]."<br>Quantity Purchased: ".$order["order_items"][$i]["oi_quantity"]."<br>Quantity Remaining: ".$order_item_sku->sku_stock_left."<br><br>"
+                    );
+        
+                    Mail::to($order["order_items"][$i]["sku"]["product"]["vendor"]["email"], $order["order_items"][$i]["sku"]["product"]["vendor"]["name"])
+                        ->queue(new Alert($data));
+
                     $order_item_sku->save();
 
                     $order_item = OrderItem::where('oi_sku', $order["order_items"][$i]["sku"]["id"])->first();
@@ -388,6 +400,30 @@ class ManagerController extends Controller
                     $sms->sms_state = 1;
                     $sms->save();
 
+                    $data = array(
+                        'subject' => 'S.A. Order Confirmed  - Solushop Ghana',
+                        'name' => $sales_associate->first_name,
+                        'message' => "Order $orderID made with your coupon has been confirmed. Your new balance is GHS ".$sales_associate->balance
+                    );
+        
+                    Mail::to($sales_associate->email, $sales_associate->first_name)
+                        ->queue(new Alert($data));
+
+
+                    //notify management
+                    $managers = Manager::where('sms', 0)->get();
+                    foreach ($managers as $manager) {
+
+                        $data = array(
+                            'subject' => 'New Order - Solushop Ghana',
+                            'name' => $manager->first_name,
+                            'message' => "This email is to inform you that a new order $orderID has been received. If you are not required to take any action during order processing, please treat this email as purely informational.<br><br>Customer: ".$order["customer"]["first_name"]." ".$order["customer"]["last_name"]."<br>Phone: 0".substr($order["customer"]["phone"], 3)
+                        );
+
+                        Mail::to($manager->email, $manager->first_name)
+                            ->queue(new Alert($data));
+                    }
+
                     //promote where necessary
                     if ($ots < 20000 && $nts >= 20000) {
                         //promote to elite
@@ -398,6 +434,16 @@ class ManagerController extends Controller
                         $sms->sms_phone = $sales_associate->phone;
                         $sms->sms_state = 1;
                         $sms->save();
+
+                        $data = array(
+                            'subject' => 'Promotion to Elite! - Solushop Ghana',
+                            'name' => $sales_associate->first_name,
+                            'message' => "Congrats! You are now an Elite Sales Associate. You can now enjoy 4% commission on all orders."
+                        );
+            
+                        Mail::to($sales_associate->email, $sales_associate->first_name)
+                            ->queue(new Alert($data));
+
                     }elseif($ots < 5000 && $nts >= 5000){
                         //promote to veteran
                         $sms = new SMS;
@@ -406,6 +452,16 @@ class ManagerController extends Controller
                         $sms->sms_state = 1;
                         $sms->save();
                         $sales_associate->badge = 3;
+
+                        $data = array(
+                            'subject' => 'Promotion to Veteran! - Solushop Ghana',
+                            'name' => $sales_associate->first_name,
+                            'message' => "Congrats! You are now an Veteran Sales Associate. You can now enjoy 3% commission on all orders."
+                        );
+            
+                        Mail::to($sales_associate->email, $sales_associate->first_name)
+                            ->queue(new Alert($data));
+
                     }elseif($ots == 0 && $nts > 0){
                         //promote to rookie
                         $sales_associate->badge = 2;
@@ -414,6 +470,15 @@ class ManagerController extends Controller
                         $sms->sms_phone = $sales_associate->phone;
                         $sms->sms_state = 1;
                         $sms->save();
+
+                        $data = array(
+                            'subject' => 'Promotion to Rookie! - Solushop Ghana',
+                            'name' => $sales_associate->first_name,
+                            'message' => "Congrats on your first sale. You are now a Rookie sales associate. Keep selling to become a Veteran and enjoy 3% commission on all orders."
+                        );
+            
+                        Mail::to($sales_associate->email, $sales_associate->first_name)
+                            ->queue(new Alert($data));
                     }
 
                     $sales_associate->save();
@@ -431,6 +496,15 @@ class ManagerController extends Controller
                 $sms->sms_phone = $order["customer"]["phone"];
                 $sms->sms_state = 1;
                 $sms->save();
+
+                $data = array(
+                    'subject' => 'Order Confirmed - Solushop Ghana',
+                    'name' => $order["customer"]["first_name"],
+                    'message' => "Your order $orderID has been confirmed and is being processed."
+                );
+    
+                Mail::to($order["customer"]["email"], $order["customer"]["first_name"])
+                    ->queue(new Alert($data));
 
                 /*--- Log Activity ---*/
                 activity()
@@ -503,6 +577,15 @@ class ManagerController extends Controller
                     $sms->sms_state = 1;
                     $sms->save();
 
+                    $data = array(
+                        'subject' => 'S.A. Order Confirmed - Solushop Ghana',
+                        'name' => $sales_associate->first_name,
+                        'message' => "Order $orderID made with your coupon has been confirmed. Your new balance is GHS ".$sales_associate->balance
+                    );
+        
+                    Mail::to($sales_associate->email, $sales_associate->first_name)
+                        ->queue(new Alert($data));
+
                     //promote where necessary
                     if ($ots < 20000 && $nts >= 20000) {
                         //promote to elite
@@ -513,14 +596,34 @@ class ManagerController extends Controller
                         $sms->sms_phone = $sales_associate->phone;
                         $sms->sms_state = 1;
                         $sms->save();
+
+                        $data = array(
+                            'subject' => 'Promotion to Elite! - Solushop Ghana',
+                            'name' => $sales_associate->first_name,
+                            'message' => "Congrats! You are now an Elite Sales Associate. You can now enjoy 4% commission on all orders."
+                        );
+            
+                        Mail::to($sales_associate->email, $sales_associate->first_name)
+                            ->queue(new Alert($data));
+
                     }elseif($ots < 5000 && $nts >= 5000){
                         //promote to veteran
+                        $sales_associate->badge = 3;
                         $sms = new SMS;
                         $sms->sms_message = "Congrats ".$sales_associate->first_name.", you are now an Veteran Sales Associate. You can now enjoy 3% commission on all orders.";
                         $sms->sms_phone = $sales_associate->phone;
                         $sms->sms_state = 1;
                         $sms->save();
-                        $sales_associate->badge = 3;
+
+                        $data = array(
+                            'subject' => 'Promotion to Veteran! - Solushop Ghana',
+                            'name' => $sales_associate->first_name,
+                            'message' => "Congrats! You are now an Veteran Sales Associate. You can now enjoy 3% commission on all orders."
+                        );
+            
+                        Mail::to($sales_associate->email, $sales_associate->first_name)
+                            ->queue(new Alert($data));
+
                     }elseif($ots == 0 && $nts > 0){
                         //promote to rookie
                         $sales_associate->badge = 2;
@@ -529,6 +632,16 @@ class ManagerController extends Controller
                         $sms->sms_phone = $sales_associate->phone;
                         $sms->sms_state = 1;
                         $sms->save();
+
+                        $data = array(
+                            'subject' => 'Promotion to Rookie! - Solushop Ghana',
+                            'name' => $sales_associate->first_name,
+                            'message' => "Congrats on your first sale. You are now a Rookie sales associate. Keep selling to become a Veteran and enjoy 3% commission on all orders."
+                        );
+            
+                        Mail::to($sales_associate->email, $sales_associate->first_name)
+                            ->queue(new Alert($data));
+
                     }
 
                     $sales_associate->save();
@@ -546,6 +659,15 @@ class ManagerController extends Controller
                 $sms->sms_phone = $order["customer"]["phone"];
                 $sms->sms_state = 1;
                 $sms->save();
+
+                $data = array(
+                    'subject' => 'Order Confirmed - Solushop Ghana',
+                    'name' => $order["customer"]["first_name"],
+                    'message' => "Your order $orderID has been confirmed and is being processed."
+                );
+    
+                Mail::to($order["customer"]["email"], $order["customer"]["first_name"])
+                    ->queue(new Alert($data));
 
                 /*--- Log Activity ---*/
                 activity()
@@ -648,18 +770,28 @@ class ManagerController extends Controller
                 $transaction->trans_recorder            = Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name;
                 $transaction->save();
                 /*--- Notify customer ---*/
-                $sms_message="Hi ".$customer->first_name.", your order $orderID has been cancelled. A refund of GHS ";
+                $sms_message="Sorry ".$customer->first_name.", your order $orderID has been cancelled. A refund of GHS ";
                 if (isset($order->order_scoupon) AND $order->order_scoupon != NULL AND $order->order_scoupon != "NULL") {
                     $sms_message .= (0.99 * $order->order_subtotal);
                 } else {
                     $sms_message .= $order->order_subtotal;
                 }
                 $sms_message .= " has been done to your Solushop Wallet. We apologize for any inconvenience caused.";
+                $email_message = $sms_message;
                 $sms = new SMS;
                 $sms->sms_message = $sms_message;
                 $sms->sms_phone = $customer->phone;
                 $sms->sms_state = 1;
                 $sms->save();
+
+                $data = array(
+                    'subject' => 'Order Cancelled - Solushop Ghana',
+                    'name' => $customer->first_name,
+                    'message' => $email_message
+                );
+    
+                Mail::to($customer->email, $customer->first_name)
+                    ->queue(new Alert($data));
 
                 $order->save();
                 $customer->save();
@@ -746,10 +878,19 @@ class ManagerController extends Controller
                 }
                 $sms_message .= " has been done to your Solushop Wallet. We apologize for any inconvenience caused.";
                 $sms = new SMS;
-                $sms->sms_message = $sms_message;
+                $sms->sms_message = $email_message = $sms_message;
                 $sms->sms_phone = $customer->phone;
                 $sms->sms_state = 1;
                 $sms->save();
+
+                $data = array(
+                    'subject' => 'Order Cancelled - Solushop Ghana',
+                    'name' => $customer->first_name,
+                    'message' => $email_message
+                );
+    
+                Mail::to($customer->email, $customer->first_name)
+                    ->queue(new Alert($data));
 
                 $order->save();
                 $customer->save();
@@ -971,7 +1112,7 @@ class ManagerController extends Controller
             ->with("products", Product::where([
                 ["product_state", "<>", 4]
             ])
-            ->with('vendor', 'images', 'state')
+            ->with('skus', 'vendor', 'images', 'state')
             ->get()
             ->toArray());
     }
@@ -984,7 +1125,7 @@ class ManagerController extends Controller
                 /*--- Check for subscription and allowance for new product ---*/
                 if (is_null(VendorSubscription::where('vs_vendor_id', $product->product_vid)->with('package')->first()) OR VendorSubscription::where('vs_vendor_id', $product->product_vid)->with('package')->first()->vs_days_left < 1) {
                     return redirect()->back()->with("error_message", "Vendor has no active subscriptions. Please ask vendor to subscribe to be able to approve a product.");
-                }elseif(Product::where('product_vid', $product->product_vid)->whereIn('product_state', [1, 2, 3, 5])->get()->count() >= VendorSubscription::where('vs_vendor_id', $product->product_vid)->with('package')->first()->package->vs_package_product_cap){
+                }elseif(Product::where('product_vid', $product->product_vid)->whereIn('product_state', [1])->get()->count() >= VendorSubscription::where('vs_vendor_id', $product->product_vid)->with('package')->first()->package->vs_package_product_cap){
                     return redirect()->back()->with("error_message", "Upload limit for vendor reached on current vendor subscription. Please upgrade to enable approve");
                 }
 
@@ -1606,16 +1747,16 @@ class ManagerController extends Controller
 
         /*--- Vendor ID ---*/
         $count = Count::first();
-        $vendor_id = date("Ymd").substr("00000".$count->vendor_count, strlen(strval($count->vendor_count)));
+        $vendor_id = date("dmY").substr("00000".$count->vendor_count, strlen(strval($count->vendor_count)));
 
         /*--- save header file ---*/
         $header_file = $request->file('header_image');
         if ($header_file->getClientOriginalExtension() != "jpg") {
             return redirect()->back()->withInput(['name', 'email', 'main_phone', 'alt_phone', 'mode_of_payment', 'payment_details', 'pick_up_address', 'header_image'])->with("error_message", "Header image must be of type: .jpg");
         }
-        $sub_path = 'app/assets/img/vendor-banner/'; 
-        $destination_path = public_path($sub_path);  
-        $header_file->move($destination_path,  $vendor_id.".jpg");
+
+        $img = Image::make($header_file);
+        $img->save('app/assets/img/vendor-banner/'.$vendor_id.'.jpg');
 
         
 
@@ -1646,6 +1787,15 @@ class ManagerController extends Controller
         $sms->sms_phone = "233".substr($request->main_phone, 1);
         $sms->sms_state = 1;
         $sms->save();
+
+        $data = array(
+            'subject' => 'Confirmed Vendor - Solushop Ghana',
+            'name' => ucwords(strtolower($request->name)),
+            'message' => "You have been accepted as a Vendor on Solushop. Subscribe to begin your journey with us.<br><br>Username: ".str_slug($request->name, '-')."<br>Password : $passcode<br>Login here : <a href='https://www.solushop.com.gh/portal/vendor'>Solushop Vendor Portal</a>"
+        );
+
+        Mail::to(strtolower($request->email), ucwords(strtolower($request->name)))
+            ->queue(new Alert($data));
 
 
          /*--- log activity ---*/
@@ -1741,9 +1891,9 @@ class ManagerController extends Controller
                     if ($header_file->getClientOriginalExtension() != "jpg") {
                         return redirect()->back()->withInput(['name', 'email', 'main_phone', 'alt_phone', 'mode_of_payment', 'payment_details', 'pick_up_address', 'header_image'])->with("error_message", "Header image must be of type: .jpg");
                     }
-                    $sub_path = 'app/assets/img/vendor-banner/'; 
-                    $destination_path = public_path($sub_path);  
-                    $header_file->move($destination_path,  $vendor->id.".jpg");
+
+                    $img = Image::make($header_file);
+                    $img->save('app/assets/img/vendor-banner/'.$vendor->id.'.jpg');
                 }
 
 
@@ -1806,6 +1956,16 @@ class ManagerController extends Controller
                         $sms->sms_state = 1;
                         $sms->save();
 
+                        /*--- Notify Vendor via Mail ---*/
+                        $data = array(
+                            'subject' => 'Vendor Payout - Solushop Ghana',
+                            'name' => $vendor->name,
+                            'message' => "A payout of GHS ".$request->pay_out_amount." has been recorded to you. Your new balance is GHS ".$vendor->balance
+                        );
+
+                        Mail::to($vendor->email, $vendor->name)
+                            ->queue(new Alert($data));
+
                         /*--- log activity ---*/
                         activity()
                         ->causedBy(Manager::where('id', Auth::guard('manager')->user()->id)->get()->first())
@@ -1842,6 +2002,15 @@ class ManagerController extends Controller
                         $sms->sms_phone = $vendor->phone;
                         $sms->sms_state = 1;
                         $sms->save();
+
+                        $data = array(
+                            'subject' => 'Vendor Penalty - Solushop Ghana',
+                            'name' => $vendor->name,
+                            'message' => "A penalty of GHS ".$request->pay_out_amount." has been recorded to you. Your new balance is GHS ".$vendor->balance
+                        );
+
+                        Mail::to($vendor->email, $vendor->name)
+                            ->queue(new Alert($data));
 
                         /*--- log activity ---*/
                         activity()
@@ -1918,6 +2087,15 @@ class ManagerController extends Controller
                 $sms->sms_phone = $order["customer"]["phone"];
                 $sms->sms_state = 1;
                 $sms->save();
+
+                $data = array(
+                    'subject' => 'Order Item Picked Up - Solushop Ghana',
+                    'name' => $order["customer"]["first_name"],
+                    'message' => "Your ordered item, ".$order_item["oi_quantity"]." ".$order_item["oi_name"]." has been picked up and is ready for delivery."
+                );
+
+                Mail::to($order["customer"]["email"], $order["customer"]["first_name"])
+                    ->queue(new Alert($data));
 
                 /*--- Record Pickup History ---*/
                 $picked_up_item = new PickedUpItem;
@@ -2016,6 +2194,15 @@ class ManagerController extends Controller
                 $sms->sms_phone = $order["customer"]["phone"];
                 $sms->sms_state = 1;
                 $sms->save();
+
+                $data = array(
+                    'subject' => 'Order Item Delivered - Solushop Ghana',
+                    'name' => $order["customer"]["first_name"],
+                    'message' => "Your ordered item, ".$order_item["oi_quantity"]." ".$order_item["oi_name"]." has been delivered successfully. <br><br>Thanks, come back soon."
+                );
+
+                Mail::to($order["customer"]["email"], $order["customer"]["first_name"])
+                    ->queue(new Alert($data));
 
                 /*--- Accrue to Vendor || Record Transaction ---*/
                 $vendor = Vendor::where('id', $order_item['sku']["product"]["vendor"]["id"])->first();
@@ -2216,9 +2403,8 @@ class ManagerController extends Controller
         /*--- save id file ---*/
         $identification_file = $request->file('identification_file');
         $identification_file_ext = $identification_file->getClientOriginalExtension();
-        $sub_path = 'portal/s-team-member-id/'; 
-        $destination_path = public_path($sub_path);  
-        $identification_file->move($destination_path,  $coupon_id.".".$identification_file_ext);
+        $file = $identification_file;
+        $file->move("/var/www/vhosts/solushop.com.gh/httpdocs/portal/s-team-member-id/", $coupon_id.".".$identification_file_ext);
 
         /*--- save coupon ---*/
         $coupon = new Coupon;
@@ -2258,6 +2444,15 @@ class ManagerController extends Controller
         $sms->sms_phone = "233".substr($request->phone, 1);
         $sms->sms_state = 1;
         $sms->save();
+
+        $data = array(
+            'subject' => 'Sales Associate Confirmation - Solushop Ghana',
+            'name' => ucwords(strtolower($request->first_name)),
+            'message' => "You have been accepted as a Sales Associate on Solushop.<br><br>Email: ".$request->email."<br>Password : $passcode<br>Login here : <a href='https://www.solushop.com.gh/portal/sales-associate'> Sales Associate Portal </a>"
+        );
+
+        Mail::to($request->email, ucwords(strtolower($request->first_name)))
+            ->queue(new Alert($data));
 
 
          /*--- log activity ---*/
@@ -2395,6 +2590,15 @@ class ManagerController extends Controller
                 $sms->sms_phone = $associate->phone;
                 $sms->sms_state = 1;
                 $sms->save();
+
+                $data = array(
+                    'subject' => 'Sales Associate Payout - Solushop Ghana',
+                    'name' => $associate->first_name,
+                    'message' => "A payout of GHS ".$request->pay_out_amount." has been recorded to you. Your new balance is GHS ".$associate->balance
+                );
+
+                Mail::to($associate->email, $associate->first_name)
+                    ->queue(new Alert($data));
 
                 /*--- log activity ---*/
                 activity()
@@ -2555,7 +2759,7 @@ class ManagerController extends Controller
                     $activity->subject_id = '0';
                     $activity->log_name = 'Delivery Partner Details Update';
                 })
-                ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." updated the details of delivery, ".$partner->first_name." ".$partner->last_name);
+                ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." updated the details of delivery partner, ".$partner->first_name." ".$partner->last_name);
 
                 $success_message = $partner->first_name." ".$partner->last_name."'s details updated successfully.";
                 $partner->save();
@@ -2613,6 +2817,7 @@ class ManagerController extends Controller
         $accounts["balance"]["total"] = Count::sum('account');
         $accounts["balance"]["vendors"] = Vendor::sum('balance');
         $accounts["balance"]["sales-associates"] = SalesAssociate::sum('balance');
+        $accounts["balance"]["delivery-partners"] = DeliveryPartner::sum('balance');
         $accounts["balance"]["available"] = $accounts["balance"]["total"] - $accounts["balance"]["vendors"] - $accounts["balance"]["sales-associates"];
 
 
@@ -2656,7 +2861,7 @@ class ManagerController extends Controller
                 $transaction->trans_credit_account      = "INT-SC001";
                 $transaction->trans_debit_account_type  = 2;
                 $transaction->trans_debit_account       = "EXT";
-                $transaction->trans_description         = "Pay Out of GH¢ ".$request->payment_amount;
+                $transaction->trans_description         = "Pay Out of GH¢ ".$request->payment_amount." - ".$request->payment_description;
                 $transaction->trans_date                = date("Y-m-d G:i:s");
                 $transaction->trans_recorder            = Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name;
                 $transaction->save();
@@ -2675,7 +2880,7 @@ class ManagerController extends Controller
                 $transaction->trans_credit_account      = "EXT";
                 $transaction->trans_debit_account_type  = 1;
                 $transaction->trans_debit_account       = "INT-SC001";
-                $transaction->trans_description         = "Pay In of GH¢ ".$request->payment_amount;
+                $transaction->trans_description         = "Pay In of GH¢ ".$request->payment_amount." - ".$request->payment_description;
                 $transaction->trans_date                = date("Y-m-d G:i:s");
                 $transaction->trans_recorder            = Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name;
                 $transaction->save();
@@ -2692,7 +2897,7 @@ class ManagerController extends Controller
         ->tap(function(Activity $activity) {
             $activity->subject_type = 'System';
             $activity->subject_id = '0';
-            $activity->log_name = 'Sales Associate Payout';
+            $activity->log_name = "Accounts ".$request->payment_type;
         })
         ->log(Auth::guard('manager')->user()->first_name." ".Auth::guard('manager')->user()->last_name." recorded a ".$request->payment_type." of GH¢ ".$request->payment_amount);
 
@@ -2748,6 +2953,15 @@ class ManagerController extends Controller
         $sms->sms_phone = $subscription[0]->phone;
         $sms->sms_state = 1;
         $sms->save();
+
+        $data = array(
+            'subject' => 'Subscription Cancelled - Solushop Ghana',
+            'name' => $subscription[0]->name,
+            'message' => "Your subscription as a vendor with Solushop Ghana has been cancelled."
+        );
+
+        Mail::to($subscription[0]->email, $subscription[0]->name)
+            ->queue(new Alert($data));
 
         /*--- log activity ---*/
         activity()
@@ -2865,6 +3079,15 @@ class ManagerController extends Controller
             $sms->sms_phone = $subscribed_vendors[$i]->phone;
             $sms->sms_state = 1;
             $sms->save();
+
+            $data = array(
+                'subject' => 'Notice - Solushop Ghana',
+                'name' => $subscribed_vendors[0]->name,
+                'message' => "It's a great time to be with Solushop. We have released a new update that introduces new and exciting features for you. Access your portal with the link and credentials below.<br><br>Username : ".$subscribed_vendors[$i]->username."<br>Passcode: ".$subscribed_vendors[$i]->passcode."<br>Link: https://www.solushop.com.gh/portal/vendor<br><br>Access your shop here:<br>https://www.solushop.com.gh/shop/".$subscribed_vendors[$i]->username
+            );
+    
+            Mail::to($subscribed_vendors[0]->email, $subscribed_vendors[0]->name)
+                ->queue(new Alert($data));
         }
     }
 }

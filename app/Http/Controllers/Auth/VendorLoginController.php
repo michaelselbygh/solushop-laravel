@@ -55,7 +55,7 @@ class VendorLoginController extends Controller
             $activity->subject_id = '0';
             $activity->log_name = 'Vendor Login Attempt';
         })
-        ->log($request->email.' attempted to log in as a vendor');
+        ->log($request->username.' attempted to log in as a vendor');
         return redirect()->back()->withInput($request->only('email', 'remember'))->with("error_message", "Invalid login credentials");
     }
 

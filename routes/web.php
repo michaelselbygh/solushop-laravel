@@ -76,6 +76,7 @@ Route::get('/cron/delete-empty-conversations', 'CronsController@deleteEmptyConve
 Route::get('/cron/delete-unpaid-orders', 'CronsController@deleteUnpaidOrders');
 Route::get('/cron/delete-unpaid-wtu-payments', 'CronsController@deleteUnpaidWTUPayments');
 Route::get('/cron/update-expired-coupons', 'CronsController@updateExpiredCoupons');
+Route::get('/cron/pending-approvals-check', 'CronsController@checkForPendingApprovals');
 
 
 

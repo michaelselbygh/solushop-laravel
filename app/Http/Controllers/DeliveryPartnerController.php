@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Auth;
 use PDF;
+use Mail;
+
+use App\Mail\Alert;
 
 use App\AccountTransaction;
 use App\Customer;
@@ -77,6 +80,15 @@ class DeliveryPartnerController extends Controller
                 $sms->sms_phone = $order["customer"]["phone"];
                 $sms->sms_state = 1;
                 $sms->save();
+
+                $data = array(
+                    'subject' => 'Order Item Picked Up - Solushop Ghana',
+                    'name' => $order["customer"]["first_name"],
+                    'message' => "Your ordered item, ".$order_item["oi_quantity"]." ".$order_item["oi_name"]." has been picked up and is ready for delivery."
+                );
+    
+                Mail::to($order["customer"]["email"], $order["customer"]["first_name"])
+                    ->queue(new Alert($data));
 
                 /*--- Record Pickup History ---*/
                 $picked_up_item = new PickedUpItem;
@@ -170,6 +182,15 @@ class DeliveryPartnerController extends Controller
                 $sms->sms_phone = $order["customer"]["phone"];
                 $sms->sms_state = 1;
                 $sms->save();
+
+                $data = array(
+                    'subject' => 'Order Item Delivered - Solushop Ghana',
+                    'name' => $order["customer"]["first_name"],
+                    'message' => "Your ordered item, ".$order_item["oi_quantity"]." ".$order_item["oi_name"]." has been delivered successfully. <br><br>Thanks, come back soon."
+                );
+    
+                Mail::to($order["customer"]["email"], $order["customer"]["first_name"])
+                    ->queue(new Alert($data));
 
                 /*--- Accrue to Vendor || Record Transaction ---*/
                 $vendor = Vendor::where('id', $order_item['sku']["product"]["vendor"]["id"])->first();

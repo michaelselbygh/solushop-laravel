@@ -5,7 +5,7 @@
 @section('content-body')
     <section id="configuration">
         <div class="row">
-            <div class="col-8">
+            <div class="col-md-8">
                 <h5 class="card-title">Transactions</h5>
                 <div class="card">
                     <div class="card-content collapse show">
@@ -43,6 +43,7 @@
                                                 @endif
                                             </td>
                                             <td>
+                                                {{ "GH¢ " . $accounts["transactions"][$i]["trans_amount"] }}
                                                 @if($accounts["transactions"][$i]["trans_debit_account_type"] == 1 AND in_array($accounts["transactions"][$i]["trans_credit_account_type"], [2, 4, 6, 8, 10]))
                                                     <img src="{{ url("portal/images/transactions/green-in.png") }}" style="width: 30px;"/>
                                                 @elseif($accounts["transactions"][$i]["trans_credit_account_type"] == 1 AND in_array($accounts["transactions"][$i]["trans_debit_account_type"], [2, 4, 6, 8, 10]))
@@ -54,9 +55,10 @@
                                                 @else
                                                     <img src="{{ url("portal/images/transactions/neutral.png") }}" style="width: 30px;"/>
                                                 @endif
+                                            
                                             </td>
                                             <td>{{ $accounts["transactions"][$i]["trans_description"] }}</td>
-                                            <td>{{ $accounts["transactions"][$i]["trans_date"] }}</td>
+                                            <td>{{ substr($accounts["transactions"][$i]["trans_date"], 0, 10) }}</td>
                                             <td>{{ $accounts["transactions"][$i]["trans_recorder"] }}</td>
                                         </tr>
                                     @endfor
@@ -68,7 +70,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-4">
+            <div class="col-md-4">
                 <h5 class="card-title">Balance</h5>
                 <div class="card">
                     <div class="card-content collapse show">
@@ -76,14 +78,40 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <h6>Total : </h6>
-                                    <h6>Due Vendors : </h6>
-                                    <h6>Due Sales Associates : </h6>
-                                    <h6>Available : </h6>
                                 </div>
                                 <div class="col-md-6" >
                                     <h6><b>GH¢ {{ round($accounts["balance"]["total"], 2) }}</b></h6>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>Due Vendors : </h6>
+                                </div>
+                                <div class="col-md-6" >
                                     <h6 style="color: #fbae17;"><b>GH¢ {{ round($accounts["balance"]["vendors"], 2) }}</b></h6>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>Due Sales Associates : </h6>
+                                </div>
+                                <div class="col-md-6" >
                                     <h6 style="color: #fbae17;"><b>GH¢ {{ round($accounts["balance"]["sales-associates"], 2) }}</b></h6>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>Due Delivery Partners : </h6>
+                                </div>
+                                <div class="col-md-6" >
+                                    <h6 style="color: #fbae17;"><b>GH¢ {{ round($accounts["balance"]["delivery-partners"], 2) }}</b></h6>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>Available : </h6>
+                                </div>
+                                <div class="col-md-6" >
                                     <h6 style="color: green;"><b>GH¢ {{ round($accounts["balance"]["available"], 2) }}</b></h6>
                                 </div>
                             </div>

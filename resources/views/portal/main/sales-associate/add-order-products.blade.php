@@ -5,7 +5,7 @@
 @section('content-body')
     <section id="configuration">
         <div class="row">
-            <div class="col-7">
+            <div class="col-md-7">
                 <h5 class="card-title">Add Order - Step 2 (Select {{$order["customer"]["first_name"] }}'s products)</h5>
                 @include('portal.main.success-and-error.message')
                 <div class="card">
@@ -70,12 +70,12 @@
                     </div>
                 </div>
             </div>
-            <div class="col-5">
+            <div class="col-md-5">
                 <h5 class="card-title">Customer Details </h5>
                 <div class="card">
                     <div class="card-content collapse show">
                         <div class="card-body card-dashboard">
-                                <b>{{ $order["customer"]["first_name"]." ".$order["customer"]["first_name"] }} - {{ "0".substr($order["customer"]["phone"], 3) }}</b><br>
+                                <b>{{ $order["customer"]["first_name"]." ".$order["customer"]["last_name"] }} - {{ "0".substr($order["customer"]["phone"], 3) }}</b><br>
                                 <b>{{ $order["address"]["ca_region"]." - ".$order["address"]["ca_town"] }} | {{ $order["address"]["ca_address"] }}</b><br>
                         </div>
                     </div>

@@ -5,12 +5,12 @@
 @section('content-body')
     <section id="configuration">
         <div class="row">
-            <div class="col-12">
+            <div class="col-md-12">
                 <div class="row">
-                    <div class="col-6"  style="margin-top:10px;">
+                    <div class="col-md-6"  style="margin-top:10px;">
                         <h5 class="card-title">Deliveries</h5>
                     </div>
-                    <div class="col-6" style="text-align: right; margin-bottom:10px;">
+                    <div class="col-md-6" style="text-align: right; margin-bottom:10px;">
                         @if(sizeof($delivery_items) > 0)
                         <form method="POST" action="{{ route('delivery-partner.process.deliveries') }}">
                                 @csrf

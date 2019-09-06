@@ -69,7 +69,7 @@
                                                             @for($i=0; $i < sizeof($customer_information["addresses"]); $i++) 
                                                                 <tr>
                                                                     <td>
-                                                                        <input style='height:15px;' type='radio' value='{{ $customer_information["addresses"][$i]['id'] }}' name='default_address' @if($customer_information["addresses"][$i]['id'] == Auth::user()->default_address) checked @endif/>
+                                                                        <input style='height:15px;' type='radio' value='{{ $customer_information["addresses"][$i]['id'] }}' name='default_address' @if($customer_information["addresses"][$i]['id'] == Auth::user()->default_address OR $i == 0) checked @endif/>
                                                                     </td>
                                                                     <td>{{ $customer_information["addresses"][$i]['ca_town'] }} | {{ $customer_information["addresses"][$i]['ca_address'] }}</td>
                                                                 </tr>
@@ -83,8 +83,8 @@
                                                             <button class="button" type="submit">Update Default</button>
                                                     </div>
                                                     <div class="col-50">
-                                                        <a href='{{ route("show.account.add.address") }}'>
-                                                            <button class="button" >Add New Address</button>
+                                                        <a href='{{ route("show.account.add.address") }}' class="external">
+                                                            <button class="button" type="button" >Add New Address</button>
                                                         </a>
                                                     </div>
                                                 </div>

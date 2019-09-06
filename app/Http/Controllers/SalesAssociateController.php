@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Validator;
 use Spatie\Activitylog\Contracts\Activity;
 
 use Auth;
+use Mail;
+
+use App\Mail\Alert;
 
 use App\AccountTransaction;
 use App\Chocolate;
@@ -51,7 +54,7 @@ class SalesAssociateController extends Controller
     }
 
     public function showCustomers(){
-        $management = [2, 5];
+        $management = [2, 5, 10];
         if(in_array(Auth::guard('sales-associate')->user()->id, $management)){
             $customers = Customer::with('milk', 'chocolate')->get()->toArray();
         }else{
@@ -149,7 +152,7 @@ class SalesAssociateController extends Controller
         $count->save();
 
         //queue customer message
-        $sms_message = "Hi ".ucwords(strtolower($request->first_name)).", a warm welcome to the Solushop family. If you need any assistance, kindly call or Whatsapp customer care on 0506753093 or your sales associate, ".Auth::guard('sales-associate')->user()->first_name.". Happy Shopping!";
+        $sms_message = "Hi ".ucwords(strtolower($request->first_name)).", a warm welcome to the Solushop family. Your S-Wallet has been credited with GHS 5 bonus. If you need any assistance, kindly call or Whatsapp customer care on 0506753093 or your sales associate, ".Auth::guard('sales-associate')->user()->first_name.". Happy Shopping!\n\nEmail: ".strtolower($request->email)." \nPassword: $password";
         $sms_phone = "233".substr($request->phone, 1);
 
         $sms = new SMS;
@@ -157,6 +160,15 @@ class SalesAssociateController extends Controller
         $sms->sms_phone = $sms_phone;
         $sms->sms_state = 1;
         $sms->save();
+
+        $data = array(
+            'subject' => 'Welcome - Solushop Ghana',
+            'name' => ucwords(strtolower($request->first_name)),
+            'message' => "A warm welcome to the Solushop family. Your S-Wallet has been credited with GHS 5 bonus. If you need any assistance, kindly call or Whatsapp customer care on 0506753093 or your sales associate, ".Auth::guard('sales-associate')->user()->first_name.". Happy Shopping!<br><br>Email: ".strtolower($request->email)." <br>Password: $password"
+        );
+
+        Mail::to(strtolower($request->email), ucwords(strtolower($request->first_name)))
+            ->queue(new Alert($data));
 
         /*--- log activity ---*/
         activity()
@@ -166,7 +178,7 @@ class SalesAssociateController extends Controller
             $activity->subject_id = '0';
             $activity->log_name = 'Customer Registration by Sales Associate';
         })
-        ->log($request->email.' was registered as a customer by '.Auth::guard('sales-associate')->user()->first_name." ".Auth::guard('sales-associate')->user()->last_name);
+        ->log(strtolower($request->email).' was registered as a customer by '.Auth::guard('sales-associate')->user()->first_name." ".Auth::guard('sales-associate')->user()->last_name);
 
         return redirect()->back()->with("success_message", "Customer registered successfully");
     }
@@ -205,7 +217,7 @@ class SalesAssociateController extends Controller
 
 
     public function showAddOrderOne(){
-        $management = [2, 5];
+        $management = [2, 5, 10];
         if(in_array(Auth::guard('sales-associate')->user()->id, $management)){
             $customers = Customer::with('milk', 'chocolate')->get()->toArray();
         }else{
@@ -353,7 +365,7 @@ class SalesAssociateController extends Controller
         }
 
         /*--- Notify customer ---*/
-        $sms_message = "Hi ".$customer->first_name.", kindly pay GHS ".($shipping + (0.99 * $order_item_subtotal))." to Solushop Ghana Official Number - 0506753093  (VF Cash - Michael Selby) to confirm your order $order_id. Alert your sales associate immediately you do.";
+        $sms_message = "Hi ".$customer->first_name.", kindly pay GHS ".($shipping + (0.99 * $order_item_subtotal))." to Solushop Ghana Official Number - 0506753093  (VF Cash - Solushop Ghana Limited) to confirm your order $order_id. Alert your sales associate immediately you do.";
         $sms_phone = $customer->phone;
 
         $sms = new SMS;
@@ -361,6 +373,15 @@ class SalesAssociateController extends Controller
         $sms->sms_phone = $sms_phone;
         $sms->sms_state = 1;
         $sms->save();
+
+        $data = array(
+            'subject' => 'Payment Instructions - Solushop Ghana',
+            'name' => $customer->first_name,
+            'message' => "Kindly pay GHS ".($shipping + (0.99 * $order_item_subtotal))." to Solushop Ghana Official Number - 0506753093  (VF Cash - Solushop Ghana Limited) to confirm your order $order_id. Alert your sales associate immediately you do."
+        );
+
+        Mail::to($customer->email, $customer->first_name)
+            ->queue(new Alert($data));
 
         /*--- log activity ---*/
         activity()
@@ -373,10 +394,9 @@ class SalesAssociateController extends Controller
         ->log(Auth::guard('sales-associate')->user()->first_name." ".Auth::guard('sales-associate')->user()->last_name.' added an order '.$order_id.' for customer with ID '.$customerID);
 
 
-        return redirect()->route("sales-associate.show.orders")->with("success_message", "Address added successfully.");
+        return redirect()->route("sales-associate.show.orders")->with("success_message", $customer->first_name."'s order placed successfully.");
 
     }
-    
     
     public function showTermsOfUse(){
         return view("portal.main.sales-associate.terms-of-use");

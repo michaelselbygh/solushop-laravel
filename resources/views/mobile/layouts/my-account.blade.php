@@ -68,6 +68,28 @@
                 overflow-y: scroll;
             }
         </style>
+        <script async src="{{ url('https://www.googletagmanager.com/gtag/js?id=UA-71743571-3') }}"></script>
+		<script>
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+			
+			gtag('config', 'UA-71743571-3');
+
+			function gtag_report_conversion(url) {
+			var callback = function () {
+				if (typeof(url) != 'undefined') {
+				window.location = url;
+				}
+			};
+			gtag('event', 'conversion', {
+				'send_to': 'AW-745721431/qr-NCKr6u50BENecy-MC',
+				'event_callback': callback
+			});
+			return false;
+			}
+
+		</script>
     </head>
     <body>
         <div id="app">

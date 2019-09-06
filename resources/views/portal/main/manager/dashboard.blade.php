@@ -96,65 +96,63 @@
 
 
     <div class="row">
-        <div id="recent-transactions" class="col-12">
+        <div id="recent-transactions" class="col-md-12">
             <h5 class="card-title">New Orders</h5>
             <div class="card" style="min-height: 450px">
                 <div class="card-content">
                     @if ($dashboard['new_orders_count'] > 0) 
-                            <div class="table-responsive">
-                                <table id="recent-orders" class="table table-hover table-xl mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th class="border-top-0">Customer Name</th>
-                                            <th class="border-top-0">Customer Phone</th>
-                                            <th class="border-top-0">Products Purchased</th>
-                                            <th class="border-top-0">Order ID</th>
-                                            <th class="border-top-0">Order Date and Time</th>
-                                            <th class="border-top-0">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    @for ($i = 0; $i < $dashboard['new_orders_count']; $i++) 
-                                        <tr>
-                                            <td class="text-truncate">
-                                                <span>
-                                                    {{ $dashboard["new_orders"][$i]["customer"]["first_name"]." ".$dashboard["new_orders"][$i]["customer"]["last_name"] }}
-                                                </span>
-                                            </td>
-                                            <td class="text-truncate">
-                                                <span>
-                                                    {{ "0".substr($dashboard["new_orders"][$i]["customer"]["phone"], 3) }}
-                                                </span>
-                                            </td>
-                                            <td class="text-truncate p-1">
-                                                <ul class="list-unstyled users-list m-0">
-                                                    @for ($j = 0; $j < sizeof($dashboard["new_orders"][$i]["order_items"]); $j++) 
-                                                        <li data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="{{ $dashboard["new_orders"][$i]["order_items"][$j]["oi_name"] }}" class="avatar avatar-sm pull-up">
-                                                            <img class="media-object rounded-circle no-border-top-radius no-border-bottom-radius"
-                                                            src="{{ url("app/assets/img/products/thumbnails/".$dashboard["new_orders"][$i]["order_items"][$j]["sku"]["product"]["images"][0]["pi_path"].".jpg") }}"
-                                                            alt="{{ $dashboard["new_orders"][$i]["order_items"][$j]["oi_name"] }}">
-                                                        </li>
-                                                    @endfor
-                                                </ul>
-                                            </td>
-                                            <td class="text-truncate">
-                                                {{ $dashboard["new_orders"][$i]["id"] }}
-                                            </td>
-                                            <td class="text-truncate">
-                                                {{ date('g:ia, l jS F Y', strtotime($dashboard["new_orders"][$i]["order_date"])) }}
-                                            </td>
-                                            <td class="text-truncate">
-                                                <a target="new" href="{{ url("portal/manager/order/".$dashboard["new_orders"][$i]["id"]) }}">
-                                                    <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="View Order"  style="margin-top: 3px;" class="btn btn-info btn-sm round">
-                                                        <i class="ft-eye"></i>
-                                                    </button>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                    @endfor
-                                </tbody>
-                            </table>
-                        </div>
+                        <table id="recent-orders" class="table table-hover table-xl mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="border-top-0">Customer Name</th>
+                                    <th class="border-top-0">Customer Phone</th>
+                                    <th class="border-top-0">Products Purchased</th>
+                                    <th class="border-top-0">Order ID</th>
+                                    <th class="border-top-0">Order Date and Time</th>
+                                    <th class="border-top-0">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for ($i = 0; $i < $dashboard['new_orders_count']; $i++) 
+                                    <tr>
+                                        <td class="text-truncate">
+                                            <span>
+                                                {{ $dashboard["new_orders"][$i]["customer"]["first_name"]." ".$dashboard["new_orders"][$i]["customer"]["last_name"] }}
+                                            </span>
+                                        </td>
+                                        <td class="text-truncate">
+                                            <span>
+                                                {{ "0".substr($dashboard["new_orders"][$i]["customer"]["phone"], 3) }}
+                                            </span>
+                                        </td>
+                                        <td class="text-truncate p-1">
+                                            <ul class="list-unstyled users-list m-0">
+                                                @for ($j = 0; $j < sizeof($dashboard["new_orders"][$i]["order_items"]); $j++) 
+                                                    <li data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="{{ $dashboard["new_orders"][$i]["order_items"][$j]["oi_name"] }}" class="avatar avatar-sm pull-up">
+                                                        <img class="media-object rounded-circle no-border-top-radius no-border-bottom-radius"
+                                                        src="{{ url("app/assets/img/products/thumbnails/".$dashboard["new_orders"][$i]["order_items"][$j]["sku"]["product"]["images"][0]["pi_path"].".jpg") }}"
+                                                        alt="{{ $dashboard["new_orders"][$i]["order_items"][$j]["oi_name"] }}">
+                                                    </li>
+                                                @endfor
+                                            </ul>
+                                        </td>
+                                        <td class="text-truncate">
+                                            {{ $dashboard["new_orders"][$i]["id"] }}
+                                        </td>
+                                        <td class="text-truncate">
+                                            {{ date('g:ia, l jS F Y', strtotime($dashboard["new_orders"][$i]["order_date"])) }}
+                                        </td>
+                                        <td class="text-truncate">
+                                            <a target="new" href="{{ url("portal/manager/order/".$dashboard["new_orders"][$i]["id"]) }}">
+                                                <button data-toggle="tooltip" data-popup="tooltip-custom" data-original-title="View Order"  style="margin-top: 3px;" class="btn btn-info btn-sm round">
+                                                    <i class="ft-eye"></i>
+                                                </button>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                @endfor
+                            </tbody>
+                        </table>
                     @else 
                         <h5 style='margin-top: 15%; margin-bottom: 20%; text-align:center'>No new orders yet.</h5></div>
                     @endif
